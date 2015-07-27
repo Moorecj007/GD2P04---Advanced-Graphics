@@ -1,5 +1,5 @@
 
-
+#include <time.h>
 
 #ifndef TIMER_H
 #define TIMER_H
@@ -7,14 +7,49 @@ class Timer
 {
 public:
 	Timer();
+	
+	/***********************
+	* GetGameTime: Retrieve the Game Time in seconds
+	* @author: Callan Moore
+	* @return: float: The game time
+	********************/
+	float GetGameTime()const;
+	
+	/***********************
+	* GetDeltaTime: Retrieve the Delta Time in seconds
+	* @author: Callan Moore
+	* @return: float: The Delta time
+	********************/
+	float GetDeltaTime()const; 
 
-	float getGameTime()const;  // in seconds
-	float getDeltaTime()const; // in seconds
-
-	void reset(); // Call before message loop.
-	void start(); // Call when unpaused.
-	void stop();  // Call when paused.
-	void tick();  // Call every frame.
+	
+	/***********************
+	* Reset: Reset the Timer
+	* @author: Callan Moore
+	* @return: void
+	********************/
+	void Reset();
+	
+	/***********************
+	* Start: Start the Timer
+	* @author: Callan Moore
+	* @return: void
+	********************/
+	void Start();
+	
+	/***********************
+	* Stop: Stop the Timer
+	* @author: Callan Moore
+	* @return: void
+	********************/
+	void Stop();  // Call when paused.
+	
+	/***********************
+	* Tick: Calculate the Delta tick
+	* @author: Callan Moore
+	* @return: void
+	********************/
+	void Tick();  // Call every frame.
 
 private:
 	double mSecondsPerCount;

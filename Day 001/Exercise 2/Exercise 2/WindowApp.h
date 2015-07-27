@@ -5,6 +5,8 @@
 #include "Utility.h"
 #include "Timer.h"
 #include <string>
+#include <vector>
+
 
 
 class WindowApp
@@ -17,6 +19,7 @@ public:
 	HWND      getMainWnd();
 
 	int run();
+	void ToggleFullScreen();
 
 	// Framework methods.  Derived client class overrides these methods to 
 	// implement specific application requirements.
@@ -26,6 +29,8 @@ public:
 	virtual void updateScene(float dt);
 	virtual void drawScene(); 
 	virtual LRESULT msgProc(UINT msg, WPARAM wParam, LPARAM lParam);
+
+	void DetectAdapters();
 
 protected:
 	void initMainWindow();
@@ -39,10 +44,19 @@ protected:
 	bool      mMinimized;
 	bool      mMaximized;
 	bool      mResizing;
+	bool	  mFullscreen;
 
 	Timer mTimer;
 
 	std::wstring mFrameStats;
+	std::wstring mTimeStats;
+	UINT mAdapterCount;
+	std::vector <IDXGIAdapter*> vAdapters;
+	std::vector <bool> vAdaptersSupported;
+	std::vector <IDXGIOutput*> vAdapterOutputs;
+	std::vector <DXGI_MODE_DESC*> vModeDesc;
+	std::vector <std::string> vModeDescInfo;
+	std::vector <std::string> vAdapterInfo;
  
 	ID3D10Device*    md3dDevice;
 	IDXGISwapChain*  mSwapChain;

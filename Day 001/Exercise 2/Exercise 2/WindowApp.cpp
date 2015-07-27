@@ -3,6 +3,13 @@
 #include "WindowApp.h"
 #include <sstream>
 
+void WindowApp::ToggleFullScreen()
+{
+	mFullscreen = !mFullscreen;
+	mSwapChain->SetFullscreenState(mFullscreen, NULL);
+}
+
+
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
@@ -17,6 +24,26 @@ MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			app = (WindowApp*)cs->lpCreateParams;
 			return 0;
 		}
+			break;
+		case WM_KEYDOWN:
+		{
+			switch (wParam)
+			{
+				case VK_F1:
+				{
+					// Exercise 2.3
+					app->ToggleFullScreen();
+				}
+				break;
+				case VK_F2:
+				{
+					// Exercise 2.4a
+					app->DetectAdapters();
+				}
+				break;
+			}
+		}
+		break;
 	}
 
 	// Don't start processing messages until after WM_CREATE.
@@ -46,7 +73,8 @@ WindowApp::WindowApp(HINSTANCE hInstance)
 
 	mMainWndCaption = L"D3D10 Application";
 	md3dDriverType  = D3D10_DRIVER_TYPE_HARDWARE;
-	mClearColor     = D3DXCOLOR(0.0f, 0.0f, 1.0f, 1.0f);
+	// Exercise 2.2
+	mClearColor     = ORANGE;
 	mClientWidth    = 800;
 	mClientHeight   = 600;
 }
@@ -75,7 +103,7 @@ int WindowApp::run()
 {
 	MSG msg = {0};
  
-	mTimer.reset();
+	mTimer.Reset();
 
 	while(msg.message != WM_QUIT)
 	{
@@ -88,10 +116,10 @@ int WindowApp::run()
 		// Otherwise, do animation/game stuff.
 		else
         {	
-			mTimer.tick();
+			mTimer.Tick();
 
 			if( !mAppPaused )
-				updateScene(mTimer.getDeltaTime());	
+				updateScene(mTimer.GetDeltaTime());	
 			else
 				Sleep(50);
 
@@ -187,22 +215,33 @@ void WindowApp::updateScene(float dt)
 	static float t_base = 0.0f;
 
 	frameCnt++;
-
+	
 	// Compute averages over one second period.
-	if( (mTimer.getGameTime() - t_base) >= 1.0f )
+	if( (mTimer.GetGameTime() - t_base) >= 1.0f )
 	{
 		float fps = (float)frameCnt; // fps = frameCnt / 1
 		float mspf = 1000.0f / fps;
 
-		std::wostringstream outs;   
+		// Exercise 2.2
+		SYSTEMTIME time;
+		GetLocalTime(&time);
+
+		std::wostringstream outs;
 		outs.precision(6);
-		outs << L"FPS: " << fps << L"\n" 
-			 << "Milliseconds: Per Frame: " << mspf;
+		outs << L"FPS: " << fps << L"\n"
+			<< "Milliseconds: Per Frame: " << mspf << L"\n";
+			 
 		mFrameStats = outs.str();
+		outs.str(L"");
+
+		outs	<< L"Time: " << time.wHour << ":" << time.wMinute << ":" << time.wSecond << L"\n"
+				<< L"Date: " << time.wDay << " " << time.wMonth << " " << time.wYear << L"\n";
+		mTimeStats = outs.str();
 		
 		// Reset for next average.
 		frameCnt = 0;
 		t_base  += 1.0f;
+
 	}
 }
 
@@ -223,12 +262,12 @@ LRESULT WindowApp::msgProc(UINT msg, WPARAM wParam, LPARAM lParam)
 		if( LOWORD(wParam) == WA_INACTIVE )
 		{
 			mAppPaused = true;
-			mTimer.stop();
+			mTimer.Stop();
 		}
 		else
 		{
 			mAppPaused = false;
-			mTimer.start();
+			mTimer.Start();
 		}
 		return 0;
 
@@ -293,7 +332,7 @@ LRESULT WindowApp::msgProc(UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_ENTERSIZEMOVE:
 		mAppPaused = true;
 		mResizing  = true;
-		mTimer.stop();
+		mTimer.Stop();
 		return 0;
 
 	// WM_EXITSIZEMOVE is sent when the user releases the resize bars.
@@ -301,7 +340,7 @@ LRESULT WindowApp::msgProc(UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_EXITSIZEMOVE:
 		mAppPaused = false;
 		mResizing  = false;
-		mTimer.start();
+		mTimer.Start();
 		onResize();
 		return 0;
  
@@ -413,6 +452,76 @@ void WindowApp::initDirect3D()
 	// just call the onResize method here to avoid code duplication.
 	
 	onResize();
+}
+
+void WindowApp::DetectAdapters()
+{
+	IDXGIFactory * pFactory = NULL;
+	CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&pFactory);
+
+	UINT i = 0;
+	IDXGIAdapter * pAdapter;
+	while (pFactory->EnumAdapters(i, &pAdapter) != DXGI_ERROR_NOT_FOUND)
+	{
+		std::string strAdapter = "Adapter ";
+		vAdapters.push_back(pAdapter);
+		strAdapter.append(std::to_string(i));
+
+		if (pAdapter->CheckInterfaceSupport(__uuidof(ID3D10Device), 0) == S_OK)
+		{
+			vAdaptersSupported.push_back(true);
+			strAdapter.append(" / DX10 Supported: True");
+		}
+		else
+		{
+			vAdaptersSupported.push_back(false);
+			strAdapter.append(" / DX10 Supported: False");
+		}
+
+		vAdapterInfo.push_back(strAdapter);
+		++i;
+	}
+	
+	i = 0;
+	IDXGIOutput* pOutput;
+	pAdapter = vAdapters[0];
+	while (pAdapter->EnumOutputs(i, &pOutput) != DXGI_ERROR_NOT_FOUND)
+	{
+		vAdapterOutputs.push_back(pOutput);
+
+		UINT num = 0;
+		DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		UINT flags = DXGI_ENUM_MODES_INTERLACED;
+		pOutput->GetDisplayModeList(format, flags, &num, 0);
+
+		DXGI_MODE_DESC* pDescs = new DXGI_MODE_DESC[num];
+		pOutput->GetDisplayModeList(format, flags, &num, pDescs);
+
+		for (UINT j = 0; j < num; j++)
+		{
+			vModeDesc.push_back(&pDescs[j]);
+
+			std::string strInfo = "Height: ";
+			strInfo.append(std::to_string(vModeDesc[j]->Height));
+			strInfo.append(" / Width: ");
+			strInfo.append(std::to_string(vModeDesc[j]->Width));
+			strInfo.append(" / Refresh Rate: ");
+			strInfo.append(std::to_string((float)(vModeDesc[j]->RefreshRate.Numerator) / (float)(vModeDesc[j]->RefreshRate.Denominator)));
+
+			vModeDescInfo.push_back(strInfo);
+		}
+
+		delete pDescs;
+
+		++i;
+	}
+
+
+
+	mAdapterCount = vAdapters.size();
+
+	ReleaseCOM(pFactory);
+
 }
 
 

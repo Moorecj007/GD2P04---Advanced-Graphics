@@ -12,7 +12,7 @@ Timer::Timer()
 
 // Returns the total time elapsed since reset() was called, NOT counting any
 // time when the clock is stopped.
-float Timer::getGameTime()const
+float Timer::GetGameTime()const
 {
 	// If we are stopped, do not count the time that has passed since we stopped.
 	//
@@ -40,12 +40,12 @@ float Timer::getGameTime()const
 	}
 }
 
-float Timer::getDeltaTime()const
+float Timer::GetDeltaTime()const
 {
 	return (float)mDeltaTime;
 }
 
-void Timer::reset()
+void Timer::Reset()
 {
 	__int64 currTime;
 	QueryPerformanceCounter((LARGE_INTEGER*)&currTime);
@@ -56,7 +56,7 @@ void Timer::reset()
 	mStopped  = false;
 }
 
-void Timer::start()
+void Timer::Start()
 {
 	__int64 startTime;
 	QueryPerformanceCounter((LARGE_INTEGER*)&startTime);
@@ -78,7 +78,7 @@ void Timer::start()
 	}
 }
 
-void Timer::stop()
+void Timer::Stop()
 {
 	if( !mStopped )
 	{
@@ -90,7 +90,7 @@ void Timer::stop()
 	}
 }
 
-void Timer::tick()
+void Timer::Tick()
 {
 	if( mStopped )
 	{

@@ -1,9 +1,4 @@
 
-//#pragma comment(lib, "d3d10.lib")
-//#pragma comment(lib, "d3dx10d.lib")
-//#pragma comment(lib, "dxerr.lib")
-//#pragma comment(lib, "dxguid.lib")
-
 #include "WindowApp.h"
  
 class InitDirect3DApp : public WindowApp
@@ -67,6 +62,36 @@ void InitDirect3DApp::drawScene()
 	// We specify DT_NOCLIP, so we do not care about width/height of the rect.
 	RECT R = {5, 5, 0, 0};
 	mFont->DrawText(0, mFrameStats.c_str(), -1, &R, DT_NOCLIP, BLACK);
+
+	R.top = R.top + 50;
+	mFont->DrawText(0, mTimeStats.c_str(), -1, &R, DT_NOCLIP, BLACK);
+
+	if (mAdapterCount > 0)
+	{
+		R.top = R.top + 50;
+		std::string strAdapters = "Adapter Count: ";
+		strAdapters.append(std::to_string(mAdapterCount));
+		mFont->DrawTextA(0, strAdapters.c_str(), -1, &R, DT_NOCLIP, BLACK);
+
+		for (UINT i = 0; i < vAdapterInfo.size(); i++)
+		{
+			R.top = R.top + 25;
+			mFont->DrawTextA(0, vAdapterInfo[i].c_str(), -1, &R, DT_NOCLIP, BLACK);
+		}
+		
+		R.top = R.top + 25;
+		std::string strOutputs = "Default Adapter Number of Outputs: ";
+		strOutputs.append(std::to_string(vAdapterOutputs.size()));
+		mFont->DrawTextA(0, strOutputs.c_str(), -1, &R, DT_NOCLIP, BLACK);
+		
+		for (UINT i = 0; i < vModeDescInfo.size(); i++)
+		{
+			R.top = R.top + 25;
+			mFont->DrawTextA(0, vModeDescInfo[i].c_str(), -1, &R, DT_NOCLIP, BLACK);
+		}
+
+
+	}
 
 	mSwapChain->Present(0, 0);
 }
