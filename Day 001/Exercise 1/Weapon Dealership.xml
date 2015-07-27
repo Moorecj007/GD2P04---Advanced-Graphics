@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>.
+<DEALERSHIP>
+	<WEAPON>
+		<NAME>			Revolver	</NAME>
+		<AMMUNITION>	9mm			</AMMUNITION>
+		<FIRE_RATE>		3 /s		</FIRE_RATE>
+		<WEIGHT>		0.5 Kg		</WEIGHT>
+	</WEAPON>
+	<WEAPON>
+		<NAME>			Shotgun		</NAME>
+		<AMMUNITION>	3mm Pellets </AMMUNITION>
+		<FIRE_RATE>		0.7 /s		</FIRE_RATE>
+		<WEIGHT>		6 Kg		</WEIGHT>
+	</WEAPON>
+	<WEAPON>
+		<NAME>			Katana		</NAME>
+		<AMMUNITION>	---			</AMMUNITION>
+		<FIRE_RATE>		---			</FIRE_RATE>
+		<WEIGHT>		0.8 Kg		</WEIGHT>
+	</WEAPON>
+	<WEAPON>
+		<NAME>			Assault Rifle	</NAME>
+		<AMMUNITION>	5mm				</AMMUNITION>
+		<FIRE_RATE>		8 /s				</FIRE_RATE>
+		<WEIGHT>		4 Kg			</WEIGHT>
+	</WEAPON>
+	<WEAPON>
+		<NAME>			Sub Machine	</NAME>
+		<AMMUNITION>	4mm			</AMMUNITION>
+		<FIRE_RATE>		15 /s			</FIRE_RATE>
+		<WEIGHT>		3.7 Kg			</WEIGHT>
+	</WEAPON>
+
+</DEALERSHIP>
+
+<GAME_ASSETS>
+	<ASSET>
+		<TYPE> WEAPON </TYPE>
+		<POSITION> On the floor </POSITION>
+		<SIZE> Small </SIZE>
+	</ASSET>
+	<ASSET>
+		<TYPE> ENVIRONMENT </TYPE>
+		<POSITION> Next to the weapon </POSITION>
+		<SIZE> slightly larger than the weapon </SIZE>
+	</ASSET>
+</GAME_ASSETS>
