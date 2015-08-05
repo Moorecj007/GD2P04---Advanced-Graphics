@@ -12,6 +12,7 @@
 * Mail :	Callan.Moore@mediadesign.school.nz
 */
 
+// This Include
 #include "Application.h"
 
 CApplication::CApplication()
@@ -23,10 +24,18 @@ CApplication::~CApplication()
 {
 }
 
-int Execute()
+
+
+
+
+
+
+
+
+
+int CApplication::Execute()
 {
 	MSG uiMsg;				// Generic message.
-
 	bool bOnline = true;
 
 	// Enter main event loop.
@@ -53,7 +62,7 @@ int Execute()
 	return (static_cast<int>(uiMsg.wParam));
 }
 
-LRESULT CALLBACK WindowProc(HWND _hWnd, UINT _uiMsg, WPARAM _wParam, LPARAM _lParam)
+LRESULT CALLBACK CApplication::WindowProc(HWND _hWnd, UINT _uiMsg, WPARAM _wParam, LPARAM _lParam)
 {
 	PAINTSTRUCT paintStruct;		// Used in WM_PAINT.
 	HDC hDC;						// Handle to a device context.
@@ -96,7 +105,7 @@ HWND CApplication::CreateWindowApp(int _iScreenWidth, int _iScreenHeight, HINSTA
 	// Fills in the window class structure.
 	winClass.cbSize = sizeof(WNDCLASSEX);
 	winClass.style = CS_DBLCLKS | CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-	winClass.lpfnWndProc = CApp->WindowProc;
+	winClass.lpfnWndProc = WindowProc;
 	winClass.cbClsExtra = 0;
 	winClass.cbWndExtra = 0;
 	winClass.hInstance = _hInstance;
@@ -115,7 +124,7 @@ HWND CApplication::CreateWindowApp(int _iScreenWidth, int _iScreenHeight, HINSTA
 
 	hWnd = CreateWindowEx(NULL,								// Extended style.
 		WINDOW_CLASS_NAME,					// Class.
-		L"",						// Title.
+		L"DX10 Framework",					// Title.
 		WS_VISIBLE | WS_CAPTION | WS_BORDER | WS_SYSMENU,// Windowed Mode
 		0, 0,								// Initial x,y position for the top left corner of the window
 		_iScreenWidth, _iScreenHeight,		// Initial width, height of the window
@@ -136,6 +145,7 @@ HWND CApplication::CreateWindowApp(int _iScreenWidth, int _iScreenHeight, HINSTA
 int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _nCmdShow)
 {
 	// Create the Application 
-	CApplication CApp;
-	CApp.CreateWindowApp(1000, 1000, _hInstance);
+	CApplication* pApp = new CApplication();
+	pApp->CreateWindowApp(1000, 1000, _hInstance);
+	pApp->Execute();
 }

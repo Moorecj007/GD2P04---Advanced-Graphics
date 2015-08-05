@@ -12,14 +12,14 @@
 * Mail :	Callan.Moore@mediadesign.school.nz
 */
 
+// Inclusion Guards
 #pragma once
+#ifndef __APPLICATION_H__
+#define __APPLICATION_H__
+
 
 #pragma comment(lib, "Winmm.lib")
-//#pragma comment(lib, "d3d10.lib")
-//#pragma comment(lib, "d3dx10d.lib")
-//#pragma comment(lib, "dxerr.lib")
-//#pragma comment(lib, "dxguid.lib")
-//#pragma comment(lib, "DXGI.lib")
+
 
 // Defines and Macros
 #define WIN32_LEAN_AND_MEAN
@@ -37,9 +37,23 @@
 class CApplication
 {
 public:
+	// TO DO headers
 	CApplication();
 	~CApplication();
 
+
+
+
+
+
+
+
+
+	/***********************
+	* Execute: Runs the main loop of the Application
+	* @author: Callan Moore
+	* @return: int: Integer containing details about the last message resulting it termination
+	********************/
 	int Execute();
 
 	/***********************
@@ -51,19 +65,21 @@ public:
 	* @Parameter: _lParam: Additional detail about the message being sent
 	* @return: LRESULT: The resulting value
 	********************/
-	LRESULT CALLBACK WindowProc(HWND _hWnd, UINT _uiMsg, WPARAM _wParam, LPARAM _lParam);
+	static LRESULT CALLBACK WindowProc(HWND _hWnd, UINT _uiMsg, WPARAM _wParam, LPARAM _lParam);
 
 	/***********************
-	* WinMain: TO DO
+	* CreateWindowApp: Creates the window for the Application
 	* @author: Callan Moore
-	* @Parameter: _hInstance: Instance handle that Windows generates for your application
-	* @Parameter: _hPrevInstance: Tracker for the previous instance for the application
-	* @Parameter: _lpCmdline: Wide char string that contains the passed in arguments
-	* @Parameter: _iCmdshow: Integer passed in during launch, indicating how the application window is opened
-	* @return: int: Program ends here
+	* @Parameter: _iScreenWidth: Width of the screen
+	* @Parameter: _iScreenHeight: Height of the screen
+	* @Parameter: _hInstance: The instance of the application
+	* @return: LRESULT: The resulting value
 	********************/
-	int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _nCmdShow);
-
 	HWND CreateWindowApp(int _iScreenWidth, int _iScreenHeight, HINSTANCE _hInstance);
+
+private:
+
 };
+
+#endif // __APPLICATION_H__
 
