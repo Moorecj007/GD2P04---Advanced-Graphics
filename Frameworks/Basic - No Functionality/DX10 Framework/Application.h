@@ -71,11 +71,10 @@ public:
 
 	// Constructors / Destructors
 	/***********************
-	* GetInstance: Returns the singleton instance of the Application, if it doesn't exist creates it.
+	* CApplication: Default Constructor for Application class
 	* @author: Callan Moore
-	* @return: CApplication*: The current instance of the Application
 	********************/
-	static CApplication* GetInstance();
+	CApplication();
 
 	/***********************
 	* Initialise: Initialise the Application
@@ -85,17 +84,10 @@ public:
 	bool Initialise();
 
 	/***********************
-	* ~CApplication: Default Destructor for Application class
+	* ~CApplication: Default Constructor for Application class
 	* @author: Callan Moore
 	********************/
 	~CApplication();
-
-	/***********************
-	* DestroyInstance: Deletes the instance of the Application.
-	* @author: Callan Moore
-	* @return: void
-	********************/
-	static void DestroyInstance();
 
 	/***********************
 	* ShutDown: Shuts down and releases all memory created by Application
@@ -111,35 +103,11 @@ public:
 	********************/
 	void ExecuteOneFrame();
 
-	// TO DO
-	void HandleInput();
-
-	/***********************
-	* SetKeyDown: Sets the Key down boolean for input Key
-	* @author: Callan Moore
-	* @parameter: _index: Index of the Key to set
-	* @parameter: _down: True/false setting
-	* @return: void
-	********************/
-	void SetKeyDown(int _index, bool _down);
-
 private:
-	// Preventing copies and extra constructions
-	CApplication();
-	CApplication(const CApplication& _kr);
-	CApplication& operator= (const CApplication& _kr);
-
-private:
-	// Singleton Instance
-	static CApplication* s_pApp;
-
 	// Window Variables
 	HWND m_hWnd;
 	int m_clientWidth;
 	int m_clientHeight;
-
-	// Input Variables
-	bool* m_pKeyDown;
 
 	// Renderer Variables
 	CDX10Renderer* m_pRenderer;

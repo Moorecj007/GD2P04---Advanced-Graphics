@@ -15,56 +15,52 @@
 // This Include
 #include "Application.h"
 
-// Static Variables
-CApplication* CApplication::s_pApp = 0;
-
-int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _cmdShow)
+int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _nCmdShow)
 {
 	// Create the Application 
-	CApplication* pApp = CApplication::GetInstance();
+	CApplication pApp = CApplication();
 	
 	
-	if (pApp->CreateWindowApp(1000, 1000, _hInstance) == true)
+	if (pApp.CreateWindowApp(1000, 1000, _hInstance) == true)
 	{
-		VALIDATE(pApp->Initialise());
-		pApp->Execute();
+		VALIDATE(pApp.Initialise());
+		pApp.Execute();
 	}
 	
 	// Delete all contents of the Application
-	pApp->DestroyInstance();
+	pApp.ShutDown();
 	return 0;
 }
 
 LRESULT CALLBACK CApplication::WindowProc(HWND _hWnd, UINT _uiMsg, WPARAM _wParam, LPARAM _lParam)
 {
-	// Retrieve the Instance of the Application
-	CApplication* pApp = CApplication::GetInstance();
+	PAINTSTRUCT paintStruct;		// Used in WM_PAINT.
+	HDC hDC;						// Handle to a device context.
 
 	// Switch case dependent on the message sent
 	switch (_uiMsg)
 	{
-		case WM_DESTROY:	// Fall Through
-		case WM_CLOSE:
-		{
-			// Kill the application, this sends a WM_QUIT message.
-			PostQuitMessage(0);	
-		}
+	case WM_CREATE:
+	{
+		return (0);
+	}
 		break;
-		case WM_KEYDOWN:
-		{
-			// Only accepts the input once per key press
-			if (((_lParam >> 30) & 1) != 1)
-			{
-				pApp->SetKeyDown(_wParam, true);
-			}
-		}
+	case WM_PAINT:
+	{
+		hDC = BeginPaint(_hWnd, &paintStruct);	// Prepares the window for painting
+		EndPaint(_hWnd, &paintStruct);			// Marks the ending of the window being painted
+
+		return (0);
+	}
 		break;
-		case WM_KEYUP:
-		{
-			pApp->SetKeyDown(_wParam, false);
-		}
+	case WM_DESTROY:
+	{
+		// Kill the application, this sends a WM_QUIT message.
+		PostQuitMessage(0);
+		return (0);
+	}
 		break;
-		default: break;
+	default: break;
 	} // End switch.
 
 	// Process any messages left to process
@@ -82,7 +78,7 @@ bool CApplication::CreateWindowApp(int _clientWidth, int _clientHeight, HINSTANC
 	winClass.cbClsExtra = 0;
 	winClass.cbWndExtra = 0;
 	winClass.hInstance = _hInstance;
-	winClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	winClass.hIcon = NULL;
 	winClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	winClass.hbrBackground = (HBRUSH)BLACK_BRUSH;
 	winClass.lpszMenuName = NULL;
@@ -142,24 +138,11 @@ CApplication::CApplication()
 
 }
 
-CApplication* CApplication::GetInstance()
-{
-	if (s_pApp == 0)
-	{
-		s_pApp = new CApplication();
-	}
-	return s_pApp;
-}
-
 bool CApplication::Initialise()
 {
 	// Create a Renderer for graphics
 	m_pRenderer = new CDX10Renderer();
 	VALIDATE(m_pRenderer->Initialise(m_clientWidth, m_clientHeight, m_hWnd));
-
-	// Initialise boolean array for KeyDown to false
-	m_pKeyDown = new bool[255];
-	memset(m_pKeyDown, false, 255);
 
 	return true;
 }
@@ -168,26 +151,13 @@ CApplication::~CApplication()
 {
 }
 
-void CApplication::DestroyInstance()
-{
-	s_pApp->ShutDown();
-	delete s_pApp;
-	s_pApp = 0;
-}
-
 void CApplication::ShutDown()
 {
-	// TO DO
-	delete m_pKeyDown;
-	m_pKeyDown = 0;
-
 	// Delete and free the memory from the Renderer
 	m_pRenderer->ShutDown();
 	delete m_pRenderer;
 	m_pRenderer = 0;
 }
-
-
 
 void CApplication::ExecuteOneFrame()
 {
@@ -199,25 +169,6 @@ void CApplication::ExecuteOneFrame()
 	//PostDraw();
 
 	m_pRenderer->RenderFrame();
-	HandleInput();
-}
-
-void CApplication::HandleInput()
-{
-	// Template Inputs
-	if (m_pKeyDown[VK_F1])
-	{
-		
-		m_pRenderer->ToggleFullscreen();
-		m_pKeyDown[VK_F1] = false;
-	}
-
-	// Application Specific Inputs
-}
-
-void CApplication::SetKeyDown(int _index, bool _down)
-{
-	m_pKeyDown[_index] = _down;
 }
 
 

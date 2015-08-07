@@ -161,10 +161,10 @@ void WindowApp::onResize()
 
 	// Resize the swap chain and recreate the render target view.
 
-	HR(mSwapChain->ResizeBuffers(1, mClientWidth, mClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0));
+	(mSwapChain->ResizeBuffers(1, mClientWidth, mClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0));
 	ID3D10Texture2D* backBuffer;
-	HR(mSwapChain->GetBuffer(0, __uuidof(ID3D10Texture2D), reinterpret_cast<void**>(&backBuffer)));
-	HR(md3dDevice->CreateRenderTargetView(backBuffer, 0, &mRenderTargetView));
+	(mSwapChain->GetBuffer(0, __uuidof(ID3D10Texture2D), reinterpret_cast<void**>(&backBuffer)));
+	(md3dDevice->CreateRenderTargetView(backBuffer, 0, &mRenderTargetView));
 	ReleaseCOM(backBuffer);
 
 
@@ -177,15 +177,15 @@ void WindowApp::onResize()
 	depthStencilDesc.MipLevels = 1;
 	depthStencilDesc.ArraySize = 1;
 	depthStencilDesc.Format    = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthStencilDesc.SampleDesc.Count   = 1; // multisampling must match
+	depthStencilDesc.SampleDesc.Count   = 1; // multi sampling must match
 	depthStencilDesc.SampleDesc.Quality = 0; // swap chain values.
 	depthStencilDesc.Usage          = D3D10_USAGE_DEFAULT;
 	depthStencilDesc.BindFlags      = D3D10_BIND_DEPTH_STENCIL;
 	depthStencilDesc.CPUAccessFlags = 0; 
 	depthStencilDesc.MiscFlags      = 0;
 
-	HR(md3dDevice->CreateTexture2D(&depthStencilDesc, 0, &mDepthStencilBuffer));
-	HR(md3dDevice->CreateDepthStencilView(mDepthStencilBuffer, 0, &mDepthStencilView));
+	(md3dDevice->CreateTexture2D(&depthStencilDesc, 0, &mDepthStencilBuffer));
+	(md3dDevice->CreateDepthStencilView(mDepthStencilBuffer, 0, &mDepthStencilView));
 
 
 	// Bind the render target view and depth/stencil view to the pipeline.
@@ -193,7 +193,7 @@ void WindowApp::onResize()
 	md3dDevice->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
 	
 
-	// Set the viewport transform.
+	// Set the view port transform.
 
 	D3D10_VIEWPORT vp;
 	vp.TopLeftX = 0;
@@ -417,7 +417,7 @@ void WindowApp::initDirect3D()
 	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
-	// No multisampling.
+	// No multi sampling.
 	sd.SampleDesc.Count   = 1;
 	sd.SampleDesc.Quality = 0;
 

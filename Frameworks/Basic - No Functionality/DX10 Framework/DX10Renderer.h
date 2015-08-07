@@ -26,35 +26,10 @@
 
 // Library Includes
 #include <d3d10.h>
-#include <dxerr.h>
-#include <map>
+#include <d3dx10.h>
 
 // Local Includes
 #include "Defines.h"
-#include "Vertex.h"
-
-#if defined(DEBUG) || defined(_DEBUG)
-#define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
-#endif
-
-#if defined(DEBUG) | defined(_DEBUG)
-	#ifndef VALIDATEHR
-	#define VALIDATEHR(x)                                      \
-	{														   \
-		HRESULT hr = (x);                                      \
-		if(FAILED(hr))                                         \
-		{                                                      \
-			DXTrace(__FILE__, (DWORD)__LINE__, hr, L#x, true); \
-			return false;									   \
-		}                                                      \
-	}
-#endif
-#else
-	#ifndef VALIDATEHR
-	#define VALIDATEHR(x) (x)
-	#endif
-#endif 
 
 
 class CDX10Renderer
@@ -70,8 +45,8 @@ public:
 	/***********************
 	* Initialise: Initialise the DX10 Renderer
 	* @author: Callan Moore
-	* @Parameter: _clientWidth: Width of the client window
-	* @Parameter: _clientHeight: Height of the client window
+	* @Parameter: _iclientWidth: Width of the screen
+	* @Parameter: _iclientHeight: Height of the screen
 	* @Parameter: _hWND: Handle to the Application window
 	* @return: bool: Successful or not
 	********************/
@@ -97,12 +72,7 @@ public:
 	********************/
 	bool InitialiseDeviceAndSwapChain();
 
-	/***********************
-	* onResize: Recreate Depth and Render Views when resizing the application
-	* @author: Callan Moore
-	* @return: bool: Successful or not
-	********************/
-	bool onResize();
+	void onResize();
 
 	/***********************
 	* RenderFrame: Render a single frame
@@ -111,47 +81,19 @@ public:
 	********************/
 	void RenderFrame();
 
-	/***********************
-	* ToggleFullscreen: Toggle Full screen on and off
-	* @author: Callan Moore
-	* @return: void
-	********************/
-	void ToggleFullscreen();
-
-	// TO DO
-	bool BuildFX(std::string _fxFileName, std::string _technique, UINT& _fxID, UINT& _techID);
-
 private:
 	// Window Variables
 	HWND m_hWnd;
 	int m_clientWidth;
 	int m_clientHeight;
-	bool m_fullScreen;
 
 	// DX10 Variables
-	ID3D10Device*    m_pDX10Device;
-	IDXGISwapChain*  m_pDX10SwapChain;
-	ID3D10RenderTargetView* m_pRenderTargetView;
+	ID3D10Device*    m_dx10Device;
+	IDXGISwapChain*  m_dx10SwapChain;
+	ID3D10RenderTargetView* m_renderTargetView;
 
 	D3D10_DRIVER_TYPE m_dx10DriverType;
 	D3DXCOLOR m_clearColor;
-
-	// TO DO initialize Ids and maps
-	UINT nextEffectID;
-	std::map<std::string, UINT>* m_pEffectIDs;
-	std::map<UINT, ID3D10Effect*>* m_pEffectsbyID;
-
-	UINT nextTechniqueID;
-	std::map<UINT, std::map<std::string, UINT>>* m_pTechniqueIDs;
-	std::map<UINT, ID3D10EffectTechnique*>* m_pTechniquesbyID;
-
-
-
-
-
-
-
-
 	
 };
 
