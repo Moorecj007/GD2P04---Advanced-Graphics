@@ -88,7 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
-    <ClInclude Include="Defines.h" />
+    <ClInclude Include="Utilities.h" />
     <ClInclude Include="DX10Renderer.h" />
     <ClInclude Include="GeometricObject.h" />
     <ClInclude Include="Vertex.h" />

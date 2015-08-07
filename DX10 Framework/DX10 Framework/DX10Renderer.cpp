@@ -31,10 +31,14 @@ bool CDX10Renderer::Initialise(int _clientWidth, int _clientHeight, HWND _hWND)
 
 	VALIDATE(InitialiseDeviceAndSwapChain());
 
-	//TVertexColor vert;
-	//BuildVertexLayout(vert);
-
 	m_clearColor = D3DXCOLOR(255.0f, 255.0f, 0.0f, 1.0f);
+
+	//Initialise the ID Keys for the Maps
+	nextEffectID = 0;
+	nextTechniqueID = 0;
+	nextInputLayoutID = 0;
+
+
 	return true;
 }
 
@@ -150,20 +154,20 @@ void CDX10Renderer::ToggleFullscreen()
 	m_pDX10SwapChain->SetFullscreenState(m_fullScreen, NULL);
 }
 
-
-bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UINT& _fxID, UINT& _techID)
+bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UINT* _fxID, UINT* _techID)
 {	
 	ID3D10Effect* pFX = 0;
 	UINT fxID;
 	UINT techID;
 
+	// Adding the Effect File to the Map
 	std::map<std::string, UINT>::iterator fxCheck;
-	fxCheck = m_pEffectIDs->find(_fxFileName);
+	fxCheck = m_effectIDs.find(_fxFileName);
 
-	if (fxCheck != m_pEffectIDs->end())
+	if (fxCheck != m_effectIDs.end())
 	{
 		fxID = fxCheck->second;
-		pFX = m_pEffectsbyID->find(fxID)->second;
+		pFX = m_effectsbyID.find(fxID)->second;
 	}
 	else
 	{
@@ -182,14 +186,16 @@ bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UIN
 		std::pair<std::string, UINT> fxPair(_fxFileName, fxID);
 		std::pair<UINT, ID3D10Effect*> fxPairByID(fxID, pFX);
 
-		m_pEffectIDs->insert(fxPair);
-		m_pEffectsbyID->insert(fxPairByID);
+		VALIDATE(m_effectIDs.insert(fxPair).second);
+		VALIDATE(m_effectsbyID.insert(fxPairByID).second);
 	}
 
-	std::map<UINT, std::map<std::string, UINT>>::iterator fxIDCheck;
-	fxIDCheck = m_pTechniqueIDs->find(fxID);
 
-	if (fxIDCheck != m_pTechniqueIDs->end())
+	// Adding the Technique to the Map
+	std::map<UINT, std::map<std::string, UINT>>::iterator fxIDCheck;
+	fxIDCheck = m_techniqueIDs.find(fxID);
+
+	if (fxIDCheck != m_techniqueIDs.end())
 	{
 		std::map<std::string, UINT>::iterator techIDCheck;
 		techIDCheck = fxIDCheck->second.find(_technique);
@@ -202,18 +208,90 @@ bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UIN
 		{
 			ID3D10EffectTechnique* pTech = pFX->GetTechniqueByName(_technique.c_str());
 
-			//techID = ++nextTechniqueID;
-			//std::pair<std::string, UINT> techPair(_technique, techID);
-			//std::map<UINT, ID3D10EffectTechnique*> techPairByID()
+			techID = ++nextTechniqueID;
+			std::pair<std::string, UINT> techPair(_technique, techID);
+			std::pair<UINT, ID3D10EffectTechnique*> techPairByID(techID, pTech);
 
-			// TO DO Add to map
-
+			VALIDATE((&fxIDCheck->second)->insert(techPair).second);
+			VALIDATE(m_techniquesbyID.insert(techPairByID).second);
 		}
 	}
+	else
+	{
+		ID3D10EffectTechnique* pTech = pFX->GetTechniqueByName(_technique.c_str());
 
+		techID = ++nextTechniqueID;
+		std::map<std::string, UINT> innerTechMap;
+		std::pair<std::string, UINT> innerTechPair(_technique, techID);
+		VALIDATE(innerTechMap.insert(innerTechPair).second);
 
+		std::pair<UINT, std::map<std::string, UINT>> outerTechMap(fxID, innerTechMap);
+		VALIDATE(m_techniqueIDs.insert(outerTechMap).second);
 
-	_fxID = fxID;
-	_techID = techID;
+		std::pair<UINT, ID3D10EffectTechnique*> techByIDPair(techID, pTech);
+		VALIDATE(m_techniquesbyID.insert(techByIDPair).second);
+	}
+
+	// Save the FX and Technique IDs in the memory passed by the Object.
+	*_fxID = fxID;
+	*_techID = techID;
+	return true;
+}
+
+bool CDX10Renderer::GetFXVariable(UINT _fxID, std::string _techVar, ID3D10EffectVariable* _fxVar)
+{
+	// Retrieve the FX pointer
+	ID3D10Effect* pFX = m_effectsbyID.find(_fxID)->second;
+	_fxVar = pFX->GetVariableByName(_techVar.c_str());
+
+	return ((_fxVar == NULL) ? false : true);
+}
+
+template <typename T>
+bool BuildVertexLayout(T _vertStruct, UINT _techID, UINT* _vertexLayoutID)
+{
+	D3D10_INPUT_ELEMENT_DESC _vertStruct[]
+
+		switch (typeid(vertStruct))
+	{
+		case TVertexBasic:
+		{
+			vertexDesc[] =
+			{
+				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 }
+			};
+		}
+		break;
+		case TVertexColor:
+		{
+			vertexDesc[] =
+			{
+				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
+				{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 }
+			};
+		}
+		break;
+		default:
+		{
+			return false;
+		}
+		break;
+	}	// End Switch
+
+	// Find the Technique using the ID
+	ID3D10EffectTechnique* pTech = m_techniquesbyID.find(_techID);
+	ID3D10InputLayout* pVertexLayout;
+
+	// Create the input layout
+	D3D10_PASS_DESC passDesc;
+	pTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	VALIDATEHR(m_pDX10Device->CreateInputLayout(_vertStruct, 2, passDesc.pIAInputSignature,
+		passDesc.IAInputSignatureSize, &pVertexLayout));
+
+	UINT inputLayerID = ++nextInputLayoutID;
+	std::pair<UINT, ID3D10InputLayout*> inputLayerPair(inputLayerID, pVertexLayout);
+	VALIDATE(m_inputLayout.insert(inputLayerPair));
+
+	*_vertexLayoutID = inputLayerID;
 	return true;
 }

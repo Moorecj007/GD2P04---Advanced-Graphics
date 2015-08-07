@@ -17,9 +17,7 @@
 #ifndef __APPLICATION_H__
 #define __APPLICATION_H__
 
-
 #pragma comment(lib, "Winmm.lib")
-
 
 // Defines and Macros
 #define WIN32_LEAN_AND_MEAN
@@ -111,7 +109,11 @@ public:
 	********************/
 	void ExecuteOneFrame();
 
-	// TO DO
+	/***********************
+	* HandleInput: Handle all input for the application
+	* @author: Callan Moore
+	* @return: void
+	********************/
 	void HandleInput();
 
 	/***********************

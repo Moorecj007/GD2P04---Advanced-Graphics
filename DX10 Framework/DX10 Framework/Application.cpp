@@ -177,7 +177,7 @@ void CApplication::DestroyInstance()
 
 void CApplication::ShutDown()
 {
-	// TO DO
+	// Delete and free memory for the Application variables
 	delete m_pKeyDown;
 	m_pKeyDown = 0;
 
@@ -186,6 +186,7 @@ void CApplication::ShutDown()
 	delete m_pRenderer;
 	m_pRenderer = 0;
 }
+
 
 
 

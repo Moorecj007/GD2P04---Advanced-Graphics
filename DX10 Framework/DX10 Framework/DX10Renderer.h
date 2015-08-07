@@ -30,7 +30,7 @@
 #include <map>
 
 // Local Includes
-#include "Defines.h"
+#include "Utilities.h"
 #include "Vertex.h"
 
 #if defined(DEBUG) || defined(_DEBUG)
@@ -118,8 +118,84 @@ public:
 	********************/
 	void ToggleFullscreen();
 
-	// TO DO
-	bool BuildFX(std::string _fxFileName, std::string _technique, UINT& _fxID, UINT& _techID);
+	/***********************
+	* BuildFX: Build a FX file and Technique and store on the Renderer
+	* @author: Callan Moore
+	* @Parameter: _fxFileName: Name of the Effects file to retrieve
+	* @Parameter: _technique: Name of the Technique to Retrieve from the FX file
+	* @Parameter: _fxID: Storage value to hold the created or found ID of the FX file
+	* @Parameter: _techID: Storage value to hold the created or found ID of the Technique
+	* @return: bool: Successful or not
+	********************/
+	bool BuildFX(std::string _fxFileName, std::string _technique, UINT* _fxID, UINT* _techID);
+
+	/***********************
+	* GetFXVariable: Retrieve a FX Variable
+	* @author: Callan Moore
+	* @Parameter: _fxID: ID of the FX file to access
+	* @Parameter: _techVar: Name of the variable to retrieve
+	* @Parameter: _fxVar: Storage variable to hold the retrieved variable
+	* @return: bool: Successful or not
+	********************/
+	bool GetFXVariable(UINT _fxID, std::string _techVar, ID3D10EffectVariable* _fxVar);
+
+	/***********************
+	* BuildVertexLayout: Build a Vertex Layout 
+	* @author: Callan Moore
+	* @Parameter: _vertStruct: Vertex structure to base layout on
+	* @Parameter: _techID: Technique ID to base the layout on
+	* @Parameter: _vertexLayoutID: Storage variable to hold the ID of the created Vertex Layout
+	* @return: bool: Successful or not
+	********************/
+	template <typename T>
+	bool BuildVertexLayout(T _vertStruct, UINT _techID, UINT* _vertexLayoutID);
+	//{
+	//	D3D10_INPUT_ELEMENT_DESC _vertStruct[]
+	//
+	//	switch (typeid(vertStruct))
+	//	{
+	//		case TVertexBasic :
+	//		{
+	//			vertexDesc[] =
+	//			{ 
+	//				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 }
+	//			};
+	//		}
+	//		break;
+	//		case TVertexColor :
+	//		{
+	//			vertexDesc[] =
+	//			{
+	//				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
+	//				{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 }
+	//			};
+	//		}
+	//		break;
+	//		default:
+	//		{
+	//			return false;
+	//		}
+	//		break;
+	//	}	// End Switch
+	//
+	//	// Find the Technique using the ID
+	//	ID3D10EffectTechnique* pTech = m_techniquesbyID.find(_techID);
+	//	ID3D10InputLayout* pVertexLayout;
+	//
+	//	// Create the input layout
+	//	D3D10_PASS_DESC passDesc;
+	//	pTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	//	VALIDATEHR(	m_pDX10Device->CreateInputLayout(_vertStruct, 2, passDesc.pIAInputSignature,
+	//				passDesc.IAInputSignatureSize, &pVertexLayout));
+	//
+	//	UINT inputLayerID = ++nextInputLayoutID;
+	//	std::pair<UINT, ID3D10InputLayout*> inputLayerPair(inputLayerID, pVertexLayout);
+	//	VALIDATE(m_inputLayout.insert(inputLayerPair));
+	//
+	//	return true;
+	//}
+
+	// TO DO - Create a damn cube!!!!!
 
 private:
 	// Window Variables
@@ -136,20 +212,16 @@ private:
 	D3D10_DRIVER_TYPE m_dx10DriverType;
 	D3DXCOLOR m_clearColor;
 
-	// TO DO initialize Ids and maps
 	UINT nextEffectID;
-	std::map<std::string, UINT>* m_pEffectIDs;
-	std::map<UINT, ID3D10Effect*>* m_pEffectsbyID;
+	std::map<std::string, UINT> m_effectIDs;
+	std::map<UINT, ID3D10Effect*> m_effectsbyID;
 
 	UINT nextTechniqueID;
-	std::map<UINT, std::map<std::string, UINT>>* m_pTechniqueIDs;
-	std::map<UINT, ID3D10EffectTechnique*>* m_pTechniquesbyID;
+	std::map<UINT, std::map<std::string, UINT>> m_techniqueIDs;
+	std::map<UINT, ID3D10EffectTechnique*> m_techniquesbyID;
 
-
-
-
-
-
+	UINT nextInputLayoutID;
+	std::map<UINT, ID3D10InputLayout*> m_inputLayout;
 
 
 	

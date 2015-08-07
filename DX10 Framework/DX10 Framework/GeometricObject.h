@@ -32,6 +32,11 @@ public:
 	********************/
 	virtual ~CGeometricObject();
 
+
+private:
+
+
+
 };
 
 #endif // __GEOMETRICOBJECT_H__
