@@ -17,11 +17,19 @@
 #ifndef __GEOMETRICOBJECT_H__
 #define __GEOMETRICOBJECT_H__
 
+// TO DO MOVE TO ANOTHER LOCATION/ DeLEETE REFERENCE
+typedef unsigned int UINT;
+#include <d3d10.h>
+#include <d3dx10.h>
+
+// Local Includes
+#include "DX10Renderer.h"
+
 class CGeometricObject
 {
 public:
 	/***********************
-	* ~CGeometricObject: Default Constructor for Geometric Object class
+	* CGeometricObject: Default Constructor for Geometric Object class
 	* @author: Callan Moore
 	********************/
 	CGeometricObject();
@@ -31,6 +39,13 @@ public:
 	* @author: Callan Moore
 	********************/
 	virtual ~CGeometricObject();
+
+	virtual bool BuildFX() = 0;
+	virtual bool GetFXVariable() = 0;
+	virtual bool BuildVertexLayout() = 0;
+
+
+
 
 
 private:

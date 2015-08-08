@@ -83,11 +83,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DX10Renderer.cpp" />
     <ClCompile Include="GeometricObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Cube.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="DX10Renderer.h" />
     <ClInclude Include="GeometricObject.h" />
