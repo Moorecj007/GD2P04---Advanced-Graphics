@@ -31,7 +31,6 @@ PixelShaderInput ColorVertexShader(VertexShaderInput inputVS)
 {
 	PixelShaderInput outputPS;
 
-
 	// Change the position vector to be 4 units for proper matrix calculations.
 	inputVS.position.w = 1.0f;
 

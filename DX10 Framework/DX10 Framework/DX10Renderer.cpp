@@ -72,6 +72,22 @@ void CDX10Renderer::ShutDown()
 		iterFX++;
 	}
 
+	// Delete the Graphics memory stored as DX10 Buffers -> Index
+	std::map<UINT, ID3D10Buffer*>::iterator iterIndexBuffers = m_indexBuffers.begin();
+	while (iterIndexBuffers != m_indexBuffers.end())
+	{
+		ReleaseCOM(iterIndexBuffers->second);
+		iterIndexBuffers++;
+	}
+
+	// Delete the Graphics memory stored as DX10 Buffers -> Vertex
+	std::map<UINT, ID3D10Buffer*>::iterator iterVertexBuffer = m_vertexBuffers.begin();
+	while (iterVertexBuffer != m_vertexBuffers.end())
+	{
+		ReleaseCOM(iterVertexBuffer->second);
+		iterVertexBuffer++;
+	}
+
 	ReleaseCOM(m_pRenderTargetView);
 	ReleaseCOM(m_pDX10SwapChain);
 	if (m_pDX10Device != 0)
@@ -147,7 +163,7 @@ bool CDX10Renderer::onResize()
 	VALIDATEHR(m_pDX10Device->CreateRenderTargetView(pBackBuffer, 0, &m_pRenderTargetView));
 
 	// Release the memory from the temporary Back Buffer
-	ReleaseCOM(pBackBuffer);
+	//ReleaseCOM(pBackBuffer);
 	
 	// Bind the Render Target View to the output-merger stage of the pipeline
 	m_pDX10Device->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
@@ -164,10 +180,13 @@ bool CDX10Renderer::onResize()
 	// Binds the View port to the Rasterizer stage of the pipeline
 	m_pDX10Device->RSSetViewports(1, &viewPort);
 
+	// Calculate the new Projection Matrix
+	CalcProjMatrix();
+
 	return true;
 }
 
-void CDX10Renderer::RenderFrame()
+void CDX10Renderer::ClearScreen()
 {
 	// Color Fill the entire Render Target View(Back Buffer) with the Renderers clear color
 	m_pDX10Device->ClearRenderTargetView(m_pRenderTargetView, m_clearColor);
@@ -266,13 +285,11 @@ bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UIN
 	return true;
 }
 
-bool CDX10Renderer::GetFXVariable(UINT _fxID, std::string _techVar, ID3D10EffectVariable* _fxVar)
+ID3D10EffectVariable* CDX10Renderer::GetFXVariable(UINT _fxID, std::string _techVar)
 {
 	// Retrieve the FX pointer
 	ID3D10Effect* pFX = m_effectsbyID.find(_fxID)->second;
-	_fxVar = pFX->GetVariableByName(_techVar.c_str());
-
-	return ((_fxVar == NULL) ? false : true);
+	return pFX->GetVariableByName(_techVar.c_str());
 }
 
 bool CDX10Renderer::BuildVertexLayout(eVertexType _vertType, UINT _techID, UINT* _vertexLayoutID)
@@ -329,4 +346,125 @@ bool CDX10Renderer::CreateVertexLayout(D3D10_INPUT_ELEMENT_DESC* _vertexDesc, UI
 
 	*_vertexLayoutID = inputLayerID;
 	return true;
+}
+
+bool CDX10Renderer::CreateIndexBuffer(DWORD* _indices, UINT _indexCount, UINT* _indexBufferID)
+{
+	D3D10_BUFFER_DESC indexBufferDesc;
+	indexBufferDesc.Usage = D3D10_USAGE_IMMUTABLE;
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * _indexCount;
+	indexBufferDesc.BindFlags = D3D10_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	D3D10_SUBRESOURCE_DATA subResourceData;
+	subResourceData.pSysMem = _indices;
+	
+	ID3D10Buffer* indexBuffer;
+	if(FAILED(m_pDX10Device->CreateBuffer(&indexBufferDesc, &subResourceData, &indexBuffer)))
+	{
+		// Release a potentially created buffer
+		ReleaseCOM(indexBuffer);
+		return false;
+	}
+
+	*_indexBufferID = ++nextIndexBufferID;
+	std::pair<UINT, ID3D10Buffer*> ibPair(nextIndexBufferID, indexBuffer);
+	(m_indexBuffers.insert(ibPair).second);
+
+	return true;
+}
+
+bool CDX10Renderer::RenderObject(UINT _vertexID, UINT  _indexID, UINT _indexCount, UINT _stride)
+{
+	// Retrieve the Vertex Buffer
+	std::map<UINT, ID3D10Buffer*>::iterator iterVBuffer = m_vertexBuffers.find(_vertexID);
+	if (iterVBuffer == m_vertexBuffers.end())
+	{
+		return false;
+	}
+	ID3D10Buffer* pVertexBuffer = iterVBuffer->second;
+
+	// Retrieve the Index Buffer
+	std::map<UINT, ID3D10Buffer*>::iterator iterIBuffer = m_indexBuffers.find(_indexID);
+	if (iterIBuffer == m_indexBuffers.end())
+	{
+		return false;
+	}
+	ID3D10Buffer* pIndexBuffer = iterIBuffer->second;
+
+	UINT s = sizeof(&pVertexBuffer);
+	UINT offset = 0;
+	m_pDX10Device->IASetVertexBuffers(0, 1, &pVertexBuffer, &_stride, &offset);
+	m_pDX10Device->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	m_pDX10Device->DrawIndexed(_indexCount, 0, 0);
+
+	return true;
+}
+
+void CDX10Renderer::StartRender()
+{
+	m_pDX10Device->ClearRenderTargetView(m_pRenderTargetView, m_clearColor);
+	//m_pDX10Device->ClearDepthStencilView(mDepthStencilView, D3D10_CLEAR_DEPTH | D3D10_CLEAR_STENCIL, 1.0f, 0);
+}
+
+void CDX10Renderer::EndRender()
+{
+	m_pDX10SwapChain->Present(0, 0);
+}
+
+void CDX10Renderer::RestoreDefaultDrawStates()
+{
+	float blendFactors[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	m_pDX10Device->OMSetDepthStencilState(0, 0);
+	m_pDX10Device->OMSetBlendState(0, blendFactors, 0xFFFFFFFF);
+	m_pDX10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+}
+
+bool CDX10Renderer::SetInputLayout(UINT _vertexLayoutID)
+{
+	// Retrieve the Vertex Layout
+	std::map<UINT, ID3D10InputLayout*>::iterator iterVLayout = m_inputLayouts.find(_vertexLayoutID);
+	if (iterVLayout == m_inputLayouts.end())
+	{
+		return false;
+	}
+	ID3D10InputLayout* pVertexLayout = iterVLayout->second;
+
+	m_pDX10Device->IASetInputLayout(pVertexLayout);
+	return true;
+}
+
+ID3D10EffectTechnique* CDX10Renderer::GetTechnique(UINT _techID)
+{
+	// Retrieve the Technique
+	std::map<UINT, ID3D10EffectTechnique*>::iterator iterTech = m_techniquesByID.find(_techID);
+	if (iterTech == m_techniquesByID.end())
+	{
+		return false;
+	}
+	return iterTech->second;
+}
+
+void CDX10Renderer::CalcViewMatrix()
+{
+	D3DXVECTOR3 pos(-5.0f, 5.0f, -5.0f);
+	D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
+	D3DXMatrixLookAtLH(&m_matView, &pos, &target, &up);
+}
+
+void CDX10Renderer::CalcProjMatrix()
+{
+	float aspect = float(m_clientWidth) / m_clientHeight;
+	D3DXMatrixPerspectiveFovLH(&m_matProj, 0.25f*PI, aspect, 1.0f, 1000.0f);
+}
+
+D3DXMATRIX* CDX10Renderer::GetViewMatrix()
+{
+	return &m_matView;
+}
+
+D3DXMATRIX* CDX10Renderer::GetProjMatrix()
+{
+	return &m_matProj;
 }

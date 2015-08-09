@@ -12,6 +12,10 @@
 * Mail :	Callan.Moore@mediadesign.school.nz
 */
 
+// TO DO - ensure everything is initialised
+// Fix the graphics leaks?
+
+
 // Inclusion Guards
 #pragma once
 #ifndef __DX10RENDERER_H__
@@ -24,44 +28,18 @@
 #pragma comment(lib, "dxerr.lib")
 #pragma comment(lib, "dxguid.lib")
 
-// Library Includes
-#include <d3d10.h>
-#include <d3dx10.h>
-#include <dxerr.h>
+
 #include <map>
 
 // Local Includes
 #include "Utilities.h"
+#include "DX10_Utilities.h"
 #include "Vertex.h"
-
-#if defined(DEBUG) || defined(_DEBUG)
-#define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
-#endif
-
-#if defined(DEBUG) | defined(_DEBUG)
-	#ifndef VALIDATEHR
-	#define VALIDATEHR(x)                                      \
-	{														   \
-		HRESULT hr = (x);                                      \
-		if(FAILED(hr))                                         \
-		{                                                      \
-			DXTrace(__FILE__, (DWORD)__LINE__, hr, L#x, true); \
-			return false;									   \
-		}                                                      \
-	}
-#endif
-#else
-	#ifndef VALIDATEHR
-	#define VALIDATEHR(x) (x)
-	#endif
-#endif 
-
 
 class CDX10Renderer
 {
 public:
-	
+
 	/***********************
 	* CDX10Renderer: Default Constructor for DX10 Renderer class
 	* @author: Callan Moore
@@ -106,11 +84,11 @@ public:
 	bool onResize();
 
 	/***********************
-	* RenderFrame: Render a single frame
+	* ClearScreen: Clears the screen to clear color
 	* @author: Callan Moore
 	* @return: void
 	********************/
-	void RenderFrame();
+	void ClearScreen();
 
 	/***********************
 	* ToggleFullscreen: Toggle Full screen on and off
@@ -135,10 +113,9 @@ public:
 	* @author: Callan Moore
 	* @Parameter: _fxID: ID of the FX file to access
 	* @Parameter: _techVar: Name of the variable to retrieve
-	* @Parameter: _fxVar: Storage variable to hold the retrieved variable
-	* @return: bool: Successful or not
+	* @return: ID3D10EffectVariable*: The Retrieved Effect Variable
 	********************/
-	bool GetFXVariable(UINT _fxID, std::string _techVar, ID3D10EffectVariable* _fxVar);
+	ID3D10EffectVariable* GetFXVariable(UINT _fxID, std::string _techVar);
 
 	/***********************
 	* BuildVertexLayout: Detect the Vertex Description Needed
@@ -161,12 +138,139 @@ public:
 	********************/
 	bool CreateVertexLayout(D3D10_INPUT_ELEMENT_DESC _vertexDesc[], UINT _elementNum, UINT _techID, UINT* _vertexLayoutID);
 
+	/***********************
+	* CreateVertexBuffer: Create an Vertex Buffer with the given data
+	* @author: Callan Moore
+	* @parameter: _pVertices: Array of Vertex Points
+	* @parameter: _vertCount: Number of Vertices
+	* @parameter: _vertexBufferID: Storage value to hold the ID of the created Vertex buffer
+	* @return: bool: Successful or not
+	********************/
+	template<typename T>
+	bool CreateVertexBuffer(typename T* _pVertices, UINT _vertCount, UINT* _vertexBufferID)
+	{
+		D3D10_BUFFER_DESC vertexBufferDesc;
+		vertexBufferDesc.Usage = D3D10_USAGE_IMMUTABLE;
+		vertexBufferDesc.ByteWidth = sizeof(T) * _vertCount;
+		vertexBufferDesc.BindFlags = D3D10_BIND_VERTEX_BUFFER;
+		vertexBufferDesc.CPUAccessFlags = 0;
+		vertexBufferDesc.MiscFlags = 0;
+
+		D3D10_SUBRESOURCE_DATA subResourceData;
+		subResourceData.pSysMem = _pVertices;
+
+		ID3D10Buffer* vertexBuffer;
+		if (FAILED(m_pDX10Device->CreateBuffer(&vertexBufferDesc, &subResourceData, &vertexBuffer)))
+		{
+			// Release a potentially created buffer
+			ReleaseCOM(vertexBuffer);
+			return false;
+		}
+
+		*_vertexBufferID = ++nextVertexBufferID;
+		std::pair<UINT, ID3D10Buffer*> vbPair(nextVertexBufferID, vertexBuffer);
+		(m_vertexBuffers.insert(vbPair).second);
+
+		return true;
+	}
+
+	/***********************
+	* CreateIndexBuffer: Create an Index Buffer with the given data
+	* @author: Callan Moore
+	* @parameter: _indices: Array if Indices points
+	* @parameter: _indexCount: Number of Indices
+	* @parameter: _indexBufferID: Storage value to hold the ID of the created Index buffer
+	* @return: bool: Successful or not
+	********************/
+	bool CreateIndexBuffer(DWORD* _indices, UINT _indexCount, UINT* _indexBufferID);
+
+	/***********************
+	* RenderObject: Renders an Object to the screen
+	* @author: Callan Moore
+	* @parameter: _vertexID: The ID of the Vertex buffer stored on the Renderer
+	* @parameter: _indexID: The ID of the Index buffer stored on the Renderer
+	* @parameter: _indexCount: The number of indices
+	* @parameter: _stride: Stride of the Vertex Buffer
+	* @return: bool: Successful or not
+	********************/
+	bool RenderObject(UINT _vertexID, UINT  _indexID, UINT _indexCount, UINT _stride);
+
+	/***********************
+	* StartRender: Clears the Back buffer ready for new frame
+	* @author: Callan Moore
+	* @return: void
+	********************/
+	void StartRender();
+
+	/***********************
+	* EndRender: Presents the Back buffer
+	* @author: Callan Moore
+	* @return: void
+	********************/
+	void EndRender();
+
+	/***********************
+	* RestoreDefaultDrawStates: Restore the default states for drawing to ensure correct states
+	* @author: Callan Moore
+	* @return: void
+	********************/
+	void RestoreDefaultDrawStates();
+
+	/***********************
+	* SetInputLayout: Set the Vertex Layout as the Input Layout on the Renderer
+	* @author: Callan Moore
+	* @parameter: _vertexLayoutID: Vertex Layout ID
+	* @return: bool: Successful or not
+	********************/
+	bool SetInputLayout(UINT _vertexLayoutID);
+
+	/***********************
+	* GetTechnique: Retrieve the Technique for the given ID
+	* @author: Callan Moore
+	* @parameter: _techID: ID of the Technique
+	* @return: ID3D10EffectTechnique*: DX10 Technique
+	********************/
+	ID3D10EffectTechnique* GetTechnique(UINT _techID);
+
+
+	/***********************
+	* CalcViewMatrix: Calculate the View Matrix for use in Renderering
+	* @author: Callan Moore
+	* @return: void
+	********************/
+	void CalcViewMatrix();
+	
+	/***********************
+	* CalcProjMatrix: Calculate the Projection Matrix for use in Renderering
+	* @author: Callan Moore
+	* @return: void
+	********************/
+	void CalcProjMatrix();
+	
+	/***********************
+	* GetViewMatrix: Retrieve the View Matrix
+	* @author: Callan Moore
+	* @return: D3DXMATRIX*: The View Matrix
+	********************/
+	D3DXMATRIX* GetViewMatrix();
+	
+	/***********************
+	* GetProjMatrix: Retrieve the Projection Matrix
+	* @author: Callan Moore
+	* @return: D3DXMATRIX*: The Projection Matrix
+	********************/
+	D3DXMATRIX* GetProjMatrix();
+
 private:
 	// Window Variables
 	HWND m_hWnd;
 	int m_clientWidth;
 	int m_clientHeight;
 	bool m_fullScreen;
+
+	// Matrices for Rendering
+	D3DXMATRIX m_matView;
+	D3DXMATRIX m_matProj;
 
 	// DX10 Variables
 	ID3D10Device*    m_pDX10Device;
@@ -187,8 +291,11 @@ private:
 	UINT nextInputLayoutID;
 	std::map<UINT, ID3D10InputLayout*> m_inputLayouts;
 
+	UINT nextVertexBufferID;
+	std::map<UINT, ID3D10Buffer*> m_vertexBuffers;
 
-	
+	UINT nextIndexBufferID;
+	std::map<UINT, ID3D10Buffer*> m_indexBuffers;
 };
 
 #endif // __DX10RENDERER_H__

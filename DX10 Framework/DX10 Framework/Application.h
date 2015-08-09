@@ -75,13 +75,15 @@ public:
 	* @return: CApplication*: The current instance of the Application
 	********************/
 	static CApplication* GetInstance();
-
+	
 	/***********************
 	* Initialise: Initialise the Application
 	* @author: Callan Moore
+	* @parameter: _clientWidth: Width of the client window
+	* @parameter: _clientHeight: Height of the client window
 	* @return: bool: Successful or not
 	********************/
-	bool Initialise();
+	bool Initialise(int _clientWidth, int _clientHeight);
 
 	/***********************
 	* ~CApplication: Default Destructor for Application class

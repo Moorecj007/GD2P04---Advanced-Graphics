@@ -32,11 +32,11 @@ CCube::CCube()
 	m_techniqueID = 0;
 	m_fxID = 0;
 	m_vertexLayoutID = 0;
+	m_vertexBufferID = 0;
+	m_indexBufferID = 0;
 
 	// Set all pointers to NULL
 	m_pRenderer = 0;
-	m_pVertexBuffer = 0;
-	m_pIndexBuffer = 0;
 	m_pTechMatWorld = 0;
 	m_pTechMatView = 0;
 	m_pTechMatProj = 0;
@@ -44,18 +44,87 @@ CCube::CCube()
 
 CCube::~CCube()
 {
-	ReleaseCOM(m_pIndexBuffer);
-	ReleaseCOM(m_pVertexBuffer);
-
-	ReleasePtr(m_pTechMatWorld);
-	ReleasePtr(m_pTechMatView);
-	ReleasePtr(m_pTechMatProj);
+	
 }
 
 bool CCube::Initialise(CDX10Renderer* _pRenderer)
 {
 	// Save the renderer on the Cube
 	m_pRenderer = _pRenderer;
+
+	// TO DO - Put in Mesh class
+	float scale = 1.0f;
+	float vertSize = 1.0f * scale / 2;
+	// Create vertex buffer
+	TVertexColor vertices[] =
+	{
+		// Front
+		{ D3DXVECTOR3(-vertSize, vertSize, -vertSize), 0x000000FF },
+		{ D3DXVECTOR3(vertSize, vertSize, -vertSize), 0x000000FF },
+		{ D3DXVECTOR3(vertSize, -vertSize, -vertSize), 0x000000FF },
+		{ D3DXVECTOR3(-vertSize, -vertSize, -vertSize), 0x000000FF },
+
+		// Left
+		{ D3DXVECTOR3(-vertSize, vertSize, vertSize), 0x000000FF },
+		{ D3DXVECTOR3(-vertSize, vertSize, -vertSize), 0x000000FF },
+		{ D3DXVECTOR3(-vertSize, -vertSize, -vertSize), 0x000000FF },
+		{ D3DXVECTOR3(-vertSize, -vertSize, vertSize), 0x000000FF },
+
+		// Right
+		{ D3DXVECTOR3(vertSize, vertSize, -vertSize), 0x000000FF },
+		{ D3DXVECTOR3(vertSize, vertSize, vertSize), 0x000000FF },
+		{ D3DXVECTOR3(vertSize, -vertSize, vertSize), 0x000000FF },
+		{ D3DXVECTOR3(vertSize, -vertSize, -vertSize), 0x000000FF },
+
+		// Back
+		{ D3DXVECTOR3(vertSize, vertSize, vertSize), 0x000000FF },
+		{ D3DXVECTOR3(-vertSize, vertSize, vertSize), 0x000000FF },
+		{ D3DXVECTOR3(-vertSize, -vertSize, vertSize), 0x000000FF },
+		{ D3DXVECTOR3(vertSize, -vertSize, vertSize), 0x000000FF },
+
+		// Top
+		{ D3DXVECTOR3(-vertSize, vertSize, vertSize), 0x000000FF },
+		{ D3DXVECTOR3(vertSize, vertSize, vertSize), 0x000000FF },
+		{ D3DXVECTOR3(vertSize, vertSize, -vertSize), 0x000000FF },
+		{ D3DXVECTOR3(-vertSize, vertSize, -vertSize), 0x000000FF },
+
+		// Bottom
+		{ D3DXVECTOR3(-vertSize, -vertSize, -vertSize), 0x000000FF },
+		{ D3DXVECTOR3(vertSize, -vertSize, -vertSize), 0x000000FF },
+		{ D3DXVECTOR3(vertSize, -vertSize, vertSize), 0x000000FF },
+		{ D3DXVECTOR3(-vertSize, -vertSize, vertSize), 0x000000FF }
+	};
+	m_stride = sizeof(*vertices);
+	m_vertexCount = (sizeof(vertices) / m_stride);
+	VALIDATE(m_pRenderer->CreateVertexBuffer(vertices, m_vertexCount, &m_vertexBufferID));
+
+	DWORD indices[] = {
+		// Front Face
+		0, 1, 2,
+		0, 2, 3,
+
+		// Left Face
+		4, 5, 6,
+		4, 6, 7,
+
+		// Right Face
+		8, 9, 10,
+		8, 10, 11,
+
+		// Back Face
+		12, 13, 14,
+		12, 14, 15,
+
+		// Top Face
+		16, 17, 18,
+		16, 18, 19,
+
+		// Bottom Face
+		20, 21, 22,
+		20, 22, 23
+	};
+	m_indexCount = (sizeof(indices) / sizeof(*indices));
+	VALIDATE(m_pRenderer->CreateIndexBuffer(indices, m_indexCount, &m_indexBufferID));
 
 	// Set up the Cube for with its shaders and draw instructions
 	BuildFX();
@@ -72,7 +141,22 @@ void CCube::Process(float _dt)
 
 void CCube::Draw()
 {
+	m_pRenderer->RestoreDefaultDrawStates();
+	m_pRenderer->SetInputLayout(m_vertexLayoutID);
+	ID3D10EffectTechnique* pTech = m_pRenderer->GetTechnique(m_techniqueID);
 
+	D3D10_TECHNIQUE_DESC techDesc;
+	pTech->GetDesc(&techDesc);
+	for (UINT p = 0; p < techDesc.Passes; ++p)
+	{
+		CalcWorldMatrix();
+		m_pTechMatWorld->AsMatrix()->SetMatrix((float*)m_matWorld);
+		m_pTechMatView->AsMatrix()->SetMatrix((float*)*m_pRenderer->GetViewMatrix());
+		m_pTechMatProj->AsMatrix()->SetMatrix((float*)*m_pRenderer->GetProjMatrix());
+
+		pTech->GetPassByIndex(p)->Apply(0);
+		m_pRenderer->RenderObject(m_vertexBufferID, m_indexBufferID, m_indexCount, m_stride);
+	}
 }
 
 bool CCube::BuildFX()
@@ -84,9 +168,14 @@ bool CCube::BuildFX()
 
 bool CCube::GetFXVariable()
 {
-	VALIDATE(m_pRenderer->GetFXVariable(m_fxID, "matColorWorld", m_pTechMatWorld));
-	VALIDATE(m_pRenderer->GetFXVariable(m_fxID, "matColorView", m_pTechMatView));
-	VALIDATE(m_pRenderer->GetFXVariable(m_fxID, "matColorProj", m_pTechMatProj));
+	m_pTechMatWorld = m_pRenderer->GetFXVariable(m_fxID, "matColorWorld");
+	VALIDATE(m_pTechMatWorld != 0);
+
+	m_pTechMatView = m_pRenderer->GetFXVariable(m_fxID, "matColorView");
+	VALIDATE(m_pTechMatView != 0);
+
+	m_pTechMatProj = m_pRenderer->GetFXVariable(m_fxID, "matColorProj");
+	VALIDATE(m_pTechMatProj != 0);
 
 	return true;
 }

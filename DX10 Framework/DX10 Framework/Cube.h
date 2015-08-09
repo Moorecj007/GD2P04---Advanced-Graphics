@@ -88,6 +88,7 @@ public:
 private:
 	CDX10Renderer* m_pRenderer;
 	eVertexType m_vertexType;
+	UINT m_stride;
 
 	v3float m_pos;
 	float m_rotationPitch;
@@ -98,11 +99,14 @@ private:
 	UINT m_techniqueID;
 	UINT m_vertexLayoutID;
 
-	ID3D10Buffer* m_pVertexBuffer;
-	ID3D10Buffer* m_pIndexBuffer; 
 	D3DXMATRIX m_matWorld;
 	ID3D10EffectVariable* m_pTechMatWorld;
 	ID3D10EffectVariable* m_pTechMatView;
 	ID3D10EffectVariable* m_pTechMatProj;
+
+	UINT m_vertexCount;
+	UINT m_indexCount;
+	UINT m_vertexBufferID;
+	UINT m_indexBufferID;
 };
 

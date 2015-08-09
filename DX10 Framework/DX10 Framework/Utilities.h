@@ -19,9 +19,27 @@
 #pragma message("Included Utilities.h")
 
 // Defines
-#define VALIDATE(a) if (!a) return (false)
 #define ReleaseCOM(x) { if (x){ x->Release(); x = 0; } }
 #define ReleasePtr(x) { if(x){ delete x; x = 0;} }
+#define MacroStr(x)   #x
+#define MacroStr2(x)  MacroStr(x)
+#define Message(desc) __pragma(message(__FILE__ "(" MacroStr2(__LINE__) ") :" #desc))
+
+#if defined(DEBUG) | defined(_DEBUG)
+#define VALIDATE(x) {								\
+	if (!x) {										\
+		/*Message("Function Failed to Validiate");*/	\
+		return (false);								\
+	}												\
+}
+#else
+	VALIDATE(x) if(!x) return false
+#endif
+
+/***********************
+Constants 
+********************/
+const float PI = 3.14159265358979323f;
 
 /***********************
 * v3float: Struct to hold 3 float values
@@ -226,7 +244,6 @@ struct v3float
 		return (*this);
 	}
 };
-
 
 #endif // __UTILITIES_H__
 

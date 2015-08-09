@@ -20,13 +20,16 @@ CApplication* CApplication::s_pApp = 0;
 
 int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _cmdShow)
 {
+	int clientWidth = 1000;
+	int clientHeight = 1000;
+
 	// Create the Application 
 	CApplication* pApp = CApplication::GetInstance();
 	
 	
-	if (pApp->CreateWindowApp(1000, 1000, _hInstance) == true)
+	if (pApp->CreateWindowApp(clientWidth, clientHeight, _hInstance) == true)
 	{
-		VALIDATE(pApp->Initialise());
+		VALIDATE(pApp->Initialise(clientWidth, clientHeight));
 		pApp->Execute();
 	}
 	
@@ -151,8 +154,12 @@ CApplication* CApplication::GetInstance()
 	return s_pApp;
 }
 
-bool CApplication::Initialise()
+bool CApplication::Initialise(int _clientWidth, int _clientHeight)
 {
+	// Save the client window sizes
+	m_clientWidth = _clientWidth;
+	m_clientHeight = _clientHeight;
+
 	// Create a Renderer for graphics
 	m_pRenderer = new CDX10Renderer();
 	VALIDATE(m_pRenderer->Initialise(m_clientWidth, m_clientHeight, m_hWnd));
@@ -194,9 +201,6 @@ void CApplication::ShutDown()
 	m_pRenderer = 0;
 }
 
-
-
-
 void CApplication::ExecuteOneFrame()
 {
 	// TO DO: remove comment
@@ -206,8 +210,13 @@ void CApplication::ExecuteOneFrame()
 	//Draw();
 	//PostDraw();
 
-	m_pRenderer->RenderFrame();
+	m_pRenderer->StartRender();
+
 	HandleInput();
+	m_pRenderer->CalcViewMatrix();
+	m_pCube->Draw();
+
+	m_pRenderer->EndRender();
 }
 
 void CApplication::HandleInput()
