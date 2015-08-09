@@ -26,6 +26,7 @@
 
 // Library Includes
 #include <d3d10.h>
+#include <d3dx10.h>
 #include <dxerr.h>
 #include <map>
 
@@ -140,62 +141,25 @@ public:
 	bool GetFXVariable(UINT _fxID, std::string _techVar, ID3D10EffectVariable* _fxVar);
 
 	/***********************
-	* BuildVertexLayout: Build a Vertex Layout 
+	* BuildVertexLayout: Detect the Vertex Description Needed
 	* @author: Callan Moore
-	* @Parameter: _vertStruct: Vertex structure to base layout on
+	* @Parameter: _vertType: Vertex structure to base layout on
 	* @Parameter: _techID: Technique ID to base the layout on
 	* @Parameter: _vertexLayoutID: Storage variable to hold the ID of the created Vertex Layout
 	* @return: bool: Successful or not
 	********************/
-	template <typename T>
-	bool BuildVertexLayout(T _vertStruct, UINT _techID, UINT* _vertexLayoutID);
-	//{
-	//	D3D10_INPUT_ELEMENT_DESC _vertStruct[]
-	//
-	//	switch (typeid(vertStruct))
-	//	{
-	//		case TVertexBasic :
-	//		{
-	//			vertexDesc[] =
-	//			{ 
-	//				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 }
-	//			};
-	//		}
-	//		break;
-	//		case TVertexColor :
-	//		{
-	//			vertexDesc[] =
-	//			{
-	//				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
-	//				{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 }
-	//			};
-	//		}
-	//		break;
-	//		default:
-	//		{
-	//			return false;
-	//		}
-	//		break;
-	//	}	// End Switch
-	//
-	//	// Find the Technique using the ID
-	//	ID3D10EffectTechnique* pTech = m_techniquesbyID.find(_techID);
-	//	ID3D10InputLayout* pVertexLayout;
-	//
-	//	// Create the input layout
-	//	D3D10_PASS_DESC passDesc;
-	//	pTech->GetPassByIndex(0)->GetDesc(&passDesc);
-	//	VALIDATEHR(	m_pDX10Device->CreateInputLayout(_vertStruct, 2, passDesc.pIAInputSignature,
-	//				passDesc.IAInputSignatureSize, &pVertexLayout));
-	//
-	//	UINT inputLayerID = ++nextInputLayoutID;
-	//	std::pair<UINT, ID3D10InputLayout*> inputLayerPair(inputLayerID, pVertexLayout);
-	//	VALIDATE(m_inputLayout.insert(inputLayerPair));
-	//
-	//	return true;
-	//}
+	bool BuildVertexLayout(eVertexType _vertType, UINT _techID, UINT* _vertexLayoutID);
 
-	// TO DO - Create a damn cube!!!!!
+	/***********************
+	* CreateVertexLayout: Create the Vertex Layout for an Object
+	* @author: Callan Moore
+	* @parameter: _vertexDesc: Description of the Vertices's
+	* @parameter: _elementNum: Number of elements in the Vertex Description
+	* @parameter: _techID: Technique ID to base the layout on
+	* @Parameter: _vertexLayoutID: Storage variable to hold the ID of the created Vertex Layout
+	* @return: bool
+	********************/
+	bool CreateVertexLayout(D3D10_INPUT_ELEMENT_DESC _vertexDesc[], UINT _elementNum, UINT _techID, UINT* _vertexLayoutID);
 
 private:
 	// Window Variables
@@ -218,10 +182,10 @@ private:
 
 	UINT nextTechniqueID;
 	std::map<UINT, std::map<std::string, UINT>> m_techniqueIDs;
-	std::map<UINT, ID3D10EffectTechnique*> m_techniquesbyID;
+	std::map<UINT, ID3D10EffectTechnique*> m_techniquesByID;
 
 	UINT nextInputLayoutID;
-	std::map<UINT, ID3D10InputLayout*> m_inputLayout;
+	std::map<UINT, ID3D10InputLayout*> m_inputLayouts;
 
 
 	

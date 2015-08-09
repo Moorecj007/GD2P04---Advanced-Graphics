@@ -28,12 +28,12 @@ float4 PS(float4 posH  : SV_POSITION,
     return color;
 }
 
-RasterizerState Wireframe
-{
-        FillMode = WireFrame;
-        CullMode = Back;
-        FrontCounterClockwise = false;
-};
+//RasterizerState Wireframe
+//{
+//        FillMode = WireFrame;
+//        CullMode = Back;
+//        FrontCounterClockwise = false;
+//};
 
 technique10 ColorTech
 {

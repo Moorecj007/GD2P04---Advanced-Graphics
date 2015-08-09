@@ -21,6 +21,7 @@
 // Defines
 #define VALIDATE(a) if (!a) return (false)
 #define ReleaseCOM(x) { if (x){ x->Release(); x = 0; } }
+#define ReleasePtr(x) { if(x){ delete x; x = 0;} }
 
 /***********************
 * v3float: Struct to hold 3 float values

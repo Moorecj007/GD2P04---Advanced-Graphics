@@ -34,6 +34,7 @@
 
 // Local Includes
 #include "DX10Renderer.h"
+#include "Cube.h"
 
 class CApplication
 {
@@ -145,6 +146,9 @@ private:
 
 	// Renderer Variables
 	CDX10Renderer* m_pRenderer;
+
+	// Objects
+	CCube* m_pCube;
 };
 
 #endif // __APPLICATION_H__

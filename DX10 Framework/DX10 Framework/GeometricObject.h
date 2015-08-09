@@ -17,10 +17,8 @@
 #ifndef __GEOMETRICOBJECT_H__
 #define __GEOMETRICOBJECT_H__
 
-// TO DO MOVE TO ANOTHER LOCATION/ DeLEETE REFERENCE
+// macros
 typedef unsigned int UINT;
-#include <d3d10.h>
-#include <d3dx10.h>
 
 // Local Includes
 #include "DX10Renderer.h"
@@ -40,13 +38,26 @@ public:
 	********************/
 	virtual ~CGeometricObject();
 
+	/***********************
+	* BuildFX: Build the FX files for the Geometric Object
+	* @author: Callan Moore
+	* @return: bool: Successful or not
+	********************/
 	virtual bool BuildFX() = 0;
+
+	/***********************
+	* GetFXVariable: Retrieve the FX variables from the FX file
+	* @author: Callan Moore
+	* @return: bool: Successful or not
+	********************/
 	virtual bool GetFXVariable() = 0;
+
+	/***********************
+	* BuildVertexLayout: Build the Vertex Layout for the Geometric Object
+	* @author: Callan Moore
+	* @return: bool: Successful or not
+	********************/
 	virtual bool BuildVertexLayout() = 0;
-
-
-
-
 
 private:
 

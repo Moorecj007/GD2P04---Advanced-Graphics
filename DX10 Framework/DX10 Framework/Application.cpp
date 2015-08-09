@@ -161,6 +161,10 @@ bool CApplication::Initialise()
 	m_pKeyDown = new bool[255];
 	memset(m_pKeyDown, false, 255);
 
+	// TO DO REMOVE
+	m_pCube = new CCube();
+	m_pCube->Initialise(m_pRenderer);
+
 	return true;
 }
 
@@ -180,6 +184,9 @@ void CApplication::ShutDown()
 	// Delete and free memory for the Application variables
 	delete m_pKeyDown;
 	m_pKeyDown = 0;
+
+	delete m_pCube;
+	m_pCube = 0;
 
 	// Delete and free the memory from the Renderer
 	m_pRenderer->ShutDown();

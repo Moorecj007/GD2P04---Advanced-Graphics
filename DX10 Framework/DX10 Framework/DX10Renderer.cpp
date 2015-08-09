@@ -48,8 +48,36 @@ CDX10Renderer::~CDX10Renderer()
 
 void CDX10Renderer::ShutDown()
 {
+	// Delete the Graphics memory stored as DX10 InputLayers
+	std::map<UINT, ID3D10InputLayout*>::iterator iterInputLayout = m_inputLayouts.begin();
+	while (iterInputLayout != m_inputLayouts.end())
+	{
+		ReleaseCOM(iterInputLayout->second);
+		iterInputLayout++;
+	}
+
+	// Delete the Graphics memory stored as DX10 Techniques
+	//std::map<UINT, ID3D10EffectTechnique*>::iterator iterTechniques = m_techniquesByID.begin();
+	//while (iterTechniques != m_techniquesByID.end())
+	//{
+	//	ReleasePtr(iterTechniques->second);
+	//	iterTechniques++;
+	//}
+
+	// Delete the Graphics memory stored as DX10 Effects
+	std::map<UINT, ID3D10Effect*>::iterator iterFX = m_effectsbyID.begin();
+	while (iterFX != m_effectsbyID.end())
+	{
+		ReleaseCOM(iterFX->second);
+		iterFX++;
+	}
+
 	ReleaseCOM(m_pRenderTargetView);
 	ReleaseCOM(m_pDX10SwapChain);
+	if (m_pDX10Device != 0)
+	{
+		m_pDX10Device->ClearState();
+	}
 	ReleaseCOM(m_pDX10Device);
 }
 
@@ -59,25 +87,25 @@ bool CDX10Renderer::InitialiseDeviceAndSwapChain()
 	m_dx10DriverType = D3D10_DRIVER_TYPE_HARDWARE;
 
 	// Fill out the DXGI Swap Chain Description structure
-	DXGI_SWAP_CHAIN_DESC sd;
-	sd.BufferDesc.Width = m_clientWidth;
-	sd.BufferDesc.Height = m_clientHeight;
-	sd.BufferDesc.RefreshRate.Numerator = 60;
-	sd.BufferDesc.RefreshRate.Denominator = 1;
-	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	sd.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+	DXGI_SWAP_CHAIN_DESC swapChainDesc;
+	swapChainDesc.BufferDesc.Width = m_clientWidth;
+	swapChainDesc.BufferDesc.Height = m_clientHeight;
+	swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
+	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
+	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
 	// No multi sampling per pixel ( 1 sample only) and low quality
-	sd.SampleDesc.Count = 1;
-	sd.SampleDesc.Quality = 0;
+	swapChainDesc.SampleDesc.Count = 1;
+	swapChainDesc.SampleDesc.Quality = 0;
 
-	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	sd.BufferCount = 1;
-	sd.OutputWindow = m_hWnd;
-	sd.Windowed = true;
-	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-	sd.Flags = 0;
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapChainDesc.BufferCount = 1;
+	swapChainDesc.OutputWindow = m_hWnd;
+	swapChainDesc.Windowed = true;
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	swapChainDesc.Flags = 0;
 
 	// Add Debug Info to the flags when run in Debug mode
 	UINT createDeviceFlags = 0;
@@ -92,7 +120,7 @@ bool CDX10Renderer::InitialiseDeviceAndSwapChain()
 				0,                 // no software device
 				createDeviceFlags,
 				D3D10_SDK_VERSION,
-				&sd,
+				&swapChainDesc,
 				&m_pDX10SwapChain,
 				&m_pDX10Device));
 	
@@ -178,7 +206,8 @@ bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UIN
 		#endif
 		
 		ID3D10Blob* compilationErrors;
-		VALIDATEHR(	D3DX10CreateEffectFromFileA(_fxFileName.c_str(), 0, 0,
+		std::string fxfilePath = "Assets/FX/" + _fxFileName;
+		VALIDATEHR(D3DX10CreateEffectFromFileA(fxfilePath.c_str(), 0, 0,
 					"fx_4_0", shaderFlags, 0, m_pDX10Device, 0, 0, &pFX, &compilationErrors, 0));
 		ReleaseCOM(compilationErrors);
 		
@@ -189,7 +218,6 @@ bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UIN
 		VALIDATE(m_effectIDs.insert(fxPair).second);
 		VALIDATE(m_effectsbyID.insert(fxPairByID).second);
 	}
-
 
 	// Adding the Technique to the Map
 	std::map<UINT, std::map<std::string, UINT>>::iterator fxIDCheck;
@@ -213,7 +241,7 @@ bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UIN
 			std::pair<UINT, ID3D10EffectTechnique*> techPairByID(techID, pTech);
 
 			VALIDATE((&fxIDCheck->second)->insert(techPair).second);
-			VALIDATE(m_techniquesbyID.insert(techPairByID).second);
+			VALIDATE(m_techniquesByID.insert(techPairByID).second);
 		}
 	}
 	else
@@ -229,7 +257,7 @@ bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UIN
 		VALIDATE(m_techniqueIDs.insert(outerTechMap).second);
 
 		std::pair<UINT, ID3D10EffectTechnique*> techByIDPair(techID, pTech);
-		VALIDATE(m_techniquesbyID.insert(techByIDPair).second);
+		VALIDATE(m_techniquesByID.insert(techByIDPair).second);
 	}
 
 	// Save the FX and Technique IDs in the memory passed by the Object.
@@ -247,50 +275,57 @@ bool CDX10Renderer::GetFXVariable(UINT _fxID, std::string _techVar, ID3D10Effect
 	return ((_fxVar == NULL) ? false : true);
 }
 
-template <typename T>
-bool BuildVertexLayout(T _vertStruct, UINT _techID, UINT* _vertexLayoutID)
+bool CDX10Renderer::BuildVertexLayout(eVertexType _vertType, UINT _techID, UINT* _vertexLayoutID)
 {
-	D3D10_INPUT_ELEMENT_DESC _vertStruct[]
+	UINT elementNum;
 
-		switch (typeid(vertStruct))
+	switch (_vertType)
 	{
-		case TVertexBasic:
+		case VT_BASIC:
 		{
-			vertexDesc[] =
+			D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
 			{
 				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 }
 			};
+			elementNum = 1;
+			return (CreateVertexLayout(vertexDesc, elementNum, _techID, _vertexLayoutID));
 		}
 		break;
-		case TVertexColor:
+		case VT_COLOR:
 		{
-			vertexDesc[] =
+			D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
 			{
 				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
 				{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 }
 			};
+			elementNum = 2;
+			return (CreateVertexLayout(vertexDesc, elementNum, _techID, _vertexLayoutID));
 		}
 		break;
 		default:
 		{
 			return false;
 		}
-		break;
+			break;
 	}	// End Switch
 
+}
+
+bool CDX10Renderer::CreateVertexLayout(D3D10_INPUT_ELEMENT_DESC* _vertexDesc, UINT _elementNum, UINT _techID, UINT* _vertexLayoutID)
+{
 	// Find the Technique using the ID
-	ID3D10EffectTechnique* pTech = m_techniquesbyID.find(_techID);
+	ID3D10EffectTechnique* pTech = m_techniquesByID.find(_techID)->second;
 	ID3D10InputLayout* pVertexLayout;
 
 	// Create the input layout
 	D3D10_PASS_DESC passDesc;
 	pTech->GetPassByIndex(0)->GetDesc(&passDesc);
-	VALIDATEHR(m_pDX10Device->CreateInputLayout(_vertStruct, 2, passDesc.pIAInputSignature,
-		passDesc.IAInputSignatureSize, &pVertexLayout));
+	VALIDATEHR(	m_pDX10Device->CreateInputLayout(_vertexDesc, _elementNum, passDesc.pIAInputSignature,
+				passDesc.IAInputSignatureSize, &pVertexLayout));
 
 	UINT inputLayerID = ++nextInputLayoutID;
 	std::pair<UINT, ID3D10InputLayout*> inputLayerPair(inputLayerID, pVertexLayout);
-	VALIDATE(m_inputLayout.insert(inputLayerPair));
+	VALIDATE(m_inputLayouts.insert(inputLayerPair).second);
 
 	*_vertexLayoutID = inputLayerID;
 	return true;

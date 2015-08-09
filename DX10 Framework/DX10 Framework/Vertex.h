@@ -20,6 +20,13 @@
 // Library Includes
 #include <d3dx10.h>
 
+// Enumerators
+enum eVertexType
+{
+	VT_BASIC,
+	VT_COLOR
+};
+
 // Basic Vertex with Position only
 struct TVertexBasic
 {
