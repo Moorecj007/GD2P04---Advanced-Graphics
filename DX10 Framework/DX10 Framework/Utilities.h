@@ -20,14 +20,10 @@
 
 // Defines
 #define ReleasePtr(x) { if(x){ delete x; x = 0;} }
-#define MacroStr(x)   #x
-#define MacroStr2(x)  MacroStr(x)
-#define Message(desc) __pragma(message(__FILE__ "(" MacroStr2(__LINE__) ") :" #desc))
 
 #if defined(DEBUG) | defined(_DEBUG)
 #define VALIDATE(x) {								\
 	if (!x) {										\
-		/*Message("Function Failed to Validiate");*/	\
 		return (false);								\
 	}												\
 }

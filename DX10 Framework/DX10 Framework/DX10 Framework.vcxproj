@@ -93,19 +93,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Cube.cpp" />
-    <ClCompile Include="DX10Renderer.cpp" />
     <ClCompile Include="GeometricObject.cpp" />
+    <ClCompile Include="DX10Renderer.cpp" />
+    <ClCompile Include="GeometricMesh.cpp" />
+    <ClCompile Include="Mesh_Cube.cpp" />
     <ClCompile Include="StaticBuffer.cpp" />
+    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
-    <ClInclude Include="Cube.h" />
+    <ClInclude Include="GeometricObject.h" />
     <ClInclude Include="DX10_Utilities.h" />
+    <ClInclude Include="GeometricMesh.h" />
+    <ClInclude Include="Mesh_Cube.h" />
     <ClInclude Include="StaticBuffer.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="DX10Renderer.h" />
-    <ClInclude Include="GeometricObject.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>

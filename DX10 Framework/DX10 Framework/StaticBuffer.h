@@ -100,7 +100,12 @@ public:
 
 		return true;
 	}
-	// TO DO
+	
+	/***********************
+	* Render: Render the Static Buffer to the current back buffer
+	* @author: Callan Moore
+	* @return: void
+	********************/
 	void Render();
 
 private:

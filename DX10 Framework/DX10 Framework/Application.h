@@ -25,7 +25,7 @@
 
 #ifdef _DEBUG
 // Visual Leak Detector to be run only if in DEBUG mode
-//#include "vld.h"
+#include "vld.h"
 #define D3D_DEBUG_INFO
 #endif // _DEBUG
 
@@ -34,7 +34,8 @@
 
 // Local Includes
 #include "DX10Renderer.h"
-#include "Cube.h"
+#include "GeometricObject.h"
+#include "Timer.h"
 
 class CApplication
 {
@@ -143,6 +144,10 @@ private:
 	int m_clientWidth;
 	int m_clientHeight;
 
+	// Timer Variables
+	CTimer* m_pTimer;
+	float m_dt;
+
 	// Input Variables
 	bool* m_pKeyDown;
 
@@ -150,7 +155,10 @@ private:
 	CDX10Renderer* m_pRenderer;
 
 	// Objects
-	CCube* m_pCube;
+	CGeometricObject* m_pCube;
+
+	// Meshes
+	CGeometricMesh* m_pCubeMesh;
 };
 
 #endif // __APPLICATION_H__

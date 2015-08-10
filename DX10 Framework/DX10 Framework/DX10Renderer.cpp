@@ -95,9 +95,9 @@ bool CDX10Renderer::InitialiseDeviceAndSwapChain()
 	swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
-	// No multi sampling per pixel ( 1 sample only) and low quality
-	swapChainDesc.SampleDesc.Count = 1;
-	swapChainDesc.SampleDesc.Quality = 0;
+	// multi sampling per pixel ( 4 sample only) and High quality
+	swapChainDesc.SampleDesc.Count = 4;
+	swapChainDesc.SampleDesc.Quality = 4;
 
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.BufferCount = 1;
@@ -275,40 +275,39 @@ ID3D10EffectVariable* CDX10Renderer::GetFXVariable(UINT _fxID, std::string _tech
 	return pFX->GetVariableByName(_techVar.c_str());
 }
 
-bool CDX10Renderer::BuildVertexLayout(eVertexType _vertType, UINT _techID, UINT* _vertexLayoutID)
+bool CDX10Renderer::BuildVertexLayout(eVertexType _vertType, UINT _techID, UINT* _pVertexLayoutID)
 {
 	UINT elementNum;
 
 	switch (_vertType)
 	{
-		case VT_BASIC:
+	case VT_BASIC:
+	{
+		D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
 		{
-			D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
-			{
-				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 }
-			};
-			elementNum = 1;
-			return (CreateVertexLayout(vertexDesc, elementNum, _techID, _vertexLayoutID));
-		}
-		break;
-		case VT_COLOR:
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 }
+		};
+		elementNum = 1;
+		return (CreateVertexLayout(vertexDesc, elementNum, _techID, _pVertexLayoutID));
+	}
+	break;
+	case VT_COLOR:
+	{
+		D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
 		{
-			D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
-			{
-				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
-				{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 }
-			};
-			elementNum = 2;
-			return (CreateVertexLayout(vertexDesc, elementNum, _techID, _vertexLayoutID));
-		}
-		break;
-		default:
-		{
-			return false;
-		}
-			break;
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
+			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 }
+		};
+		elementNum = 2;
+		return (CreateVertexLayout(vertexDesc, elementNum, _techID, _pVertexLayoutID));
+	}
+	break;
+	default:
+	{
+		return false;
+	}
+	break;
 	}	// End Switch
-
 }
 
 bool CDX10Renderer::CreateVertexLayout(D3D10_INPUT_ELEMENT_DESC* _vertexDesc, UINT _elementNum, UINT _techID, UINT* _vertexLayoutID)
@@ -331,7 +330,7 @@ bool CDX10Renderer::CreateVertexLayout(D3D10_INPUT_ELEMENT_DESC* _vertexDesc, UI
 	return true;
 }
 
-bool CDX10Renderer::RenderObject(UINT _bufferID)
+bool CDX10Renderer::RenderMesh(UINT _bufferID)
 {
 	// Retrieve the Vertex Buffer
 	std::map<UINT, CStaticBuffer*>::iterator iterBuffer = m_staticBuffers.find(_bufferID);
@@ -358,8 +357,12 @@ void CDX10Renderer::RestoreDefaultDrawStates()
 {
 	float blendFactors[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	m_pDX10Device->OMSetDepthStencilState(0, 0);
-	m_pDX10Device->OMSetBlendState(0, blendFactors, 0xFFFFFFFF);
-	m_pDX10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_pDX10Device->OMSetBlendState(0, blendFactors, 0xFFFFFFFF);	
+}
+
+void CDX10Renderer::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY _primitiveType)
+{
+	m_pDX10Device->IASetPrimitiveTopology(_primitiveType);
 }
 
 bool CDX10Renderer::SetInputLayout(UINT _vertexLayoutID)
@@ -387,7 +390,7 @@ ID3D10EffectTechnique* CDX10Renderer::GetTechnique(UINT _techID)
 	return iterTech->second;
 }
 
-void CDX10Renderer::CalcViewMatrix()
+void CDX10Renderer::SetViewMatrix()
 {
 	D3DXVECTOR3 pos(-5.0f, 5.0f, -5.0f);
 	D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);

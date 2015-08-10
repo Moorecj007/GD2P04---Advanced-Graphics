@@ -27,13 +27,19 @@ enum eVertexType
 	VT_COLOR
 };
 
-// Basic Vertex with Position only
+/***********************
+* TVertexBasic: Basic Vertex with Position only
+* @author: Callan Moore
+********************/
 struct TVertexBasic
 {
 	D3DXVECTOR3 pos;
 };
 
-// Basic Vertex with Color
+/***********************
+* TVertexColor: Basic Vertex with Color
+* @author: Callan Moore
+********************/
 struct TVertexColor
 {
 	D3DXVECTOR3 pos;

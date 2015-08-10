@@ -27,13 +27,13 @@
 
 // Library Includes
 #include <map>
+#include <typeinfo> 
 
 // Local Includes
 #include "Utilities.h"
 #include "DX10_Utilities.h"
 #include "Vertex.h"
 #include "StaticBuffer.h"
-
 
 class CDX10Renderer
 {
@@ -121,10 +121,11 @@ public:
 	* @author: Callan Moore
 	* @Parameter: _vertType: Vertex structure to base layout on
 	* @Parameter: _techID: Technique ID to base the layout on
-	* @Parameter: _vertexLayoutID: Storage variable to hold the ID of the created Vertex Layout
+	* @Parameter: _pVertexLayoutID: Storage variable to hold the ID of the created Vertex Layout
 	* @return: bool: Successful or not
 	********************/
 	bool BuildVertexLayout(eVertexType _vertType, UINT _techID, UINT* _pVertexLayoutID);
+
 
 	/***********************
 	* CreateVertexLayout: Create the Vertex Layout for an Object
@@ -138,7 +139,7 @@ public:
 	bool CreateVertexLayout(D3D10_INPUT_ELEMENT_DESC _vertexDesc[], UINT _elementCount, UINT _techID, UINT* _pVertexLayoutID);
 
 	/***********************
-	* TO DO: Creates a static buffer that holds all information for Vertex and Index Buffers for an Object
+	* CreateStaticBuffer: Creates a static buffer that holds all information for Vertex and Index Buffers for an Mesh
 	* @author: Callan Moore
 	* @parameter: _pVertices: The array of Vertices
 	* @parameter: _pIndices: The array of Indices
@@ -178,7 +179,7 @@ public:
 	* @parameter: _vertexID: The ID of the static buffer stored on the Renderer
 	* @return: bool: Successful or not
 	********************/
-	bool RenderObject(UINT _bufferID);
+	bool RenderMesh(UINT _bufferID);
 
 	/***********************
 	* StartRender: Clears the Back buffer ready for new frame
@@ -202,6 +203,14 @@ public:
 	void RestoreDefaultDrawStates();
 
 	/***********************
+	* SetPrimitiveTopology: Sets the primitive topology for a Mesh before drawing
+	* @author: Callan Moore
+	* @parameter: _primitiveType: The Primitive type/topology for the Mesh
+	* @return: void
+	********************/
+	void SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY _primitiveType);
+
+	/***********************
 	* SetInputLayout: Set the Vertex Layout as the Input Layout on the Renderer
 	* @author: Callan Moore
 	* @parameter: _vertexLayoutID: Vertex Layout ID
@@ -218,11 +227,11 @@ public:
 	ID3D10EffectTechnique* GetTechnique(UINT _techID);
 
 	/***********************
-	* CalcViewMatrix: Calculate the View Matrix for use in Renderering
+	* SetViewMatrix: Set the View Matrix for use in Renderering
 	* @author: Callan Moore
 	* @return: void
 	********************/
-	void CalcViewMatrix();
+	void SetViewMatrix();
 	
 	/***********************
 	* CalcProjMatrix: Calculate the Projection Matrix for use in Renderering

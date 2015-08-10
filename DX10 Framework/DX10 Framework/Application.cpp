@@ -15,6 +15,10 @@
 // This Include
 #include "Application.h"
 
+// Local Includes
+#include "GeometricMesh.h"
+#include "Mesh_Cube.h"
+
 // Static Variables
 CApplication* CApplication::s_pApp = 0;
 
@@ -156,6 +160,9 @@ CApplication* CApplication::GetInstance()
 
 bool CApplication::Initialise(int _clientWidth, int _clientHeight)
 {
+	m_pTimer = new CTimer();
+	m_pTimer->Reset();
+
 	// Save the client window sizes
 	m_clientWidth = _clientWidth;
 	m_clientHeight = _clientHeight;
@@ -168,9 +175,12 @@ bool CApplication::Initialise(int _clientWidth, int _clientHeight)
 	m_pKeyDown = new bool[255];
 	memset(m_pKeyDown, false, 255);
 
-	// TO DO REMOVE
-	m_pCube = new CCube();
-	m_pCube->Initialise(m_pRenderer);
+	// Creating a Cube Object
+	m_pCubeMesh = new CMesh_Cube();
+	TVertexColor vertColor;
+	m_pCubeMesh->Initialise(m_pRenderer, vertColor, 1.0f, RED);
+	m_pCube = new CGeometricObject();
+	m_pCube->Initialise(m_pRenderer, m_pCubeMesh);
 
 	return true;
 }
@@ -189,33 +199,32 @@ void CApplication::DestroyInstance()
 void CApplication::ShutDown()
 {
 	// Delete and free memory for the Application variables
-	delete m_pKeyDown;
-	m_pKeyDown = 0;
-
-	delete m_pCube;
-	m_pCube = 0;
+	ReleasePtr(m_pKeyDown);
+	ReleasePtr(m_pCube);
+	ReleasePtr(m_pCubeMesh);
+	ReleasePtr(m_pTimer);
 
 	// Delete and free the memory from the Renderer
 	m_pRenderer->ShutDown();
-	delete m_pRenderer;
-	m_pRenderer = 0;
+	ReleasePtr(m_pRenderer);
 }
 
 void CApplication::ExecuteOneFrame()
 {
-	// TO DO: remove comment
-	//CalculateFPS();
-	//Process();
-	//PreDraw();
-	//Draw();
-	//PostDraw();
+	// Retrieve the Delta Tick of the last frame
+	Sleep(1);
+	m_pTimer->Tick();
+	m_dt = m_pTimer->GetDeltaTime();
 
+	// Get the Renderer Ready to receive new data
 	m_pRenderer->StartRender();
 
 	HandleInput();
-	m_pRenderer->CalcViewMatrix();
+	m_pRenderer->SetViewMatrix();
+	m_pCube->Process(m_dt);
 	m_pCube->Draw();
 
+	// Tell the Renderer the data input is over and present the outcome
 	m_pRenderer->EndRender();
 }
 
