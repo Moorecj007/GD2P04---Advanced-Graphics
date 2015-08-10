@@ -19,7 +19,6 @@
 #pragma message("Included Utilities.h")
 
 // Defines
-#define ReleaseCOM(x) { if (x){ x->Release(); x = 0; } }
 #define ReleasePtr(x) { if(x){ delete x; x = 0;} }
 #define MacroStr(x)   #x
 #define MacroStr2(x)  MacroStr(x)

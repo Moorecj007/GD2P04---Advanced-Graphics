@@ -32,8 +32,6 @@ CCube::CCube()
 	m_techniqueID = 0;
 	m_fxID = 0;
 	m_vertexLayoutID = 0;
-	m_vertexBufferID = 0;
-	m_indexBufferID = 0;
 
 	// Set all pointers to NULL
 	m_pRenderer = 0;
@@ -59,76 +57,76 @@ bool CCube::Initialise(CDX10Renderer* _pRenderer)
 	TVertexColor vertices[] =
 	{
 		// Front
-		{ D3DXVECTOR3(-vertSize, vertSize, -vertSize), 0x000000FF },
-		{ D3DXVECTOR3(vertSize, vertSize, -vertSize), 0x000000FF },
-		{ D3DXVECTOR3(vertSize, -vertSize, -vertSize), 0x000000FF },
-		{ D3DXVECTOR3(-vertSize, -vertSize, -vertSize), 0x000000FF },
-
+		{ D3DXVECTOR3(-vertSize, vertSize, -vertSize), BLACK },
+		{ D3DXVECTOR3(vertSize, vertSize, -vertSize), BLACK },
+		{ D3DXVECTOR3(vertSize, -vertSize, -vertSize), BLACK },
+		{ D3DXVECTOR3(-vertSize, -vertSize, -vertSize), BLACK },
+	
 		// Left
-		{ D3DXVECTOR3(-vertSize, vertSize, vertSize), 0x000000FF },
-		{ D3DXVECTOR3(-vertSize, vertSize, -vertSize), 0x000000FF },
-		{ D3DXVECTOR3(-vertSize, -vertSize, -vertSize), 0x000000FF },
-		{ D3DXVECTOR3(-vertSize, -vertSize, vertSize), 0x000000FF },
-
+		{ D3DXVECTOR3(-vertSize, vertSize, vertSize), RED },
+		{ D3DXVECTOR3(-vertSize, vertSize, -vertSize), RED },
+		{ D3DXVECTOR3(-vertSize, -vertSize, -vertSize), RED },
+		{ D3DXVECTOR3(-vertSize, -vertSize, vertSize), RED },
+	
 		// Right
-		{ D3DXVECTOR3(vertSize, vertSize, -vertSize), 0x000000FF },
-		{ D3DXVECTOR3(vertSize, vertSize, vertSize), 0x000000FF },
-		{ D3DXVECTOR3(vertSize, -vertSize, vertSize), 0x000000FF },
-		{ D3DXVECTOR3(vertSize, -vertSize, -vertSize), 0x000000FF },
-
+		{ D3DXVECTOR3(vertSize, vertSize, -vertSize), GREEN },
+		{ D3DXVECTOR3(vertSize, vertSize, vertSize), GREEN },
+		{ D3DXVECTOR3(vertSize, -vertSize, vertSize), GREEN },
+		{ D3DXVECTOR3(vertSize, -vertSize, -vertSize), GREEN },
+	
 		// Back
-		{ D3DXVECTOR3(vertSize, vertSize, vertSize), 0x000000FF },
-		{ D3DXVECTOR3(-vertSize, vertSize, vertSize), 0x000000FF },
-		{ D3DXVECTOR3(-vertSize, -vertSize, vertSize), 0x000000FF },
-		{ D3DXVECTOR3(vertSize, -vertSize, vertSize), 0x000000FF },
-
+		{ D3DXVECTOR3(vertSize, vertSize, vertSize), BLUE },
+		{ D3DXVECTOR3(-vertSize, vertSize, vertSize), BLUE },
+		{ D3DXVECTOR3(-vertSize, -vertSize, vertSize), BLUE },
+		{ D3DXVECTOR3(vertSize, -vertSize, vertSize), BLUE },
+	
 		// Top
-		{ D3DXVECTOR3(-vertSize, vertSize, vertSize), 0x000000FF },
-		{ D3DXVECTOR3(vertSize, vertSize, vertSize), 0x000000FF },
-		{ D3DXVECTOR3(vertSize, vertSize, -vertSize), 0x000000FF },
-		{ D3DXVECTOR3(-vertSize, vertSize, -vertSize), 0x000000FF },
-
+		{ D3DXVECTOR3(-vertSize, vertSize, vertSize), MAGENTA },
+		{ D3DXVECTOR3(vertSize, vertSize, vertSize), MAGENTA },
+		{ D3DXVECTOR3(vertSize, vertSize, -vertSize), MAGENTA },
+		{ D3DXVECTOR3(-vertSize, vertSize, -vertSize), MAGENTA },
+	
 		// Bottom
-		{ D3DXVECTOR3(-vertSize, -vertSize, -vertSize), 0x000000FF },
-		{ D3DXVECTOR3(vertSize, -vertSize, -vertSize), 0x000000FF },
-		{ D3DXVECTOR3(vertSize, -vertSize, vertSize), 0x000000FF },
-		{ D3DXVECTOR3(-vertSize, -vertSize, vertSize), 0x000000FF }
+		{ D3DXVECTOR3(-vertSize, -vertSize, -vertSize), WHITE },
+		{ D3DXVECTOR3(vertSize, -vertSize, -vertSize), WHITE },
+		{ D3DXVECTOR3(vertSize, -vertSize, vertSize), WHITE },
+		{ D3DXVECTOR3(-vertSize, -vertSize, vertSize), WHITE }
 	};
 	m_stride = sizeof(*vertices);
 	m_vertexCount = (sizeof(vertices) / m_stride);
-	VALIDATE(m_pRenderer->CreateVertexBuffer(vertices, m_vertexCount, &m_vertexBufferID));
-
+	
 	DWORD indices[] = {
 		// Front Face
 		0, 1, 2,
 		0, 2, 3,
-
+	
 		// Left Face
 		4, 5, 6,
 		4, 6, 7,
-
+	
 		// Right Face
 		8, 9, 10,
 		8, 10, 11,
-
+	
 		// Back Face
 		12, 13, 14,
 		12, 14, 15,
-
+	
 		// Top Face
 		16, 17, 18,
 		16, 18, 19,
-
+	
 		// Bottom Face
 		20, 21, 22,
 		20, 22, 23
 	};
 	m_indexCount = (sizeof(indices) / sizeof(*indices));
-	VALIDATE(m_pRenderer->CreateIndexBuffer(indices, m_indexCount, &m_indexBufferID));
+	
+	m_pRenderer->CreateStaticBuffer(vertices, indices, m_vertexCount, m_indexCount, m_stride, &m_bufferID);
 
 	// Set up the Cube for with its shaders and draw instructions
 	BuildFX();
-	GetFXVariable();
+	CreateFXVarPointers();
 	BuildVertexLayout();
 
 	return true;
@@ -145,17 +143,20 @@ void CCube::Draw()
 	m_pRenderer->SetInputLayout(m_vertexLayoutID);
 	ID3D10EffectTechnique* pTech = m_pRenderer->GetTechnique(m_techniqueID);
 
-	D3D10_TECHNIQUE_DESC techDesc;
-	pTech->GetDesc(&techDesc);
-	for (UINT p = 0; p < techDesc.Passes; ++p)
+	if (pTech != NULL)
 	{
-		CalcWorldMatrix();
-		m_pTechMatWorld->AsMatrix()->SetMatrix((float*)m_matWorld);
-		m_pTechMatView->AsMatrix()->SetMatrix((float*)*m_pRenderer->GetViewMatrix());
-		m_pTechMatProj->AsMatrix()->SetMatrix((float*)*m_pRenderer->GetProjMatrix());
+		D3D10_TECHNIQUE_DESC techDesc;
+		pTech->GetDesc(&techDesc);
+		for (UINT p = 0; p < techDesc.Passes; ++p)
+		{
+			CalcWorldMatrix();
+			m_pTechMatWorld->AsMatrix()->SetMatrix((float*)m_matWorld);
+			m_pTechMatView->AsMatrix()->SetMatrix((float*)*m_pRenderer->GetViewMatrix());
+			m_pTechMatProj->AsMatrix()->SetMatrix((float*)*m_pRenderer->GetProjMatrix());
 
-		pTech->GetPassByIndex(p)->Apply(0);
-		m_pRenderer->RenderObject(m_vertexBufferID, m_indexBufferID, m_indexCount, m_stride);
+			pTech->GetPassByIndex(p)->Apply(0);
+			m_pRenderer->RenderObject(m_bufferID);
+		}
 	}
 }
 
@@ -166,7 +167,7 @@ bool CCube::BuildFX()
 	return true;
 }
 
-bool CCube::GetFXVariable()
+bool CCube::CreateFXVarPointers()
 {
 	m_pTechMatWorld = m_pRenderer->GetFXVariable(m_fxID, "matColorWorld");
 	VALIDATE(m_pTechMatWorld != 0);
@@ -199,6 +200,7 @@ void CCube::CalcWorldMatrix()
 	D3DXMatrixIdentity(&matRotatePitch);
 	D3DXMatrixIdentity(&matRotateYaw);
 	D3DXMatrixIdentity(&matRotateRoll);
+	D3DXMatrixIdentity(&matTranslation);
 
 	// Reset the Objects World Matrix for new Calculation
 	D3DXMatrixIdentity(&m_matWorld);

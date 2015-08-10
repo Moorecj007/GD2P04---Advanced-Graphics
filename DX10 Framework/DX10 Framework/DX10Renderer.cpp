@@ -31,13 +31,12 @@ bool CDX10Renderer::Initialise(int _clientWidth, int _clientHeight, HWND _hWND)
 
 	VALIDATE(InitialiseDeviceAndSwapChain());
 
-	m_clearColor = D3DXCOLOR(255.0f, 255.0f, 0.0f, 1.0f);
+	m_clearColor = YELLOW;
 
 	//Initialise the ID Keys for the Maps
 	nextEffectID = 0;
 	nextTechniqueID = 0;
 	nextInputLayoutID = 0;
-
 
 	return true;
 }
@@ -56,36 +55,20 @@ void CDX10Renderer::ShutDown()
 		iterInputLayout++;
 	}
 
-	// Delete the Graphics memory stored as DX10 Techniques
-	//std::map<UINT, ID3D10EffectTechnique*>::iterator iterTechniques = m_techniquesByID.begin();
-	//while (iterTechniques != m_techniquesByID.end())
-	//{
-	//	ReleasePtr(iterTechniques->second);
-	//	iterTechniques++;
-	//}
-
 	// Delete the Graphics memory stored as DX10 Effects
-	std::map<UINT, ID3D10Effect*>::iterator iterFX = m_effectsbyID.begin();
-	while (iterFX != m_effectsbyID.end())
+	std::map<UINT, ID3D10Effect*>::iterator iterFX = m_effectsByID.begin();
+	while (iterFX != m_effectsByID.end())
 	{
 		ReleaseCOM(iterFX->second);
 		iterFX++;
 	}
 
-	// Delete the Graphics memory stored as DX10 Buffers -> Index
-	std::map<UINT, ID3D10Buffer*>::iterator iterIndexBuffers = m_indexBuffers.begin();
-	while (iterIndexBuffers != m_indexBuffers.end())
+	// Delete the Graphics memory stored as static Buffers
+	std::map<UINT, CStaticBuffer*>::iterator iterBuffers = m_staticBuffers.begin();
+	while (iterBuffers != m_staticBuffers.end())
 	{
-		ReleaseCOM(iterIndexBuffers->second);
-		iterIndexBuffers++;
-	}
-
-	// Delete the Graphics memory stored as DX10 Buffers -> Vertex
-	std::map<UINT, ID3D10Buffer*>::iterator iterVertexBuffer = m_vertexBuffers.begin();
-	while (iterVertexBuffer != m_vertexBuffers.end())
-	{
-		ReleaseCOM(iterVertexBuffer->second);
-		iterVertexBuffer++;
+		ReleasePtr(iterBuffers->second);
+		iterBuffers++;
 	}
 
 	ReleaseCOM(m_pRenderTargetView);
@@ -151,7 +134,7 @@ bool CDX10Renderer::onResize()
 {
 	// Release the old render target view before creating again
 	ReleaseCOM(m_pRenderTargetView);
-	
+
 	// Resize the buffers of the Swap Chain and create the new render target view
 	VALIDATEHR(m_pDX10SwapChain->ResizeBuffers(1, m_clientWidth, m_clientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0));
 
@@ -163,7 +146,7 @@ bool CDX10Renderer::onResize()
 	VALIDATEHR(m_pDX10Device->CreateRenderTargetView(pBackBuffer, 0, &m_pRenderTargetView));
 
 	// Release the memory from the temporary Back Buffer
-	//ReleaseCOM(pBackBuffer);
+	ReleaseCOM(pBackBuffer);
 	
 	// Bind the Render Target View to the output-merger stage of the pipeline
 	m_pDX10Device->OMSetRenderTargets(1, &m_pRenderTargetView, NULL);
@@ -201,7 +184,7 @@ void CDX10Renderer::ToggleFullscreen()
 	m_pDX10SwapChain->SetFullscreenState(m_fullScreen, NULL);
 }
 
-bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UINT* _fxID, UINT* _techID)
+bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UINT* _pFXID, UINT* _pTechID)
 {	
 	ID3D10Effect* pFX = 0;
 	UINT fxID;
@@ -214,7 +197,7 @@ bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UIN
 	if (fxCheck != m_effectIDs.end())
 	{
 		fxID = fxCheck->second;
-		pFX = m_effectsbyID.find(fxID)->second;
+		pFX = m_effectsByID.find(fxID)->second;
 	}
 	else
 	{
@@ -235,7 +218,7 @@ bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UIN
 		std::pair<UINT, ID3D10Effect*> fxPairByID(fxID, pFX);
 
 		VALIDATE(m_effectIDs.insert(fxPair).second);
-		VALIDATE(m_effectsbyID.insert(fxPairByID).second);
+		VALIDATE(m_effectsByID.insert(fxPairByID).second);
 	}
 
 	// Adding the Technique to the Map
@@ -280,15 +263,15 @@ bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UIN
 	}
 
 	// Save the FX and Technique IDs in the memory passed by the Object.
-	*_fxID = fxID;
-	*_techID = techID;
+	*_pFXID = fxID;
+	*_pTechID = techID;
 	return true;
 }
 
 ID3D10EffectVariable* CDX10Renderer::GetFXVariable(UINT _fxID, std::string _techVar)
 {
 	// Retrieve the FX pointer
-	ID3D10Effect* pFX = m_effectsbyID.find(_fxID)->second;
+	ID3D10Effect* pFX = m_effectsByID.find(_fxID)->second;
 	return pFX->GetVariableByName(_techVar.c_str());
 }
 
@@ -348,56 +331,15 @@ bool CDX10Renderer::CreateVertexLayout(D3D10_INPUT_ELEMENT_DESC* _vertexDesc, UI
 	return true;
 }
 
-bool CDX10Renderer::CreateIndexBuffer(DWORD* _indices, UINT _indexCount, UINT* _indexBufferID)
-{
-	D3D10_BUFFER_DESC indexBufferDesc;
-	indexBufferDesc.Usage = D3D10_USAGE_IMMUTABLE;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * _indexCount;
-	indexBufferDesc.BindFlags = D3D10_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
-	D3D10_SUBRESOURCE_DATA subResourceData;
-	subResourceData.pSysMem = _indices;
-	
-	ID3D10Buffer* indexBuffer;
-	if(FAILED(m_pDX10Device->CreateBuffer(&indexBufferDesc, &subResourceData, &indexBuffer)))
-	{
-		// Release a potentially created buffer
-		ReleaseCOM(indexBuffer);
-		return false;
-	}
-
-	*_indexBufferID = ++nextIndexBufferID;
-	std::pair<UINT, ID3D10Buffer*> ibPair(nextIndexBufferID, indexBuffer);
-	(m_indexBuffers.insert(ibPair).second);
-
-	return true;
-}
-
-bool CDX10Renderer::RenderObject(UINT _vertexID, UINT  _indexID, UINT _indexCount, UINT _stride)
+bool CDX10Renderer::RenderObject(UINT _bufferID)
 {
 	// Retrieve the Vertex Buffer
-	std::map<UINT, ID3D10Buffer*>::iterator iterVBuffer = m_vertexBuffers.find(_vertexID);
-	if (iterVBuffer == m_vertexBuffers.end())
+	std::map<UINT, CStaticBuffer*>::iterator iterBuffer = m_staticBuffers.find(_bufferID);
+	if (iterBuffer == m_staticBuffers.end())
 	{
 		return false;
 	}
-	ID3D10Buffer* pVertexBuffer = iterVBuffer->second;
-
-	// Retrieve the Index Buffer
-	std::map<UINT, ID3D10Buffer*>::iterator iterIBuffer = m_indexBuffers.find(_indexID);
-	if (iterIBuffer == m_indexBuffers.end())
-	{
-		return false;
-	}
-	ID3D10Buffer* pIndexBuffer = iterIBuffer->second;
-
-	UINT s = sizeof(&pVertexBuffer);
-	UINT offset = 0;
-	m_pDX10Device->IASetVertexBuffers(0, 1, &pVertexBuffer, &_stride, &offset);
-	m_pDX10Device->IASetIndexBuffer(pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	m_pDX10Device->DrawIndexed(_indexCount, 0, 0);
-
+	iterBuffer->second->Render();
 	return true;
 }
 
@@ -440,7 +382,7 @@ ID3D10EffectTechnique* CDX10Renderer::GetTechnique(UINT _techID)
 	std::map<UINT, ID3D10EffectTechnique*>::iterator iterTech = m_techniquesByID.find(_techID);
 	if (iterTech == m_techniquesByID.end())
 	{
-		return false;
+		return NULL;
 	}
 	return iterTech->second;
 }

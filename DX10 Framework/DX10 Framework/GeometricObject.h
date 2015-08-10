@@ -46,11 +46,11 @@ public:
 	virtual bool BuildFX() = 0;
 
 	/***********************
-	* GetFXVariable: Retrieve the FX variables from the FX file
+	* CreateFXVarPointers: Retrieve the FX variables from the FX file
 	* @author: Callan Moore
 	* @return: bool: Successful or not
 	********************/
-	virtual bool GetFXVariable() = 0;
+	virtual bool CreateFXVarPointers() = 0;
 
 	/***********************
 	* BuildVertexLayout: Build the Vertex Layout for the Geometric Object

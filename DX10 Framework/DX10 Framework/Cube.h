@@ -12,8 +12,15 @@
 * Mail :	Callan.Moore@mediadesign.school.nz
 */
 
+// Inclusion Guards
 #pragma once
+#ifndef __CUBE_H__
+#define __CUBE_H__
+
+// Local Includes
 #include "GeometricObject.h"
+
+
 class CCube :
 	public CGeometricObject
 {
@@ -64,11 +71,11 @@ public:
 	virtual bool BuildFX();
 	
 	/***********************
-	* GetFXVariable: Retrieve the FX variables from the FX file
+	* CreateFXVarPointers: Retrieve the FX variables from the FX file
 	* @author: Callan Moore
 	* @return: bool: Successful or not
 	********************/
-	virtual bool GetFXVariable();
+	virtual bool CreateFXVarPointers();
 	
 	/***********************
 	* BuildVertexLayout: Build the Vertex Layout for this Object
@@ -106,7 +113,8 @@ private:
 
 	UINT m_vertexCount;
 	UINT m_indexCount;
-	UINT m_vertexBufferID;
-	UINT m_indexBufferID;
+	UINT m_bufferID;
 };
+
+#endif	// __CUBE_H__
 

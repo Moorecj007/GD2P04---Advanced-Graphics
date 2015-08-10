@@ -12,9 +12,6 @@
 * Mail :	Callan.Moore@mediadesign.school.nz
 */
 
-// TO DO - ensure everything is initialised
-// Fix the graphics leaks?
-
 
 // Inclusion Guards
 #pragma once
@@ -28,13 +25,15 @@
 #pragma comment(lib, "dxerr.lib")
 #pragma comment(lib, "dxguid.lib")
 
-
+// Library Includes
 #include <map>
 
 // Local Includes
 #include "Utilities.h"
 #include "DX10_Utilities.h"
 #include "Vertex.h"
+#include "StaticBuffer.h"
+
 
 class CDX10Renderer
 {
@@ -106,7 +105,7 @@ public:
 	* @Parameter: _techID: Storage value to hold the created or found ID of the Technique
 	* @return: bool: Successful or not
 	********************/
-	bool BuildFX(std::string _fxFileName, std::string _technique, UINT* _fxID, UINT* _techID);
+	bool BuildFX(std::string _fxFileName, std::string _technique, UINT* _pFXID, UINT* _pTechID);
 
 	/***********************
 	* GetFXVariable: Retrieve a FX Variable
@@ -125,75 +124,61 @@ public:
 	* @Parameter: _vertexLayoutID: Storage variable to hold the ID of the created Vertex Layout
 	* @return: bool: Successful or not
 	********************/
-	bool BuildVertexLayout(eVertexType _vertType, UINT _techID, UINT* _vertexLayoutID);
+	bool BuildVertexLayout(eVertexType _vertType, UINT _techID, UINT* _pVertexLayoutID);
 
 	/***********************
 	* CreateVertexLayout: Create the Vertex Layout for an Object
 	* @author: Callan Moore
 	* @parameter: _vertexDesc: Description of the Vertices's
-	* @parameter: _elementNum: Number of elements in the Vertex Description
+	* @parameter: _elementCount: Number of elements in the Vertex Description
 	* @parameter: _techID: Technique ID to base the layout on
 	* @Parameter: _vertexLayoutID: Storage variable to hold the ID of the created Vertex Layout
-	* @return: bool
-	********************/
-	bool CreateVertexLayout(D3D10_INPUT_ELEMENT_DESC _vertexDesc[], UINT _elementNum, UINT _techID, UINT* _vertexLayoutID);
-
-	/***********************
-	* CreateVertexBuffer: Create an Vertex Buffer with the given data
-	* @author: Callan Moore
-	* @parameter: _pVertices: Array of Vertex Points
-	* @parameter: _vertCount: Number of Vertices
-	* @parameter: _vertexBufferID: Storage value to hold the ID of the created Vertex buffer
 	* @return: bool: Successful or not
 	********************/
-	template<typename T>
-	bool CreateVertexBuffer(typename T* _pVertices, UINT _vertCount, UINT* _vertexBufferID)
+	bool CreateVertexLayout(D3D10_INPUT_ELEMENT_DESC _vertexDesc[], UINT _elementCount, UINT _techID, UINT* _pVertexLayoutID);
+
+	/***********************
+	* TO DO: Creates a static buffer that holds all information for Vertex and Index Buffers for an Object
+	* @author: Callan Moore
+	* @parameter: _pVertices: The array of Vertices
+	* @parameter: _pIndices: The array of Indices
+	* @parameter: _vertCount: Number of Vertices
+	* @parameter: _indexCount: Number of Indices
+	* @parameter: _stride: Stride size for each Vertex
+	* @parameter: _pBufferID: Storage variable to hold the ID of the created static buffer
+	* @return: bool: Successful or not
+	********************/
+	template<typename TIndices, typename TVertices>
+	bool CreateStaticBuffer(typename TVertices* _pVertices, typename TIndices* _pIndices,
+		UINT _vertCount, UINT _indexCount, UINT _stride, UINT* _pBufferID)
 	{
-		D3D10_BUFFER_DESC vertexBufferDesc;
-		vertexBufferDesc.Usage = D3D10_USAGE_IMMUTABLE;
-		vertexBufferDesc.ByteWidth = sizeof(T) * _vertCount;
-		vertexBufferDesc.BindFlags = D3D10_BIND_VERTEX_BUFFER;
-		vertexBufferDesc.CPUAccessFlags = 0;
-		vertexBufferDesc.MiscFlags = 0;
+		*_pBufferID = ++nextBufferID;
 
-		D3D10_SUBRESOURCE_DATA subResourceData;
-		subResourceData.pSysMem = _pVertices;
-
-		ID3D10Buffer* vertexBuffer;
-		if (FAILED(m_pDX10Device->CreateBuffer(&vertexBufferDesc, &subResourceData, &vertexBuffer)))
+		CStaticBuffer* staticBuff = new CStaticBuffer(m_pDX10Device);
+		if (staticBuff->Initialise(_pVertices, _pIndices, _vertCount, _indexCount, _stride, _pBufferID))
 		{
-			// Release a potentially created buffer
-			ReleaseCOM(vertexBuffer);
+			std::pair<UINT, CStaticBuffer*> bufferPair(nextBufferID, staticBuff);
+			VALIDATE(m_staticBuffers.insert(bufferPair).second);
+
+			return true;
+		}
+		else
+		{
+			// Delete the failed static buffer memory
+			_pBufferID = 0;
+			delete staticBuff;
+			staticBuff = 0;
 			return false;
 		}
-
-		*_vertexBufferID = ++nextVertexBufferID;
-		std::pair<UINT, ID3D10Buffer*> vbPair(nextVertexBufferID, vertexBuffer);
-		(m_vertexBuffers.insert(vbPair).second);
-
-		return true;
 	}
-
-	/***********************
-	* CreateIndexBuffer: Create an Index Buffer with the given data
-	* @author: Callan Moore
-	* @parameter: _indices: Array if Indices points
-	* @parameter: _indexCount: Number of Indices
-	* @parameter: _indexBufferID: Storage value to hold the ID of the created Index buffer
-	* @return: bool: Successful or not
-	********************/
-	bool CreateIndexBuffer(DWORD* _indices, UINT _indexCount, UINT* _indexBufferID);
 
 	/***********************
 	* RenderObject: Renders an Object to the screen
 	* @author: Callan Moore
-	* @parameter: _vertexID: The ID of the Vertex buffer stored on the Renderer
-	* @parameter: _indexID: The ID of the Index buffer stored on the Renderer
-	* @parameter: _indexCount: The number of indices
-	* @parameter: _stride: Stride of the Vertex Buffer
+	* @parameter: _vertexID: The ID of the static buffer stored on the Renderer
 	* @return: bool: Successful or not
 	********************/
-	bool RenderObject(UINT _vertexID, UINT  _indexID, UINT _indexCount, UINT _stride);
+	bool RenderObject(UINT _bufferID);
 
 	/***********************
 	* StartRender: Clears the Back buffer ready for new frame
@@ -231,7 +216,6 @@ public:
 	* @return: ID3D10EffectTechnique*: DX10 Technique
 	********************/
 	ID3D10EffectTechnique* GetTechnique(UINT _techID);
-
 
 	/***********************
 	* CalcViewMatrix: Calculate the View Matrix for use in Renderering
@@ -282,7 +266,7 @@ private:
 
 	UINT nextEffectID;
 	std::map<std::string, UINT> m_effectIDs;
-	std::map<UINT, ID3D10Effect*> m_effectsbyID;
+	std::map<UINT, ID3D10Effect*> m_effectsByID;
 
 	UINT nextTechniqueID;
 	std::map<UINT, std::map<std::string, UINT>> m_techniqueIDs;
@@ -291,11 +275,8 @@ private:
 	UINT nextInputLayoutID;
 	std::map<UINT, ID3D10InputLayout*> m_inputLayouts;
 
-	UINT nextVertexBufferID;
-	std::map<UINT, ID3D10Buffer*> m_vertexBuffers;
-
-	UINT nextIndexBufferID;
-	std::map<UINT, ID3D10Buffer*> m_indexBuffers;
+	UINT nextBufferID;
+	std::map<UINT, CStaticBuffer*> m_staticBuffers;
 };
 
 #endif // __DX10RENDERER_H__

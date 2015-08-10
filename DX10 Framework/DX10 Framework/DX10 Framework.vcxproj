@@ -41,8 +41,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(IncludePath);$(DXSDK_DIR)Include;</IncludePath>
-    <LibraryPath>$(LibraryPath);$(DXSDK_DIR)Lib\x86;</LibraryPath>
+    <IncludePath>H:\Applications\Visual Leak Detector\include;$(IncludePath);$(DXSDK_DIR)Include</IncludePath>
+    <LibraryPath>H:\Applications\Visual Leak Detector\lib\Win32;$(LibraryPath);$(DXSDK_DIR)Lib\x86</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -96,11 +96,13 @@
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DX10Renderer.cpp" />
     <ClCompile Include="GeometricObject.cpp" />
+    <ClCompile Include="StaticBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="DX10_Utilities.h" />
+    <ClInclude Include="StaticBuffer.h" />
     <ClInclude Include="Utilities.h" />
     <ClInclude Include="DX10Renderer.h" />
     <ClInclude Include="GeometricObject.h" />
