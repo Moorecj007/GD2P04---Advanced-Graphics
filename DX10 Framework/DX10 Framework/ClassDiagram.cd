@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CApplication">
+    <Position X="9" Y="2.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>BAAAAACCADDAAwQgBCAAAkAABAAEAAAAAAAgAUCAgAA=</HashCode>
+      <FileName>Application.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CGeometricObject" Collapsed="true">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAMAAIAAEkCA4AgAgAAAAEwABAAAgQAAAAAACAACgA=</HashCode>
+      <FileName>GeometricObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CGeometricMesh">
+    <Position X="14.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAQAgAAAAAAAAAAEgAAYAABAAAAAgAAA=</HashCode>
+      <FileName>GeometricMesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMesh_Rect_Prism">
+    <Position X="17.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAABAAAAAAICA=</HashCode>
+      <FileName>Mesh_Rect_Prism.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CStaticBuffer" Collapsed="true">
+    <Position X="6.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AFAABgAAAAAAAUAAAAAQAAAAAAABAACAABAAAAAAAAQ=</HashCode>
+      <FileName>StaticBuffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CTimer" Collapsed="true">
+    <Position X="4.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gBAAEAAAACAABQABCAACAAAAACIAIAAAIAAAABAAQAA=</HashCode>
+      <FileName>Timer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CDX10Renderer" Collapsed="true">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQACBDIACGBCAwAYwABAAIIAACRSggEAIhChg0AGkAA=</HashCode>
+      <FileName>DX10Renderer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="v3float" Collapsed="true">
+    <Position X="6.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAFgAwEAAAA=</HashCode>
+      <FileName>Utilities.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="TVertexBasic" Collapsed="true">
+    <Position X="6.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Vertex.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="TVertexColor" Collapsed="true">
+    <Position X="4.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAIAAAAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>Vertex.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="eVertexType" Collapsed="true">
+    <Position X="6.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Vertex.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

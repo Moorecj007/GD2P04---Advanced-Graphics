@@ -36,25 +36,25 @@ public:
 	virtual ~CGeometricMesh();
 
 	/***********************
-	* Initialise: Initialise the Cube mesh
+	* Initialise: Initialise the Geometric mesh
 	* @author: Callan Moore
 	* @parameter: _pRenderer: Renderer for the Application
 	* @parameter: _vert: Vertex Structure to use
-	* @parameter: _scale: Scale factor for the Cube Mesh
+	* @parameter: _scale: Scale factor for the Mesh
 	* @return: bool: Successful or not
 	********************/
-	virtual bool Initialise(CDX10Renderer* _pRenderer, TVertexBasic _vert, float _scale) = 0;
+	virtual bool Initialise(CDX10Renderer* _pRenderer, TVertexBasic _vert, v3float _scalar) = 0;
 
 	/***********************
-	* Initialise: Initialise the Cube mesh
+	* Initialise: Initialise the Geometric mesh
 	* @author: Callan Moore
 	* @parameter: _pRenderer: Renderer for the Application
 	* @parameter: _vert: Vertex Structure to use
-	* @parameter: _scale: Scale factor for the Cube Mesh
+	* @parameter: _scale: Scale factor for the Geometric Mesh
 	* @parameter: _color: Color for each vertex
 	* @return: bool: Successful or not
 	********************/
-	virtual bool Initialise(CDX10Renderer* _pRenderer, TVertexColor _vert, float _scale, D3DXCOLOR _color) = 0;
+	virtual bool Initialise(CDX10Renderer* _pRenderer, TVertexColor _vert, v3float _scale, D3DXCOLOR _color) = 0;
 
 	/***********************
 	* Render: Render the Mesh

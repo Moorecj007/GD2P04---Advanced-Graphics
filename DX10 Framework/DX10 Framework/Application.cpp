@@ -17,7 +17,7 @@
 
 // Local Includes
 #include "GeometricMesh.h"
-#include "Mesh_Cube.h"
+#include "Mesh_Rect_Prism.h"
 
 // Static Variables
 CApplication* CApplication::s_pApp = 0;
@@ -176,9 +176,10 @@ bool CApplication::Initialise(int _clientWidth, int _clientHeight)
 	memset(m_pKeyDown, false, 255);
 
 	// Creating a Cube Object
-	m_pCubeMesh = new CMesh_Cube();
+	m_pCubeMesh = new CMesh_Rect_Prism();
 	TVertexColor vertColor;
-	m_pCubeMesh->Initialise(m_pRenderer, vertColor, 1.0f, RED);
+	v3float scalar(1.0f, 1.0f, 1.0f);
+	m_pCubeMesh->Initialise(m_pRenderer, vertColor, scalar, RED);
 	m_pCube = new CGeometricObject();
 	m_pCube->Initialise(m_pRenderer, m_pCubeMesh);
 

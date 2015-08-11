@@ -194,62 +194,82 @@ bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UIN
 	std::map<std::string, UINT>::iterator fxCheck;
 	fxCheck = m_effectIDs.find(_fxFileName);
 
+	// Check if the FX file has already been created
 	if (fxCheck != m_effectIDs.end())
 	{
+		// FX file already exists, save the ID
 		fxID = fxCheck->second;
 		pFX = m_effectsByID.find(fxID)->second;
 	}
 	else
 	{
+		// Set the shader flags to enforce strictness
 		DWORD shaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
 		#if defined( DEBUG ) || defined( _DEBUG )
+			// Addition shader flags for information in DEBUG mode only
 			shaderFlags |= D3D10_SHADER_DEBUG;
 			shaderFlags |= D3D10_SHADER_SKIP_OPTIMIZATION;
 		#endif
-		
+
 		ID3D10Blob* compilationErrors;
+
+		// Add the directory path from the DX10Render file to the stored FX files
 		std::string fxfilePath = "Assets/FX/" + _fxFileName;
+
+		// Create the FX file from the input file string
 		VALIDATEHR(D3DX10CreateEffectFromFileA(fxfilePath.c_str(), 0, 0,
 					"fx_4_0", shaderFlags, 0, m_pDX10Device, 0, 0, &pFX, &compilationErrors, 0));
 		ReleaseCOM(compilationErrors);
 		
+		// Create the pairs to be inserted into the appropriate FX Maps
 		fxID = ++nextEffectID;
 		std::pair<std::string, UINT> fxPair(_fxFileName, fxID);
 		std::pair<UINT, ID3D10Effect*> fxPairByID(fxID, pFX);
 
+		// Insert the pairs into their respective Maps
 		VALIDATE(m_effectIDs.insert(fxPair).second);
 		VALIDATE(m_effectsByID.insert(fxPairByID).second);
 	}
 
 	// Adding the Technique to the Map
+
+	// Retrieve the Technique IDs map using the FX ID to get a Map of all techniques for that particular FX file
 	std::map<UINT, std::map<std::string, UINT>>::iterator fxIDCheck;
 	fxIDCheck = m_techniqueIDs.find(fxID);
 
+	// Check if the FX file already has techniques stored for it
 	if (fxIDCheck != m_techniqueIDs.end())
 	{
+		// Search the Inner Map (of Techs by FX ID) to check if the Technique has already been created
 		std::map<std::string, UINT>::iterator techIDCheck;
 		techIDCheck = fxIDCheck->second.find(_technique);
 
 		if (techIDCheck != fxIDCheck->second.end())
 		{
+			// Technique already exists, save the ID
 			techID = fxCheck->second;
 		}
 		else
 		{
+			// Technique has not been created so Retrieve the Tech from the FX file
 			ID3D10EffectTechnique* pTech = pFX->GetTechniqueByName(_technique.c_str());
 
+			// Create pairs to store in the Technique Maps
 			techID = ++nextTechniqueID;
 			std::pair<std::string, UINT> techPair(_technique, techID);
 			std::pair<UINT, ID3D10EffectTechnique*> techPairByID(techID, pTech);
 
+			// Insert the pairs into their respective Maps
 			VALIDATE((&fxIDCheck->second)->insert(techPair).second);
 			VALIDATE(m_techniquesByID.insert(techPairByID).second);
 		}
 	}
 	else
 	{
+		// Technique has not been created so Retrieve the Tech from the FX file
 		ID3D10EffectTechnique* pTech = pFX->GetTechniqueByName(_technique.c_str());
 
+		// Create pairs to store in the Technique Maps
 		techID = ++nextTechniqueID;
 		std::map<std::string, UINT> innerTechMap;
 		std::pair<std::string, UINT> innerTechPair(_technique, techID);
@@ -272,6 +292,8 @@ ID3D10EffectVariable* CDX10Renderer::GetFXVariable(UINT _fxID, std::string _tech
 {
 	// Retrieve the FX pointer
 	ID3D10Effect* pFX = m_effectsByID.find(_fxID)->second;
+
+	// Retrieve the pointer to the variable and return it to the calling object
 	return pFX->GetVariableByName(_techVar.c_str());
 }
 
@@ -283,6 +305,7 @@ bool CDX10Renderer::BuildVertexLayout(eVertexType _vertType, UINT _techID, UINT*
 	{
 	case VT_BASIC:
 	{
+		// Vertex Desc with basic vertex of a position only
 		D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 }
@@ -293,6 +316,7 @@ bool CDX10Renderer::BuildVertexLayout(eVertexType _vertType, UINT _techID, UINT*
 	break;
 	case VT_COLOR:
 	{
+		// Vertex Desc for a basic vertex with D3DXCOLOR as well
 		D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
@@ -322,10 +346,12 @@ bool CDX10Renderer::CreateVertexLayout(D3D10_INPUT_ELEMENT_DESC* _vertexDesc, UI
 	VALIDATEHR(	m_pDX10Device->CreateInputLayout(_vertexDesc, _elementNum, passDesc.pIAInputSignature,
 				passDesc.IAInputSignatureSize, &pVertexLayout));
 
+	// Add the Vertex Layout to the Map
 	UINT inputLayerID = ++nextInputLayoutID;
 	std::pair<UINT, ID3D10InputLayout*> inputLayerPair(inputLayerID, pVertexLayout);
 	VALIDATE(m_inputLayouts.insert(inputLayerPair).second);
 
+	// Store the ID in for the calling object
 	*_vertexLayoutID = inputLayerID;
 	return true;
 }

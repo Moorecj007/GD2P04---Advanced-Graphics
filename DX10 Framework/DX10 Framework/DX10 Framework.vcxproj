@@ -57,6 +57,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -67,6 +68,9 @@
       <ShaderModel>4.0</ShaderModel>
       <ShaderType>Effect</ShaderType>
     </FxCompile>
+    <Bscmake>
+      <PreserveSbr>true</PreserveSbr>
+    </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -96,7 +100,8 @@
     <ClCompile Include="GeometricObject.cpp" />
     <ClCompile Include="DX10Renderer.cpp" />
     <ClCompile Include="GeometricMesh.cpp" />
-    <ClCompile Include="Mesh_Cube.cpp" />
+    <ClCompile Include="Mesh_Finite_Plane.cpp" />
+    <ClCompile Include="Mesh_Rect_Prism.cpp" />
     <ClCompile Include="StaticBuffer.cpp" />
     <ClCompile Include="Timer.cpp" />
   </ItemGroup>
@@ -105,7 +110,8 @@
     <ClInclude Include="GeometricObject.h" />
     <ClInclude Include="DX10_Utilities.h" />
     <ClInclude Include="GeometricMesh.h" />
-    <ClInclude Include="Mesh_Cube.h" />
+    <ClInclude Include="Mesh_Finite_Plane.h" />
+    <ClInclude Include="Mesh_Rect_Prism.h" />
     <ClInclude Include="StaticBuffer.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Utilities.h" />
