@@ -42,17 +42,17 @@ public:
 	* @author: Callan Moore
 	* @parameter: _pRenderer: Renderer for the Application
 	* @parameter: _vert: Vertex Structure to use
-	* @parameter: _scale: Scale factor for the Cube Mesh
+	* @parameter: _scale: Scale factor for the finite plane Mesh
 	* @return: bool: Successful or not
 	********************/
 	virtual bool Initialise(CDX10Renderer* _pRenderer, TVertexBasic _vert, v3float _scale);
 	
 	/***********************
-	* Initialise: Initialise the Rect Prism mesh
+	* Initialise: Initialise the finite plane mesh
 	* @author: Callan Moore
 	* @parameter: _pRenderer: Renderer for the Application
 	* @parameter: _vert: Vertex Structure to use
-	* @parameter: _scale: Scale factor for the Cube Mesh
+	* @parameter: _scale: Scale factor for the finite plane Mesh
 	* @parameter: _color: Color for each vertex
 	* @return: bool: Successful or not
 	********************/
