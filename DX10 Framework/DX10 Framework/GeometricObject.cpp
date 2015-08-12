@@ -58,7 +58,7 @@ bool CGeometricObject::Initialise(CDX10Renderer* _pRenderer, CGeometricMesh* _pM
 
 void CGeometricObject::Process(float _dt)
 {
-	m_rotationYaw += (float)D3DXToRadian(60.0f) * _dt;
+	//m_rotationYaw += (float)D3DXToRadian(60.0f) * _dt;
 }
 
 void CGeometricObject::Draw()

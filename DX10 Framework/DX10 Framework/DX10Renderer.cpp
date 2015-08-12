@@ -24,6 +24,9 @@ CDX10Renderer::CDX10Renderer()
 
 bool CDX10Renderer::Initialise(int _clientWidth, int _clientHeight, HWND _hWND)
 {
+	// Seed time
+	srand((UINT)time(NULL));
+
 	// Save Window Variables
 	m_hWnd = _hWND;
 	m_clientWidth = _clientWidth;
@@ -34,9 +37,9 @@ bool CDX10Renderer::Initialise(int _clientWidth, int _clientHeight, HWND _hWND)
 	m_clearColor = YELLOW;
 
 	//Initialise the ID Keys for the Maps
-	nextEffectID = 0;
-	nextTechniqueID = 0;
-	nextInputLayoutID = 0;
+	m_nextEffectID = 0;
+	m_nextTechniqueID = 0;
+	m_nextInputLayoutID = 0;
 
 	return true;
 }
@@ -222,7 +225,7 @@ bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UIN
 		ReleaseCOM(compilationErrors);
 		
 		// Create the pairs to be inserted into the appropriate FX Maps
-		fxID = ++nextEffectID;
+		fxID = ++m_nextEffectID;
 		std::pair<std::string, UINT> fxPair(_fxFileName, fxID);
 		std::pair<UINT, ID3D10Effect*> fxPairByID(fxID, pFX);
 
@@ -255,7 +258,7 @@ bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UIN
 			ID3D10EffectTechnique* pTech = pFX->GetTechniqueByName(_technique.c_str());
 
 			// Create pairs to store in the Technique Maps
-			techID = ++nextTechniqueID;
+			techID = ++m_nextTechniqueID;
 			std::pair<std::string, UINT> techPair(_technique, techID);
 			std::pair<UINT, ID3D10EffectTechnique*> techPairByID(techID, pTech);
 
@@ -270,7 +273,7 @@ bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UIN
 		ID3D10EffectTechnique* pTech = pFX->GetTechniqueByName(_technique.c_str());
 
 		// Create pairs to store in the Technique Maps
-		techID = ++nextTechniqueID;
+		techID = ++m_nextTechniqueID;
 		std::map<std::string, UINT> innerTechMap;
 		std::pair<std::string, UINT> innerTechPair(_technique, techID);
 		VALIDATE(innerTechMap.insert(innerTechPair).second);
@@ -347,7 +350,7 @@ bool CDX10Renderer::CreateVertexLayout(D3D10_INPUT_ELEMENT_DESC* _vertexDesc, UI
 				passDesc.IAInputSignatureSize, &pVertexLayout));
 
 	// Add the Vertex Layout to the Map
-	UINT inputLayerID = ++nextInputLayoutID;
+	UINT inputLayerID = ++m_nextInputLayoutID;
 	std::pair<UINT, ID3D10InputLayout*> inputLayerPair(inputLayerID, pVertexLayout);
 	VALIDATE(m_inputLayouts.insert(inputLayerPair).second);
 
@@ -418,7 +421,7 @@ ID3D10EffectTechnique* CDX10Renderer::GetTechnique(UINT _techID)
 
 void CDX10Renderer::SetViewMatrix()
 {
-	D3DXVECTOR3 pos(-5.0f, 5.0f, -5.0f);
+	D3DXVECTOR3 pos(-5.0f, 5.0f, -20.0f);
 	D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
 	D3DXMatrixLookAtLH(&m_matView, &pos, &target, &up);

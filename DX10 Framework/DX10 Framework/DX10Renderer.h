@@ -28,6 +28,7 @@
 // Library Includes
 #include <map>
 #include <typeinfo> 
+#include <time.h>
 
 // Local Includes
 #include "Utilities.h"
@@ -153,12 +154,12 @@ public:
 	bool CreateStaticBuffer(typename TVertices* _pVertices, typename TIndices* _pIndices,
 		UINT _vertCount, UINT _indexCount, UINT _stride, UINT* _pBufferID)
 	{
-		*_pBufferID = ++nextBufferID;
+		*_pBufferID = ++m_nextBufferID;
 
 		CStaticBuffer* staticBuff = new CStaticBuffer(m_pDX10Device);
 		if (staticBuff->Initialise(_pVertices, _pIndices, _vertCount, _indexCount, _stride, _pBufferID))
 		{
-			std::pair<UINT, CStaticBuffer*> bufferPair(nextBufferID, staticBuff);
+			std::pair<UINT, CStaticBuffer*> bufferPair(m_nextBufferID, staticBuff);
 			VALIDATE(m_staticBuffers.insert(bufferPair).second);
 
 			return true;
@@ -273,18 +274,18 @@ private:
 	D3D10_DRIVER_TYPE m_dx10DriverType;
 	D3DXCOLOR m_clearColor;
 
-	UINT nextEffectID;
+	UINT m_nextEffectID;
 	std::map<std::string, UINT> m_effectIDs;
 	std::map<UINT, ID3D10Effect*> m_effectsByID;
 
-	UINT nextTechniqueID;
+	UINT m_nextTechniqueID;
 	std::map<UINT, std::map<std::string, UINT>> m_techniqueIDs;
 	std::map<UINT, ID3D10EffectTechnique*> m_techniquesByID;
 
-	UINT nextInputLayoutID;
+	UINT m_nextInputLayoutID;
 	std::map<UINT, ID3D10InputLayout*> m_inputLayouts;
 
-	UINT nextBufferID;
+	UINT m_nextBufferID;
 	std::map<UINT, CStaticBuffer*> m_staticBuffers;
 };
 

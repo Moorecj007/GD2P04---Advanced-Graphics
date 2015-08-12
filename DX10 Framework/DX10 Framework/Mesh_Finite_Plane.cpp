@@ -23,6 +23,157 @@ CMesh_Finite_Plane::~CMesh_Finite_Plane()
 {
 }
 
+bool CMesh_Finite_Plane::Initialise(CDX10Renderer* _pRenderer, TVertexBasic _vert, v3float _scale)
+{
+	// Save the renderer on the Cube
+	m_pRenderer = _pRenderer;
+
+	float vertScaleX = _scale.x / 2;
+	//float vertScaleY = _scale.y / 2;
+	float vertScaleZ = _scale.z / 2;
+
+	const UINT kVertexCount = 10000;
+	int size = (int)sqrt(kVertexCount);
+	int sizeFromOrigin = (size / 2);
+
+	TVertexBasic vertices[kVertexCount];
+
+	for (int length = -sizeFromOrigin; length < sizeFromOrigin; length++)
+	{
+		for (int width = -sizeFromOrigin; width < sizeFromOrigin; width++)
+		{
+			int index = (length + sizeFromOrigin) * size + (width + sizeFromOrigin);
+			vertices[index].pos = D3DXVECTOR3((width * _scale.x), 0, (length * _scale.z));
+		}
+	}
+
+	// Save the information for the Vertex Buffer
+	m_vertType = VT_BASIC;
+	UINT stride = sizeof(*vertices);
+
+	const UINT kIndexCount = 19800; // (size * size) + ((size - 2) * size);
+	DWORD indices[kIndexCount];
+	bool widthFlipDir = true;
+	int index = 0;
+	for (int length = -sizeFromOrigin; length < (sizeFromOrigin - 1); length++)
+	{
+		if (widthFlipDir == true)
+		{
+			for (int width = sizeFromOrigin; width > -sizeFromOrigin; width--)
+			{
+				indices[index++] = ((length + sizeFromOrigin) * size) + (width + sizeFromOrigin) - 1;
+				indices[index++] = ((length + 1 + sizeFromOrigin) * size) + (width + sizeFromOrigin) - 1;
+			}
+		}
+		else
+		{
+			for (int width = -sizeFromOrigin; width < sizeFromOrigin; width++)
+			{
+				indices[index++] = ((length + sizeFromOrigin) * size) + (width + sizeFromOrigin) - 1;
+				indices[index++] = ((length + 1 + sizeFromOrigin) * size) + (width + sizeFromOrigin) - 1;
+			}
+		}
+
+		// Flip the direction of the width loop
+		widthFlipDir = !widthFlipDir;
+	}
+
+	m_primTopology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+
+	// Create the Static buffer and store the ID
+	m_pRenderer->CreateStaticBuffer(vertices, indices, kVertexCount, kIndexCount, stride, &m_bufferID);
+
+	return true;
+}
+
+bool CMesh_Finite_Plane::Initialise(CDX10Renderer* _pRenderer, TVertexColor _vert, v3float _scale, D3DXCOLOR _color)
+{
+	// Save the renderer on the Cube
+	m_pRenderer = _pRenderer;
+
+	bool randomYawValues;
+	_scale.y != 0.0f ? randomYawValues = true : randomYawValues = false;
+
+	const UINT kVertexCount = 10000;
+	int size = (int)sqrt(kVertexCount);
+	int sizeFromOrigin = (size / 2);
+
+	TVertexColor vertices[kVertexCount];
+
+	if (randomYawValues == true)
+	{
+		float yPos = 0.0f;
+
+		for (int length = -sizeFromOrigin; length < sizeFromOrigin; length++)
+		{
+			for (int width = -sizeFromOrigin; width < sizeFromOrigin; width++)
+			{
+				if (rand() % 2 == 1)
+				{
+					yPos += (float)(rand() % 100) / 1000.0f;
+				}
+				else
+				{
+					yPos -= (float)(rand() % 100) / 1000.0f;
+				}
+
+				int index = (length + sizeFromOrigin) * size + (width + sizeFromOrigin);
+				vertices[index].pos = D3DXVECTOR3((width * _scale.x), (yPos), (length * _scale.z));
+				vertices[index].color = _color;
+			}
+		}
+	}
+	else
+	{
+		for (int length = -sizeFromOrigin; length < sizeFromOrigin; length++)
+		{
+			for (int width = -sizeFromOrigin; width < sizeFromOrigin; width++)
+			{
+				int index = (length + sizeFromOrigin) * size + (width + sizeFromOrigin);
+				vertices[index].pos = D3DXVECTOR3((width * _scale.x), 0, (length * _scale.z));
+				vertices[index].color = _color;
+			}
+		}
+	}
+
+	// Save the information for the Vertex Buffer
+	m_vertType = VT_COLOR;
+	UINT stride = sizeof(*vertices);
+
+	const UINT kIndexCount = 19800; // (size * size) + ((size - 2) * size);
+	DWORD indices[kIndexCount];
+	bool widthFlipDir = true;
+	int index = 0;
+	for (int length = -sizeFromOrigin; length < (sizeFromOrigin - 1); length++)
+	{
+		if (widthFlipDir == true)
+		{
+			for (int width = sizeFromOrigin; width > -sizeFromOrigin; width--)
+			{
+				indices[index++] = ((length + sizeFromOrigin) * size) + (width + sizeFromOrigin) - 1;
+				indices[index++] = ((length + 1 + sizeFromOrigin) * size) + (width + sizeFromOrigin) - 1;
+			}
+		}
+		else
+		{
+			for (int width = -sizeFromOrigin; width < sizeFromOrigin; width++)
+			{
+				indices[index++] = ((length + sizeFromOrigin) * size) + (width + sizeFromOrigin) - 1;
+				indices[index++] = ((length + 1 + sizeFromOrigin) * size) + (width + sizeFromOrigin) - 1;
+			}
+		}
+
+		// Flip the direction of the width loop
+		widthFlipDir = !widthFlipDir;
+	}
+
+	m_primTopology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
+
+	// Create the Static buffer and store the ID
+	m_pRenderer->CreateStaticBuffer(vertices, indices, kVertexCount, kIndexCount, stride, &m_bufferID);
+
+	return true;
+}
 
 void CMesh_Finite_Plane::Render()
 {

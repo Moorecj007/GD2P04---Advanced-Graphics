@@ -15,10 +15,6 @@
 // This Include
 #include "Application.h"
 
-// Local Includes
-#include "GeometricMesh.h"
-#include "Mesh_Rect_Prism.h"
-
 // Static Variables
 CApplication* CApplication::s_pApp = 0;
 
@@ -183,6 +179,14 @@ bool CApplication::Initialise(int _clientWidth, int _clientHeight)
 	m_pCube = new CGeometricObject();
 	m_pCube->Initialise(m_pRenderer, m_pCubeMesh);
 
+	// Creating a Terrain Object
+	m_pTerrainMesh = new CMesh_Finite_Plane();
+	//TVertexColor vertColor;
+	scalar = v3float(0.1f, 0.01f, 0.1f);
+	m_pTerrainMesh->Initialise(m_pRenderer, vertColor, scalar, RED);
+	m_pTerrain = new CGeometricObject();
+	m_pTerrain->Initialise(m_pRenderer, m_pTerrainMesh);
+
 	return true;
 }
 
@@ -201,8 +205,10 @@ void CApplication::ShutDown()
 {
 	// Delete and free memory for the Application variables
 	ReleasePtr(m_pKeyDown);
-	ReleasePtr(m_pCube);
 	ReleasePtr(m_pCubeMesh);
+	ReleasePtr(m_pTerrainMesh);
+	ReleasePtr(m_pCube);
+	ReleasePtr(m_pTerrain);
 	ReleasePtr(m_pTimer);
 
 	// Delete and free the memory from the Renderer
@@ -224,6 +230,9 @@ void CApplication::ExecuteOneFrame()
 	m_pRenderer->SetViewMatrix();
 	m_pCube->Process(m_dt);
 	m_pCube->Draw();
+
+	m_pTerrain->Process(m_dt);
+	m_pTerrain->Draw();
 
 	// Tell the Renderer the data input is over and present the outcome
 	m_pRenderer->EndRender();

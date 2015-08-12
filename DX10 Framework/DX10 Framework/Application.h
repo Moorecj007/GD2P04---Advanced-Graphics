@@ -36,6 +36,9 @@
 #include "DX10Renderer.h"
 #include "GeometricObject.h"
 #include "Timer.h"
+#include "GeometricMesh.h"
+#include "Mesh_Rect_Prism.h"
+#include "Mesh_Finite_Plane.h"
 
 class CApplication
 {
@@ -156,9 +159,11 @@ private:
 
 	// Objects
 	CGeometricObject* m_pCube;
+	CGeometricObject* m_pTerrain;
 
 	// Meshes
 	CGeometricMesh* m_pCubeMesh;
+	CGeometricMesh* m_pTerrainMesh;
 };
 
 #endif // __APPLICATION_H__
