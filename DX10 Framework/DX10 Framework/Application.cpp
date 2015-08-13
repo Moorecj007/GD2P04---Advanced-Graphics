@@ -182,10 +182,18 @@ bool CApplication::Initialise(int _clientWidth, int _clientHeight)
 	// Creating a Terrain Object
 	m_pTerrainMesh = new CMesh_Finite_Plane();
 	//TVertexColor vertColor;
-	scalar = v3float(0.1f, 0.01f, 0.1f);
+	scalar = v3float(1.0f, 0.3f, 1.0f);
 	m_pTerrainMesh->Initialise(m_pRenderer, vertColor, scalar, RED);
 	m_pTerrain = new CGeometricObject();
 	m_pTerrain->Initialise(m_pRenderer, m_pTerrainMesh);
+
+	m_pCamera = new CCamera_Debug();
+	m_pCamera->Initialise(m_pRenderer);
+	m_pCamera->SetSpeed(10);
+	m_pCamera->SetPostionVec({ -20.0f, 10.0f, -20.0f });
+	m_pCamera->SetTargetVector({ 0.0f, 0.0f, 0.0f });
+	
+
 
 	return true;
 }
@@ -210,6 +218,7 @@ void CApplication::ShutDown()
 	ReleasePtr(m_pCube);
 	ReleasePtr(m_pTerrain);
 	ReleasePtr(m_pTimer);
+	ReleasePtr(m_pCamera);
 
 	// Delete and free the memory from the Renderer
 	m_pRenderer->ShutDown();
@@ -217,22 +226,31 @@ void CApplication::ShutDown()
 }
 
 void CApplication::ExecuteOneFrame()
+{	
+	Process();
+	Draw();
+}
+
+void CApplication::Process()
 {
 	// Retrieve the Delta Tick of the last frame
 	Sleep(1);
 	m_pTimer->Tick();
 	m_dt = m_pTimer->GetDeltaTime();
 
+	HandleInput();
+	m_pCamera->Process();
+	m_pCube->Process(m_dt);
+	m_pTerrain->Process(m_dt);
+}
+
+void CApplication::Draw()
+{
 	// Get the Renderer Ready to receive new data
 	m_pRenderer->StartRender();
 
-	HandleInput();
-	m_pRenderer->SetViewMatrix();
-	m_pCube->Process(m_dt);
-	m_pCube->Draw();
-
-	m_pTerrain->Process(m_dt);
 	m_pTerrain->Draw();
+	m_pCube->Draw();
 
 	// Tell the Renderer the data input is over and present the outcome
 	m_pRenderer->EndRender();
@@ -242,11 +260,32 @@ void CApplication::HandleInput()
 {
 	// Template Inputs
 	if (m_pKeyDown[VK_F1])
-	{
-		
+	{	
 		m_pRenderer->ToggleFullscreen();
 		m_pKeyDown[VK_F1] = false;
 	}
+	if (m_pKeyDown[VK_F2])
+	{
+
+		m_pRenderer->ToggleFillMode();
+		m_pKeyDown[VK_F2] = false;
+	}
+	//if (m_pKeyDown[0x57]) // W Key
+	//{
+	//	m_pCamera->MoveInLookDir(1.0f, m_dt);
+	//}
+	//if (m_pKeyDown[0x53]) // S Key
+	//{
+	//	m_pCamera->MoveInLookDir(-1.0f, m_dt);
+	//}
+	//if (m_pKeyDown[0x41])	// A Key
+	//{
+	//	m_pCamera->Yaw(1.0f, m_dt);
+	//}
+	//if (m_pKeyDown[0x44])	// D Key
+	//{
+	//	m_pCamera->Yaw(-1.0f, m_dt);
+	//}
 
 	// Application Specific Inputs
 }

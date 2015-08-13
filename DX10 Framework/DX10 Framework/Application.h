@@ -25,7 +25,7 @@
 
 #ifdef _DEBUG
 // Visual Leak Detector to be run only if in DEBUG mode
-//#include "vld.h"
+#include "vld.h"
 #define D3D_DEBUG_INFO
 #endif // _DEBUG
 
@@ -39,6 +39,7 @@
 #include "GeometricMesh.h"
 #include "Mesh_Rect_Prism.h"
 #include "Mesh_Finite_Plane.h"
+#include "Camera_Debug.h"
 
 class CApplication
 {
@@ -117,6 +118,20 @@ public:
 	void ExecuteOneFrame();
 
 	/***********************
+	* Process: Process the Application
+	* @author: Callan Moore
+	* @return: void
+	********************/
+	void Process();
+
+	/***********************
+	* Draw: Draw the Application components
+	* @author: Callan Moore
+	* @return: void
+	********************/
+	void Draw();
+
+	/***********************
 	* HandleInput: Handle all input for the application
 	* @author: Callan Moore
 	* @return: void
@@ -164,6 +179,9 @@ private:
 	// Meshes
 	CGeometricMesh* m_pCubeMesh;
 	CGeometricMesh* m_pTerrainMesh;
+
+	// Camera
+	CCamera_Debug* m_pCamera;
 };
 
 #endif // __APPLICATION_H__

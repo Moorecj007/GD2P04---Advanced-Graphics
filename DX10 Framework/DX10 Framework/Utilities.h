@@ -19,6 +19,7 @@
 #pragma message("Included Utilities.h")
 
 // Defines
+#define _USE_MATH_DEFINES
 #define ReleasePtr(x) { if(x){ delete x; x = 0;} }
 
 #if defined(DEBUG) | defined(_DEBUG)
@@ -30,6 +31,9 @@
 #else
 	VALIDATE(x) if(!x) return false
 #endif
+
+// Library Includes
+#include <math.h>
 
 /***********************
 Constants 
@@ -239,6 +243,17 @@ struct v3float
 		return (*this);
 	}
 };
+
+/***********************
+* DegreesToRadians: Converts degrees to radians
+* @author: Callan Moore
+* @parameter: _fDegrees: Angle in Degrees to convert
+* @return: float: Angle in Radians
+********************/
+inline float DegreesToRadians(float _fDegrees)
+{
+	return ((_fDegrees * (float)M_PI) / 180.0f);
+}
 
 #endif // __UTILITIES_H__
 

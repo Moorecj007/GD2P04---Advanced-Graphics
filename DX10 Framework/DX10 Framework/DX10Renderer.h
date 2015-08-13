@@ -98,6 +98,13 @@ public:
 	void ToggleFullscreen();
 
 	/***********************
+	* ToggleFillMode: Toggle fill mode between solid and wireframe
+	* @author: Callan Moore
+	* @return: void
+	********************/
+	void ToggleFillMode();
+
+	/***********************
 	* BuildFX: Build a FX file and Technique and store on the Renderer
 	* @author: Callan Moore
 	* @Parameter: _fxFileName: Name of the Effects file to retrieve
@@ -230,9 +237,12 @@ public:
 	/***********************
 	* SetViewMatrix: Set the View Matrix for use in Renderering
 	* @author: Callan Moore
+	* @parameter: _pos: The position vector of the camera
+	* @parameter: _look: The look vector of the camera
+	* @parameter: _up: The up vector of the camera
 	* @return: void
 	********************/
-	void SetViewMatrix();
+	void SetViewMatrix(D3DXVECTOR3 _pos, D3DXVECTOR3 _look, D3DXVECTOR3 _up);
 	
 	/***********************
 	* CalcProjMatrix: Calculate the Projection Matrix for use in Renderering
@@ -270,6 +280,7 @@ private:
 	ID3D10Device*    m_pDX10Device;
 	IDXGISwapChain*  m_pDX10SwapChain;
 	ID3D10RenderTargetView* m_pRenderTargetView;
+	D3D10_RASTERIZER_DESC m_rasterizerDesc;
 
 	D3D10_DRIVER_TYPE m_dx10DriverType;
 	D3DXCOLOR m_clearColor;

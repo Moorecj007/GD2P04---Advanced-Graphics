@@ -93,6 +93,7 @@ private:
 	CGeometricMesh* m_pMesh;
 
 	v3float m_pos;
+	float m_timeElapsed;
 	float m_rotationPitch;
 	float m_rotationYaw;
 	float m_rotationRoll;
@@ -105,6 +106,7 @@ private:
 	ID3D10EffectVariable* m_pTechMatWorld;
 	ID3D10EffectVariable* m_pTechMatView;
 	ID3D10EffectVariable* m_pTechMatProj;
+	ID3D10EffectVariable* m_pTechTimeElapsed;
 };
 
 #endif	// __GEOMETRICOBJECT_H__

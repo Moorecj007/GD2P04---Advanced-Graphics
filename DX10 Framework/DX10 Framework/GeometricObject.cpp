@@ -35,6 +35,8 @@ CGeometricObject::CGeometricObject()
 	m_pTechMatWorld = 0;
 	m_pTechMatView = 0;
 	m_pTechMatProj = 0;
+
+	m_timeElapsed = 0;
 }
 
 CGeometricObject::~CGeometricObject()
@@ -58,7 +60,12 @@ bool CGeometricObject::Initialise(CDX10Renderer* _pRenderer, CGeometricMesh* _pM
 
 void CGeometricObject::Process(float _dt)
 {
-	//m_rotationYaw += (float)D3DXToRadian(60.0f) * _dt;
+	m_timeElapsed += _dt;
+	if (m_timeElapsed > 1.0f)
+	{
+		m_timeElapsed -= 1.0f;
+	}
+	CalcWorldMatrix();
 }
 
 void CGeometricObject::Draw()
@@ -72,11 +79,11 @@ void CGeometricObject::Draw()
 		D3D10_TECHNIQUE_DESC techDesc;
 		pTech->GetDesc(&techDesc);
 		for (UINT p = 0; p < techDesc.Passes; ++p)
-		{
-			CalcWorldMatrix();
+		{	
 			m_pTechMatWorld->AsMatrix()->SetMatrix((float*)m_matWorld);
 			m_pTechMatView->AsMatrix()->SetMatrix((float*)*m_pRenderer->GetViewMatrix());
 			m_pTechMatProj->AsMatrix()->SetMatrix((float*)*m_pRenderer->GetProjMatrix());
+			m_pTechTimeElapsed->AsScalar()->SetFloat(m_timeElapsed);
 
 			pTech->GetPassByIndex(p)->Apply(0);
 			m_pMesh->Render();
@@ -101,6 +108,9 @@ bool CGeometricObject::CreateFXVarPointers()
 
 	m_pTechMatProj = m_pRenderer->GetFXVariable(m_fxID, "matColorProj");
 	VALIDATE(m_pTechMatProj != 0);
+
+	m_pTechTimeElapsed = m_pRenderer->GetFXVariable(m_fxID, "timeElapsed");
+	VALIDATE(m_pTechTimeElapsed != 0);
 
 	return true;
 }

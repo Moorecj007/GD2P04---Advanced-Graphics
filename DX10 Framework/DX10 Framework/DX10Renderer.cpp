@@ -125,6 +125,20 @@ bool CDX10Renderer::InitialiseDeviceAndSwapChain()
 				&swapChainDesc,
 				&m_pDX10SwapChain,
 				&m_pDX10Device));
+
+	m_rasterizerDesc.CullMode = D3D10_CULL_BACK;
+	m_rasterizerDesc.FillMode = D3D10_FILL_SOLID;
+	m_rasterizerDesc.FrontCounterClockwise = true;
+	m_rasterizerDesc.DepthBias = true;
+	m_rasterizerDesc.DepthBiasClamp = 0;
+	m_rasterizerDesc.SlopeScaledDepthBias = 0;
+	m_rasterizerDesc.DepthClipEnable = true;
+	m_rasterizerDesc.ScissorEnable = false;
+	m_rasterizerDesc.MultisampleEnable = false;
+	m_rasterizerDesc.AntialiasedLineEnable = true;
+	ID3D10RasterizerState* pRS;
+	m_pDX10Device->CreateRasterizerState(&m_rasterizerDesc, &pRS);
+	m_pDX10Device->RSSetState(pRS);
 	
 	
 	// Invoke functionality that deals with changing size of the window
@@ -185,6 +199,22 @@ void CDX10Renderer::ToggleFullscreen()
 {
 	m_fullScreen = !m_fullScreen;
 	m_pDX10SwapChain->SetFullscreenState(m_fullScreen, NULL);
+}
+
+void CDX10Renderer::ToggleFillMode()
+{
+	if (m_rasterizerDesc.FillMode == D3D10_FILL_SOLID)
+	{
+		m_rasterizerDesc.FillMode = D3D10_FILL_WIREFRAME;
+	}
+	else
+	{
+		m_rasterizerDesc.FillMode = D3D10_FILL_SOLID;
+	}
+
+	ID3D10RasterizerState* pRS;
+	m_pDX10Device->CreateRasterizerState(&m_rasterizerDesc, &pRS);
+	m_pDX10Device->RSSetState(pRS);
 }
 
 bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UINT* _pFXID, UINT* _pTechID)
@@ -419,12 +449,14 @@ ID3D10EffectTechnique* CDX10Renderer::GetTechnique(UINT _techID)
 	return iterTech->second;
 }
 
-void CDX10Renderer::SetViewMatrix()
+void CDX10Renderer::SetViewMatrix(D3DXVECTOR3 _pos, D3DXVECTOR3 _look, D3DXVECTOR3 _up)
 {
-	D3DXVECTOR3 pos(-5.0f, 5.0f, -20.0f);
-	D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
-	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
-	D3DXMatrixLookAtLH(&m_matView, &pos, &target, &up);
+	//D3DXVECTOR3 pos(_pos.x, _pos.y, _pos.z);
+	//_look = _look.Normalise()  * 5.0f;
+	//D3DXVECTOR3 target(_look.x + pos.x, _look.y + pos.y, _look.z + pos.z);
+	//D3DXVECTOR3 target(_look.x, _look.y, _look.z);	// target
+	//D3DXVECTOR3 up(_up.x, _up.y, _up.z);
+	D3DXMatrixLookAtLH(&m_matView, &_pos, &_look, &_up);
 }
 
 void CDX10Renderer::CalcProjMatrix()
