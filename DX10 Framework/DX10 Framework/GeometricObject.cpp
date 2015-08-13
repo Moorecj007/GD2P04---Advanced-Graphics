@@ -50,7 +50,7 @@ bool CGeometricObject::Initialise(CDX10Renderer* _pRenderer, CGeometricMesh* _pM
 	m_pRenderer = _pRenderer;
 	m_pMesh = _pMesh;
 
-	// Set up the Cube for with its shaders and draw instructions
+	// Set up the Objects for with its shaders and draw instructions
 	BuildFX();
 	CreateFXVarPointers();
 	BuildVertexLayout();

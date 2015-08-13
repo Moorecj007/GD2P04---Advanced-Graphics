@@ -29,7 +29,7 @@
 	}												\
 }
 #else
-	VALIDATE(x) if(!x) return false
+	#define VALIDATE(x) if(!x) return false
 #endif
 
 // Library Includes
@@ -247,12 +247,23 @@ struct v3float
 /***********************
 * DegreesToRadians: Converts degrees to radians
 * @author: Callan Moore
-* @parameter: _fDegrees: Angle in Degrees to convert
+* @parameter: _degrees: Angle in Degrees to convert
 * @return: float: Angle in Radians
 ********************/
-inline float DegreesToRadians(float _fDegrees)
+inline float DegreesToRadians(float _degrees)
 {
-	return ((_fDegrees * (float)M_PI) / 180.0f);
+	return ((_degrees * (float)M_PI) / 180.0f);
+}
+
+/***********************
+* RadiansToDegrees: Converts radians to degrees
+* @author: Callan Moore
+* @parameter: _radians: Angle in radians to convert
+* @return: float: Angle in degrees
+********************/
+inline float RadiansToDegrees(float _radians)
+{
+	return (180.0f * _radians / float(M_PI));
 }
 
 #endif // __UTILITIES_H__

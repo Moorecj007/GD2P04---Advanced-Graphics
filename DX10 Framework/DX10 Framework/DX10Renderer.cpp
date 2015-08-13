@@ -50,6 +50,11 @@ CDX10Renderer::~CDX10Renderer()
 
 void CDX10Renderer::ShutDown()
 {
+	if (m_fullScreen == true)
+	{
+		m_pDX10SwapChain->SetFullscreenState(true, NULL);
+	}
+
 	// Delete the Graphics memory stored as DX10 InputLayers
 	std::map<UINT, ID3D10InputLayout*>::iterator iterInputLayout = m_inputLayouts.begin();
 	while (iterInputLayout != m_inputLayouts.end())
@@ -76,6 +81,7 @@ void CDX10Renderer::ShutDown()
 
 	ReleaseCOM(m_pRenderTargetView);
 	ReleaseCOM(m_pDX10SwapChain);
+	ReleaseCOM(m_pRasterizerState);
 	if (m_pDX10Device != 0)
 	{
 		m_pDX10Device->ClearState();
@@ -136,9 +142,9 @@ bool CDX10Renderer::InitialiseDeviceAndSwapChain()
 	m_rasterizerDesc.ScissorEnable = false;
 	m_rasterizerDesc.MultisampleEnable = false;
 	m_rasterizerDesc.AntialiasedLineEnable = true;
-	ID3D10RasterizerState* pRS;
-	m_pDX10Device->CreateRasterizerState(&m_rasterizerDesc, &pRS);
-	m_pDX10Device->RSSetState(pRS);
+
+	m_pDX10Device->CreateRasterizerState(&m_rasterizerDesc, &m_pRasterizerState);
+	m_pDX10Device->RSSetState(m_pRasterizerState);
 	
 	
 	// Invoke functionality that deals with changing size of the window
@@ -212,9 +218,9 @@ void CDX10Renderer::ToggleFillMode()
 		m_rasterizerDesc.FillMode = D3D10_FILL_SOLID;
 	}
 
-	ID3D10RasterizerState* pRS;
-	m_pDX10Device->CreateRasterizerState(&m_rasterizerDesc, &pRS);
-	m_pDX10Device->RSSetState(pRS);
+	ReleaseCOM(m_pRasterizerState);
+	m_pDX10Device->CreateRasterizerState(&m_rasterizerDesc, &m_pRasterizerState);
+	m_pDX10Device->RSSetState(m_pRasterizerState);
 }
 
 bool CDX10Renderer::BuildFX(std::string _fxFileName, std::string _technique, UINT* _pFXID, UINT* _pTechID)
@@ -404,7 +410,6 @@ bool CDX10Renderer::RenderMesh(UINT _bufferID)
 void CDX10Renderer::StartRender()
 {
 	m_pDX10Device->ClearRenderTargetView(m_pRenderTargetView, m_clearColor);
-	//m_pDX10Device->ClearDepthStencilView(mDepthStencilView, D3D10_CLEAR_DEPTH | D3D10_CLEAR_STENCIL, 1.0f, 0);
 }
 
 void CDX10Renderer::EndRender()
@@ -449,14 +454,15 @@ ID3D10EffectTechnique* CDX10Renderer::GetTechnique(UINT _techID)
 	return iterTech->second;
 }
 
-void CDX10Renderer::SetViewMatrix(D3DXVECTOR3 _pos, D3DXVECTOR3 _look, D3DXVECTOR3 _up)
+void CDX10Renderer::SetViewMatrix(D3DXMATRIX _view)
 {
 	//D3DXVECTOR3 pos(_pos.x, _pos.y, _pos.z);
 	//_look = _look.Normalise()  * 5.0f;
 	//D3DXVECTOR3 target(_look.x + pos.x, _look.y + pos.y, _look.z + pos.z);
 	//D3DXVECTOR3 target(_look.x, _look.y, _look.z);	// target
 	//D3DXVECTOR3 up(_up.x, _up.y, _up.z);
-	D3DXMatrixLookAtLH(&m_matView, &_pos, &_look, &_up);
+	//D3DXMatrixLookAtLH(&m_matView, &_pos, &_look, &_up);
+	m_matView = _view;
 }
 
 void CDX10Renderer::CalcProjMatrix()

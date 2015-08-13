@@ -12,7 +12,6 @@
 * Mail :	Callan.Moore@mediadesign.school.nz
 */
 
-
 // Inclusion Guards
 #pragma once
 #ifndef __DX10RENDERER_H__
@@ -29,6 +28,7 @@
 #include <map>
 #include <typeinfo> 
 #include <time.h>
+#include <DXGIDebug.h>
 
 // Local Includes
 #include "Utilities.h"
@@ -134,7 +134,6 @@ public:
 	********************/
 	bool BuildVertexLayout(eVertexType _vertType, UINT _techID, UINT* _pVertexLayoutID);
 
-
 	/***********************
 	* CreateVertexLayout: Create the Vertex Layout for an Object
 	* @author: Callan Moore
@@ -237,12 +236,10 @@ public:
 	/***********************
 	* SetViewMatrix: Set the View Matrix for use in Renderering
 	* @author: Callan Moore
-	* @parameter: _pos: The position vector of the camera
-	* @parameter: _look: The look vector of the camera
-	* @parameter: _up: The up vector of the camera
+	* @parameter: _view: The new View matrix
 	* @return: void
 	********************/
-	void SetViewMatrix(D3DXVECTOR3 _pos, D3DXVECTOR3 _look, D3DXVECTOR3 _up);
+	void SetViewMatrix(D3DXMATRIX _view);
 	
 	/***********************
 	* CalcProjMatrix: Calculate the Projection Matrix for use in Renderering
@@ -281,6 +278,7 @@ private:
 	IDXGISwapChain*  m_pDX10SwapChain;
 	ID3D10RenderTargetView* m_pRenderTargetView;
 	D3D10_RASTERIZER_DESC m_rasterizerDesc;
+	ID3D10RasterizerState* m_pRasterizerState;
 
 	D3D10_DRIVER_TYPE m_dx10DriverType;
 	D3DXCOLOR m_clearColor;

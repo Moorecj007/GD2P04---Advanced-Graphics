@@ -39,7 +39,7 @@
     <ClCompile Include="Mesh_Finite_Plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Camera_Debug.cpp">
+    <ClCompile Include="Camera_FirstPerson.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,7 +77,7 @@
     <ClInclude Include="Mesh_Finite_Plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Camera_Debug.h">
+    <ClInclude Include="Camera_FirstPerson.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

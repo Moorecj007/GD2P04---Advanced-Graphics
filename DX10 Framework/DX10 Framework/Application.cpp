@@ -18,8 +18,7 @@
 // Static Variables
 CApplication* CApplication::s_pApp = 0;
 
-int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _cmdShow)
-{
+int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, int _cmdShow){
 	int clientWidth = 1000;
 	int clientHeight = 1000;
 
@@ -65,6 +64,11 @@ LRESULT CALLBACK CApplication::WindowProc(HWND _hWnd, UINT _uiMsg, WPARAM _wPara
 		case WM_KEYUP:
 		{
 			pApp->SetKeyDown(_wParam, false);
+		}
+		break;
+		case WM_MOUSEMOVE:
+		{
+			
 		}
 		break;
 		default: break;
@@ -116,10 +120,9 @@ bool CApplication::CreateWindowApp(int _clientWidth, int _clientHeight, HINSTANC
 int CApplication::Execute()
 {
 	MSG uiMsg;				// Generic message.
-	bool bOnline = true;
 
 	// Enter main event loop.
-	while (bOnline)
+	while (m_online)
 	{
 		while (PeekMessage(&uiMsg, NULL, 0, 0, PM_REMOVE))
 		{
@@ -156,6 +159,8 @@ CApplication* CApplication::GetInstance()
 
 bool CApplication::Initialise(int _clientWidth, int _clientHeight)
 {
+	ShowCursor(false);
+	m_online = true;
 	m_pTimer = new CTimer();
 	m_pTimer->Reset();
 
@@ -172,29 +177,24 @@ bool CApplication::Initialise(int _clientWidth, int _clientHeight)
 	memset(m_pKeyDown, false, 255);
 
 	// Creating a Cube Object
-	m_pCubeMesh = new CMesh_Rect_Prism();
-	TVertexColor vertColor;
-	v3float scalar(1.0f, 1.0f, 1.0f);
-	m_pCubeMesh->Initialise(m_pRenderer, vertColor, scalar, RED);
-	m_pCube = new CGeometricObject();
-	m_pCube->Initialise(m_pRenderer, m_pCubeMesh);
+	//m_pCubeMesh = new CMesh_Rect_Prism();
+	//TVertexColor vertColor;
+	//v3float scalar(1.0f, 1.0f, 1.0f);
+	//m_pCubeMesh->Initialise(m_pRenderer, vertColor, scalar, RED);
+	//m_pCube = new CGeometricObject();
+	//m_pCube->Initialise(m_pRenderer, m_pCubeMesh);
 
 	// Creating a Terrain Object
+	TVertexColor vertColor;
 	m_pTerrainMesh = new CMesh_Finite_Plane();
-	//TVertexColor vertColor;
-	scalar = v3float(1.0f, 0.3f, 1.0f);
+	v3float scalar = v3float(1.0f, 0.3f, 1.0f);
 	m_pTerrainMesh->Initialise(m_pRenderer, vertColor, scalar, RED);
 	m_pTerrain = new CGeometricObject();
 	m_pTerrain->Initialise(m_pRenderer, m_pTerrainMesh);
 
-	m_pCamera = new CCamera_Debug();
+	m_pCamera = new CCamera_FirstPerson();
 	m_pCamera->Initialise(m_pRenderer);
-	m_pCamera->SetSpeed(10);
-	m_pCamera->SetPostionVec({ -20.0f, 10.0f, -20.0f });
-	m_pCamera->SetTargetVector({ 0.0f, 0.0f, 0.0f });
 	
-
-
 	return true;
 }
 
@@ -239,9 +239,9 @@ void CApplication::Process()
 	m_dt = m_pTimer->GetDeltaTime();
 
 	HandleInput();
-	m_pCamera->Process();
-	m_pCube->Process(m_dt);
+	//m_pCube->Process(m_dt);
 	m_pTerrain->Process(m_dt);
+	m_pCamera->Process(m_dt);
 }
 
 void CApplication::Draw()
@@ -250,7 +250,7 @@ void CApplication::Draw()
 	m_pRenderer->StartRender();
 
 	m_pTerrain->Draw();
-	m_pCube->Draw();
+	//m_pCube->Draw();
 
 	// Tell the Renderer the data input is over and present the outcome
 	m_pRenderer->EndRender();
@@ -266,28 +266,63 @@ void CApplication::HandleInput()
 	}
 	if (m_pKeyDown[VK_F2])
 	{
-
 		m_pRenderer->ToggleFillMode();
 		m_pKeyDown[VK_F2] = false;
 	}
-	//if (m_pKeyDown[0x57]) // W Key
-	//{
-	//	m_pCamera->MoveInLookDir(1.0f, m_dt);
-	//}
-	//if (m_pKeyDown[0x53]) // S Key
-	//{
-	//	m_pCamera->MoveInLookDir(-1.0f, m_dt);
-	//}
-	//if (m_pKeyDown[0x41])	// A Key
-	//{
-	//	m_pCamera->Yaw(1.0f, m_dt);
-	//}
-	//if (m_pKeyDown[0x44])	// D Key
-	//{
-	//	m_pCamera->Yaw(-1.0f, m_dt);
-	//}
+	if (m_pKeyDown[VK_ESCAPE])
+	{
+		m_online = false;
+	}
 
-	// Application Specific Inputs
+	// Camera Inputs
+	if (m_pKeyDown[0x57]) // W Key
+	{
+		m_pCamera->MoveForwards(1.0f);
+	}
+	if (m_pKeyDown[0x53]) // S Key
+	{
+		m_pCamera->MoveForwards(-1.0f);
+	}
+	if (m_pKeyDown[0x41])	// A Key
+	{
+		m_pCamera->Strafe(-1.0f);
+	}
+	if (m_pKeyDown[0x44])	// D Key
+	{
+		m_pCamera->Strafe(1.0f);
+	}
+	if (m_pKeyDown[0x45])	// E Key
+	{
+		m_pCamera->Fly(1.0f);
+	}
+	if (m_pKeyDown[0x51])	// Q Key
+	{
+		m_pCamera->Fly(-1.0f);
+	}
+	
+	POINT mousePt;
+	GetCursorPos(&mousePt);
+	
+	if (mousePt.x > m_mousePrev.x)
+	{
+		m_pCamera->RotateYaw(1.0);
+	}
+	else if (mousePt.x < m_mousePrev.x)
+	{
+		m_pCamera->RotateYaw(-1.0);
+	}
+	
+	if (mousePt.y > m_mousePrev.y)
+	{
+		m_pCamera->RotatePitch(1.0);
+	}
+	else if (mousePt.y < m_mousePrev.y)
+	{
+		m_pCamera->RotatePitch(-1.0);
+	}
+	
+	m_mousePrev = { (m_clientWidth / 2), (m_clientHeight / 2) };
+	SetCursorPos(m_mousePrev.x, m_mousePrev.y);
 }
 
 void CApplication::SetKeyDown(int _index, bool _down)

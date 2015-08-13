@@ -39,7 +39,7 @@
 #include "GeometricMesh.h"
 #include "Mesh_Rect_Prism.h"
 #include "Mesh_Finite_Plane.h"
-#include "Camera_Debug.h"
+#include "Camera_FirstPerson.h"
 
 class CApplication
 {
@@ -161,6 +161,7 @@ private:
 	HWND m_hWnd;
 	int m_clientWidth;
 	int m_clientHeight;
+	bool m_online;
 
 	// Timer Variables
 	CTimer* m_pTimer;
@@ -181,7 +182,14 @@ private:
 	CGeometricMesh* m_pTerrainMesh;
 
 	// Camera
-	CCamera_Debug* m_pCamera;
+	CCamera_FirstPerson* m_pCamera;
+	// Mouse Tracking
+	POINT m_mousePrev;
+	bool m_mouseMoveLeft;
+	bool m_mouseMoveRight;
+	bool m_mouseMoveUp;
+	bool m_mouseMoveDown;
+
 };
 
 #endif // __APPLICATION_H__

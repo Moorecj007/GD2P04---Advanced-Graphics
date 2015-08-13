@@ -28,54 +28,81 @@ bool CMesh_Finite_Plane::Initialise(CDX10Renderer* _pRenderer, TVertexBasic _ver
 	// Save the renderer on the Cube
 	m_pRenderer = _pRenderer;
 
-	float vertScaleX = _scale.x / 2;
-	//float vertScaleY = _scale.y / 2;
-	float vertScaleZ = _scale.z / 2;
+	bool randomYawValues;
+	_scale.y != 0.0f ? randomYawValues = true : randomYawValues = false;
 
-	const UINT kVertexCount = 10000;
+	const UINT kVertexCount = 400;
 	int size = (int)sqrt(kVertexCount);
 	int sizeFromOrigin = (size / 2);
 
-	TVertexBasic vertices[kVertexCount];
+	TVertexColor vertices[kVertexCount];
 
-	for (int length = -sizeFromOrigin; length < sizeFromOrigin; length++)
+	if (randomYawValues == true)
 	{
-		for (int width = -sizeFromOrigin; width < sizeFromOrigin; width++)
+		for (int length = -sizeFromOrigin; length < sizeFromOrigin; length++)
 		{
-			int index = (length + sizeFromOrigin) * size + (width + sizeFromOrigin);
-			vertices[index].pos = D3DXVECTOR3((width * _scale.x), 0, (length * _scale.z));
+			for (int width = -sizeFromOrigin; width < sizeFromOrigin; width++)
+			{
+
+				int index = (length + sizeFromOrigin) * size + (width + sizeFromOrigin);
+
+				float yPos = (float)(rand() % 2);
+				vertices[index].pos = D3DXVECTOR3((width * _scale.x), (yPos), (length * _scale.z));
+			}
+		}
+	}
+	else
+	{
+		for (int length = -sizeFromOrigin; length < sizeFromOrigin; length++)
+		{
+			for (int width = -sizeFromOrigin; width < sizeFromOrigin; width++)
+			{
+				int index = (length + sizeFromOrigin) * size + (width + sizeFromOrigin);
+				vertices[index].pos = D3DXVECTOR3((width * _scale.x), 0, (length * _scale.z));
+			}
 		}
 	}
 
 	// Save the information for the Vertex Buffer
-	m_vertType = VT_BASIC;
+	m_vertType = VT_COLOR;
 	UINT stride = sizeof(*vertices);
 
-	const UINT kIndexCount = 19800; // (size * size) + ((size - 2) * size);
+	const UINT kIndexCount = 778;
 	DWORD indices[kIndexCount];
-	bool widthFlipDir = true;
 	int index = 0;
-	for (int length = -sizeFromOrigin; length < (sizeFromOrigin - 1); length++)
+	// Cycle through all rows except last one
+	for (int row = 0; row < size - 1; row++)
 	{
-		if (widthFlipDir == true)
+		if (row % 2 == 0)	// Even Row
 		{
-			for (int width = sizeFromOrigin; width > -sizeFromOrigin; width--)
+			// Even Rows go Right to Left for Clockwise winding order
+			for (int col = (int)(size - 1); col >= 0; col--)
 			{
-				indices[index++] = ((length + sizeFromOrigin) * size) + (width + sizeFromOrigin) - 1;
-				indices[index++] = ((length + 1 + sizeFromOrigin) * size) + (width + sizeFromOrigin) - 1;
+				indices[index++] = (col + (row * size));
+				indices[index++] = (col + ((row + 1) * size));
 			}
-		}
-		else
-		{
-			for (int width = -sizeFromOrigin; width < sizeFromOrigin; width++)
-			{
-				indices[index++] = ((length + sizeFromOrigin) * size) + (width + sizeFromOrigin) - 1;
-				indices[index++] = ((length + 1 + sizeFromOrigin) * size) + (width + sizeFromOrigin) - 1;
-			}
-		}
 
-		// Flip the direction of the width loop
-		widthFlipDir = !widthFlipDir;
+			// Add Degenerate triangle at end of each row
+			if (row != size - 2)
+			{
+				indices[index++] = (0 + ((row + 1) * size));
+			}
+		}
+		else	// Odd Row
+		{
+			// Even Rows go Left to Right for Clockwise winding order
+			for (int col = 0; col < size; col++)
+			{
+				indices[index++] = (col + (row * size));
+				indices[index++] = (col + ((row + 1) * size));
+			}
+
+			// Add Degenerate triangle at end of each row
+			if (row != size - 2)
+			{
+				indices[index++] = ((size - 1) + ((row + 1)  * size));
+			}
+		}
 	}
 
 	m_primTopology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP;
@@ -102,35 +129,14 @@ bool CMesh_Finite_Plane::Initialise(CDX10Renderer* _pRenderer, TVertexColor _ver
 
 	if (randomYawValues == true)
 	{
-		//float yPos = 0.0f;
-		//float yBounds = 10.0f;
-
 		for (int length = -sizeFromOrigin; length < sizeFromOrigin; length++)
 		{
 			for (int width = -sizeFromOrigin; width < sizeFromOrigin; width++)
 			{
-				//if (rand() % 2 == 1)
-				//{					
-				//	yPos += (float)(rand() % 10) / 100.0f;
-				//	if (yPos > yBounds)
-				//	{
-				//		yPos = yBounds;
-				//	}
-				//}
-				//else
-				//{
-				//	yPos -= (float)(rand() % 10) / 100.0f;
-				//	if (yPos < -yBounds)
-				//	{
-				//		yPos = -yBounds;
-				//	}
-				//}
 
 				int index = (length + sizeFromOrigin) * size + (width + sizeFromOrigin);
-				//vertices[index].pos = D3DXVECTOR3((width * _scale.x), (yPos), (length * _scale.z));
-				//D3DXCOLOR gradientColor = _color * ((yPos + yBounds) / 10.0f);
 
-				float yPos = rand() % 2;
+				float yPos = (float)(rand() % 2);
 				vertices[index].pos = D3DXVECTOR3((width * _scale.x), (yPos), (length * _scale.z));
 				D3DXCOLOR gradientColor = _color * (yPos * 2.0f / 255) / 10.0f;
 				vertices[index].color = gradientColor;
@@ -154,7 +160,7 @@ bool CMesh_Finite_Plane::Initialise(CDX10Renderer* _pRenderer, TVertexColor _ver
 	m_vertType = VT_COLOR;
 	UINT stride = sizeof(*vertices);
 
-	const UINT kIndexCount = 778; // (size * size) + ((size - 2) * size);
+	const UINT kIndexCount = 778;
 	DWORD indices[kIndexCount];
 	int index = 0;
 	// Cycle through all rows except last one
