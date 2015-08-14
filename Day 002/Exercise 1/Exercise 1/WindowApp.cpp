@@ -154,7 +154,7 @@ void WindowApp::onResize()
 	depthStencilDesc.MipLevels = 1;
 	depthStencilDesc.ArraySize = 1;
 	depthStencilDesc.Format    = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthStencilDesc.SampleDesc.Count   = 1; // multisampling must match
+	depthStencilDesc.SampleDesc.Count   = 1; // multi sampling must match
 	depthStencilDesc.SampleDesc.Quality = 0; // swap chain values.
 	depthStencilDesc.Usage          = D3D10_USAGE_DEFAULT;
 	depthStencilDesc.BindFlags      = D3D10_BIND_DEPTH_STENCIL;
