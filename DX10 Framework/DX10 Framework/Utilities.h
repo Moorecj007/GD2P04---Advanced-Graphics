@@ -33,12 +33,23 @@
 #endif
 
 // Library Includes
+#include <windows.h>
 #include <math.h>
 
 /***********************
 Constants 
 ********************/
 const float PI = 3.14159265358979323f;
+
+/***********************
+* v2float: Struct to hold 2 float values
+* @author: Callan Moore
+********************/
+struct v2float
+{
+	float x;
+	float y;
+};
 
 /***********************
 * v3float: Struct to hold 3 float values

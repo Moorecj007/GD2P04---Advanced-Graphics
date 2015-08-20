@@ -30,8 +30,8 @@ bool CCamera_FirstPerson::Initialise(CDX10Renderer* _pRenderer, HINSTANCE _hInst
 	m_pDirectInput = new CDirectInput();
 	VALIDATE(m_pDirectInput->Initialise(_hInstance, _hWnd));
 
-	m_position = D3DXVECTOR3(0.0f, 1.0f, -30.0f);
-	m_target = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
+	m_position = D3DXVECTOR3(-2.0f, 0.0f, -2.0f);
+	m_target = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_up = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	m_defaultForward = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
 	m_defaultRight = D3DXVECTOR3(1.0f, 0.0f, 0.0f);

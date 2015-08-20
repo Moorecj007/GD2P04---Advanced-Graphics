@@ -18,10 +18,10 @@
 #define __MESH_FINITE_PLANE_H__
 
 // Local Includes
-#include "GeometricMesh.h"
+#include "GenericMesh.h"
 
 class CMesh_Finite_Plane :
-	public CGeometricMesh
+	public CGenericMesh
 {
 public:
 

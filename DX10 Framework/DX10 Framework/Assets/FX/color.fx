@@ -6,8 +6,8 @@ cbuffer cbPerObject
 {
 	float4x4 matColorWorld;
 	float4x4 matColorView;  
-	float4x4 matColorProj; 	
-	float timeElapsed;
+	float4x4 matColorProj; 
+	float4 objColor;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,8 +41,7 @@ PixelShaderInput ColorVertexShader(VertexShaderInput inputVS)
 	outputPS.position = mul(outputPS.position, matColorProj);
 
 	// Store the input color for the pixel shader to use.
-	float4 colorChange = float4(timeElapsed * ((inputVS.position.x + 10) / 20), timeElapsed * ((inputVS.position.y + 10) / 20), timeElapsed * ((inputVS.position.z + 10) / 20), 1.0f);
-	outputPS.color = colorChange;
+	outputPS.color = objColor;
 
 	return outputPS;
 }
@@ -56,16 +55,6 @@ float4 ColorPixelShader(PixelShaderInput inputPS) : SV_Target
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// Rasterizer State
-////////////////////////////////////////////////////////////////////////////////
-RasterizerState BackCulling
-{
-       // FillMode = WireFrame;
-       // CullMode = Back;
-       // FrontCounterClockwise = true;
-};
-
-////////////////////////////////////////////////////////////////////////////////
 // Technique
 ////////////////////////////////////////////////////////////////////////////////
 technique10 ColorTechnique
@@ -75,7 +64,5 @@ technique10 ColorTechnique
 		SetVertexShader(CompileShader(vs_4_0, ColorVertexShader()));
 		SetPixelShader(CompileShader(ps_4_0, ColorPixelShader()));
 		SetGeometryShader(NULL);
-
-		//SetRasterizerState(BackCulling);
 	}
 }

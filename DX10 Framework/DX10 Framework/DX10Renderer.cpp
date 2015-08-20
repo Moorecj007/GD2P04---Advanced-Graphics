@@ -386,6 +386,19 @@ bool CDX10Renderer::BuildVertexLayout(eVertexType _vertType, UINT _techID, UINT*
 		return (CreateVertexLayout(vertexDesc, elementNum, _techID, _pVertexLayoutID));
 	}
 	break;
+	case VT_COLOR_UV:
+	{
+		// Vertex Desc for a basic vertex with D3DXCOLOR as well
+		D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
+			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 },
+			{ "UV", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 28, D3D10_INPUT_PER_VERTEX_DATA, 0 }
+		};
+		elementNum = 2;
+		return (CreateVertexLayout(vertexDesc, elementNum, _techID, _pVertexLayoutID));
+	}
+		break;
 	default:
 	{
 		return false;

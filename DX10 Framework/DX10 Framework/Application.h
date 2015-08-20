@@ -17,29 +17,18 @@
 #ifndef __APPLICATION_H__
 #define __APPLICATION_H__
 
-#pragma comment(lib, "Winmm.lib")
-
-// Defines and Macros
-#define WIN32_LEAN_AND_MEAN
-#define WINDOW_CLASS_NAME L"DX10 FRAMEWORK"
-
-#ifdef _DEBUG
-// Visual Leak Detector to be run only if in DEBUG mode
-#include "vld.h"
-#define D3D_DEBUG_INFO
-#endif // _DEBUG
-
-// Library Includes
-#include <windows.h>
+// Initialization
+#include "AppInitialise.h"
 
 // Local Includes
+#include "Utilities.h"
 #include "DX10Renderer.h"
-#include "GeometricObject.h"
+#include "GenericObject.h"
 #include "Timer.h"
-#include "GeometricMesh.h"
-#include "Mesh_Rect_Prism.h"
-#include "Mesh_Finite_Plane.h"
 #include "Camera_FirstPerson.h"
+#include "GDI_Renderer.h"
+#include "GDI_Quad.h"
+#include "Mesh_Rect_Prism.h"
 
 class CApplication
 {
@@ -172,24 +161,22 @@ private:
 	bool* m_pKeyDown;
 
 	// Renderer Variables
-	CDX10Renderer* m_pRenderer;
-
-	// Objects
-	CGeometricObject* m_pCube;
-	CGeometricObject* m_pTerrain;
-
-	// Meshes
-	CGeometricMesh* m_pCubeMesh;
-	CGeometricMesh* m_pTerrainMesh;
+	CDX10Renderer* m_pDX10Renderer;
+	CGDI_Renderer* m_pGDIRenderer;
 
 	// Camera
 	CCamera_FirstPerson* m_pCamera;
-	// Mouse Tracking
-	POINT m_mousePrev;
-	bool m_mouseMoveLeft;
-	bool m_mouseMoveRight;
-	bool m_mouseMoveUp;
-	bool m_mouseMoveDown;
+
+	// Objects
+	CGenericObject* m_pCube;
+	CGDI_Quad* m_pQuad;
+	CGDI_Quad* m_pQuad2;
+	CGDI_Quad* m_pQuad3;
+
+	// Meshes
+	CGenericMesh* m_pCubeMesh;
+	
+
 };
 
 #endif // __APPLICATION_H__

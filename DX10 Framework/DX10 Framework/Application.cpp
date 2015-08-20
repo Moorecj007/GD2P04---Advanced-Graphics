@@ -91,7 +91,7 @@ bool CApplication::CreateWindowApp(int _clientWidth, int _clientHeight, HINSTANC
 	winClass.hInstance = _hInstance;
 	winClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	winClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	winClass.hbrBackground = (HBRUSH)BLACK_BRUSH;
+	winClass.hbrBackground = (HBRUSH)WHITE_BRUSH;
 	winClass.lpszMenuName = NULL;
 	winClass.lpszClassName = WINDOW_CLASS_NAME;
 	winClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
@@ -159,7 +159,17 @@ CApplication* CApplication::GetInstance()
 
 bool CApplication::Initialise(int _clientWidth, int _clientHeight, HINSTANCE _hInstance)
 {
-	ShowCursor(false);
+	// Determine which rendererer to use
+	bool usingDX10Renderer = true;
+	bool usingGDIRenderer = false;
+
+	// default state so only one renderer can be active at any time
+	if (usingDX10Renderer == usingGDIRenderer)
+	{
+		usingDX10Renderer = true;
+		usingGDIRenderer = false;
+	}
+
 	m_online = true;
 	m_pTimer = new CTimer();
 	m_pTimer->Reset();
@@ -168,24 +178,42 @@ bool CApplication::Initialise(int _clientWidth, int _clientHeight, HINSTANCE _hI
 	m_clientWidth = _clientWidth;
 	m_clientHeight = _clientHeight;
 
-	// Create a Renderer for graphics
-	m_pRenderer = new CDX10Renderer();
-	VALIDATE(m_pRenderer->Initialise(m_clientWidth, m_clientHeight, m_hWnd));
-
 	// Initialise boolean array for KeyDown to false
 	m_pKeyDown = new bool[255];
 	memset(m_pKeyDown, false, 255);
 
-	// Creating a Terrain Object
-	TVertexColor vertColor;
-	m_pTerrainMesh = new CMesh_Finite_Plane();
-	v3float scalar = v3float(1.0f, 0.3f, 1.0f);
-	m_pTerrainMesh->Initialise(m_pRenderer, vertColor, scalar, RED);
-	m_pTerrain = new CGeometricObject();
-	m_pTerrain->Initialise(m_pRenderer, m_pTerrainMesh);
+	// Create a Renderer for graphics
+	if (usingDX10Renderer == true)
+	{
+		// Initialise the Renderer
+		m_pDX10Renderer = new CDX10Renderer();
+		VALIDATE(m_pDX10Renderer->Initialise(m_clientWidth, m_clientHeight, m_hWnd));
 
-	m_pCamera = new CCamera_FirstPerson();
-	m_pCamera->Initialise(m_pRenderer, _hInstance, m_hWnd);
+		// Initialise the Objects
+		m_pCamera = new CCamera_FirstPerson();
+		m_pCamera->Initialise(m_pDX10Renderer, _hInstance, m_hWnd);
+
+		TVertexColor vert;
+		m_pCubeMesh = new CMesh_Rect_Prism();
+		VALIDATE(m_pCubeMesh->Initialise(m_pDX10Renderer, vert, { 2.0f, 2.0f, 2.0f }));
+
+		m_pCube = new CGenericObject();
+		VALIDATE(m_pCube->Initialise(m_pDX10Renderer, m_pCubeMesh, BLUE));
+	}
+	if (usingGDIRenderer == true)
+	{
+		// Initialise the Renderer
+		m_pGDIRenderer = new CGDI_Renderer();
+		VALIDATE(m_pGDIRenderer->Initialise(m_hWnd, _hInstance, m_clientWidth, m_clientHeight));
+
+		// Initialise the Objects
+		m_pQuad = new CGDI_Quad();
+		VALIDATE(m_pQuad->Initialise(m_pGDIRenderer, { 400, 400 }, 70, 5, RGB(255, 0, 0)));
+		m_pQuad2 = new CGDI_Quad();
+		VALIDATE(m_pQuad2->Initialise(m_pGDIRenderer, { 200, 600 }, 100, 100, 0x00FF00));
+		m_pQuad3 = new CGDI_Quad();
+		VALIDATE(m_pQuad3->Initialise(m_pGDIRenderer, { 800, 700 }, 20, 40, 0x0000FF));
+	}
 	
 	return true;
 }
@@ -205,16 +233,23 @@ void CApplication::ShutDown()
 {
 	// Delete and free memory for the Application variables
 	ReleasePtr(m_pKeyDown);
-	ReleasePtr(m_pCubeMesh);
-	ReleasePtr(m_pTerrainMesh);
-	ReleasePtr(m_pCube);
-	ReleasePtr(m_pTerrain);
 	ReleasePtr(m_pTimer);
+
 	ReleasePtr(m_pCamera);
+	ReleasePtr(m_pCubeMesh);
+	ReleasePtr(m_pCube);
+
+	ReleasePtr(m_pQuad);
+	ReleasePtr(m_pQuad2);
+	ReleasePtr(m_pQuad3);
 
 	// Delete and free the memory from the Renderer
-	m_pRenderer->ShutDown();
-	ReleasePtr(m_pRenderer);
+	if (m_pDX10Renderer != 0)
+	{
+		m_pDX10Renderer->ShutDown();
+	}
+	ReleasePtr(m_pDX10Renderer);
+	ReleasePtr(m_pGDIRenderer);
 }
 
 void CApplication::ExecuteOneFrame()
@@ -231,20 +266,42 @@ void CApplication::Process()
 	m_dt = m_pTimer->GetDeltaTime();
 
 	HandleInput();
-	//m_pCube->Process(m_dt);
-	m_pTerrain->Process(m_dt);
-	m_pCamera->Process(m_dt);
+
+	if (m_pDX10Renderer != 0)
+	{
+		m_pCamera->Process(m_dt);
+		m_pCube->Process(m_dt);
+	}
+
+	if (m_pGDIRenderer != 0)
+	{
+
+	}
 }
 
 void CApplication::Draw()
 {
-	// Get the Renderer Ready to receive new data
-	m_pRenderer->StartRender();
+	if (m_pDX10Renderer != 0)
+	{
+		// Get the Renderer Ready to receive new data
+		m_pDX10Renderer->StartRender();
 
-	m_pTerrain->Draw();
+		m_pCube->Draw();
 
-	// Tell the Renderer the data input is over and present the outcome
-	m_pRenderer->EndRender();
+		// Tell the Renderer the data input is over and present the outcome
+		m_pDX10Renderer->EndRender();
+	}
+
+	if (m_pGDIRenderer != 0)
+	{
+		m_pGDIRenderer->BeginRender();
+
+		m_pQuad->Render();
+		m_pQuad2->Render();
+		m_pQuad3->Render();
+
+		m_pGDIRenderer->EndRender();
+	}
 }
 
 void CApplication::HandleInput()
@@ -252,19 +309,22 @@ void CApplication::HandleInput()
 	// Template Inputs
 	if (m_pKeyDown[VK_F1])
 	{	
-		m_pRenderer->ToggleFullscreen();
+		m_pDX10Renderer->ToggleFullscreen();
 		m_pKeyDown[VK_F1] = false;
 	}
 	if (m_pKeyDown[VK_F2])
 	{
-		m_pRenderer->ToggleFillMode();
+		m_pDX10Renderer->ToggleFillMode();
 		m_pKeyDown[VK_F2] = false;
 	}
 	if (m_pKeyDown[VK_ESCAPE])
 	{
-		if (m_pRenderer->GetFullScreenState() == true)
+		if (m_pDX10Renderer != 0)
 		{
-			m_pRenderer->ToggleFullscreen();
+			if (m_pDX10Renderer->GetFullScreenState() == true)
+			{
+				m_pDX10Renderer->ToggleFullscreen();
+			}
 		}
 		m_online = false;
 	}

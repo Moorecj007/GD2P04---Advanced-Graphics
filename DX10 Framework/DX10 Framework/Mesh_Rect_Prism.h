@@ -18,11 +18,11 @@
 #define __MESH_RECT_PRISM_H__
 
 // Local Includes
-#include "GeometricMesh.h"
+#include "GenericMesh.h"
 #include "DX10Renderer.h"
 
 class CMesh_Rect_Prism :
-	public CGeometricMesh
+	public CGenericMesh
 {
 public:
 	/***********************
@@ -53,10 +53,19 @@ public:
 	* @parameter: _pRenderer: Renderer for the Application
 	* @parameter: _vert: Vertex Structure to use
 	* @parameter: _scale: Scale factor for the finite plane Mesh
-	* @parameter: _color: Color for each vertex
 	* @return: bool: Successful or not
 	********************/
-	virtual bool Initialise(CDX10Renderer* _pRenderer, TVertexColor _vert, v3float _scale, D3DXCOLOR _color);
+	virtual bool Initialise(CDX10Renderer* _pRenderer, TVertexColor _vert, v3float _scale);
+
+	/***********************
+	* Initialise: Initialise the finite plane mesh
+	* @author: Callan Moore
+	* @parameter: _pRenderer: Renderer for the Application
+	* @parameter: _vert: Vertex Structure to use
+	* @parameter: _scale: Scale factor for the finite plane Mesh
+	* @return: bool: Successful or not
+	********************/
+	virtual bool Initialise(CDX10Renderer* _pRenderer, TVertexColorUV _vert, v3float _scale);
 
 	/***********************
 	* Render: Render the Rect Prism Mesh
