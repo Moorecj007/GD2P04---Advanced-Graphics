@@ -25,7 +25,6 @@ cbuffer cbPerObject
 
 // Nonnumeric values cannot be added to a cbuffer.
 Texture2D gDiffuseMap;
-Texture2D gDiffuseMap2;
 Texture2D gSpecMap;
 
 SamplerState gTriLinearSam
@@ -73,9 +72,6 @@ float4 PS(VS_OUT pIn) : SV_Target
 {
 	// Get materials from texture maps.
 	float4 diffuse = gDiffuseMap.Sample(gTriLinearSam, pIn.texC);
-	float4 diffuse2 = gDiffuseMap2.Sample(gTriLinearSam, pIn.texC);
-
-	float4 diffuseTotal = diffuse * diffuse2;
 
 	float4 spec    = gSpecMap.Sample( gTriLinearSam, pIn.texC );
 	
@@ -83,13 +79,13 @@ float4 PS(VS_OUT pIn) : SV_Target
 	spec.a *= 256.0f;
 	
 	// Interpolating normal can make it not be of unit length so normalize it.
-    float3 normalW = normalize(pIn.normalW);
+    	float3 normalW = normalize(pIn.normalW);
     
 	// Compute the lit color for this pixel.
-	SurfaceInfo v = { pIn.posW, normalW, diffuseTotal, spec };
+	SurfaceInfo v = { pIn.posW, normalW, diffuse, spec };
 	float3 litColor = ParallelLight(v, gLight, gEyePosW);
     
-	return float4(litColor, diffuseTotal.a);
+		return float4(litColor, diffuse.a);
 }
 
 technique10 TexTech

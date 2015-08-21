@@ -47,7 +47,7 @@ bool CCamera_FirstPerson::Initialise(CDX10Renderer* _pRenderer, HINSTANCE _hInst
 	m_pitchChange = 0.0f;
 
 	m_speed = 5.0f;
-	m_rotSpeed = DegreesToRadians(2.0f);
+	m_rotSpeed = DegreesToRadians(180.0f);
 
 	m_maxRotation = DegreesToRadians(89.0f);
 	m_minRotation = DegreesToRadians(-89.0f);

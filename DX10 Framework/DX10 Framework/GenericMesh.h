@@ -66,6 +66,16 @@ public:
 	virtual bool Initialise(CDX10Renderer* _pRenderer, TVertexColorUV _vert, v3float _scale) = 0;
 
 	/***********************
+	* Initialise: Initialise the finite plane mesh
+	* @author: Callan Moore
+	* @parameter: _pRenderer: Renderer for the Application
+	* @parameter: _vert: Vertex Structure to use
+	* @parameter: _scale: Scale factor for the finite plane Mesh
+	* @return: bool: Successful or not
+	********************/
+	virtual bool Initialise(CDX10Renderer* _pRenderer, TVertexColorNormalUV _vert, v3float _scale) = 0;
+
+	/***********************
 	* Render: Render the Mesh
 	* @author: Callan Moore
 	* @return: void

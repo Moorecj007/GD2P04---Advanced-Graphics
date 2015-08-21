@@ -17,6 +17,16 @@
 
 CGenericObject::CGenericObject()
 {
+	
+}
+
+CGenericObject::~CGenericObject()
+{
+	
+}
+
+void CGenericObject::BaseInitialise()
+{
 	// Set initial position to origin point
 	m_pos = { 0, 0, 0 };
 
@@ -35,13 +45,6 @@ CGenericObject::CGenericObject()
 	m_pTechMatWorld = 0;
 	m_pTechMatView = 0;
 	m_pTechMatProj = 0;
-
-	m_timeElapsed = 0;
-}
-
-CGenericObject::~CGenericObject()
-{
-	
 }
 
 bool CGenericObject::Initialise(CDX10Renderer* _pRenderer, CGenericMesh* _pMesh, D3DXCOLOR _color)
@@ -61,59 +64,7 @@ bool CGenericObject::Initialise(CDX10Renderer* _pRenderer, CGenericMesh* _pMesh,
 
 void CGenericObject::Process(float _dt)
 {
-	m_timeElapsed += _dt;
-	if (m_timeElapsed > 1.0f)
-	{
-		m_timeElapsed -= 1.0f;
-	}
 	CalcWorldMatrix();
-}
-
-void CGenericObject::Draw()
-{
-	m_pRenderer->RestoreDefaultDrawStates();
-	m_pRenderer->SetInputLayout(m_vertexLayoutID);
-	ID3D10EffectTechnique* pTech = m_pRenderer->GetTechnique(m_techniqueID);
-
-	if (pTech != NULL)
-	{
-		D3D10_TECHNIQUE_DESC techDesc;
-		pTech->GetDesc(&techDesc);
-		for (UINT p = 0; p < techDesc.Passes; ++p)
-		{	
-			m_pTechObjColor->SetFloatVector((float*)m_color);
-			m_pTechMatWorld->SetMatrix((float*)m_matWorld);
-			m_pTechMatView->SetMatrix((float*)*m_pRenderer->GetViewMatrix());
-			m_pTechMatProj->SetMatrix((float*)*m_pRenderer->GetProjMatrix());
-
-			pTech->GetPassByIndex(p)->Apply(0);
-			m_pMesh->Render();
-		}
-	}
-}
-
-bool CGenericObject::BuildFX()
-{
-	VALIDATE(m_pRenderer->BuildFX("color.fx", "ColorTechnique", &m_fxID, &m_techniqueID));
-
-	return true;
-}
-
-bool CGenericObject::CreateFXVarPointers()
-{
-	m_pTechMatWorld = m_pRenderer->GetFXVariable(m_fxID, "matColorWorld")->AsMatrix();
-	VALIDATE(m_pTechMatWorld != 0);
-
-	m_pTechMatView = m_pRenderer->GetFXVariable(m_fxID, "matColorView")->AsMatrix();
-	VALIDATE(m_pTechMatView != 0);
-
-	m_pTechMatProj = m_pRenderer->GetFXVariable(m_fxID, "matColorProj")->AsMatrix();
-	VALIDATE(m_pTechMatProj != 0);
-
-	m_pTechObjColor = m_pRenderer->GetFXVariable(m_fxID, "objColor")->AsVector();
-	VALIDATE(m_pTechObjColor != 0);
-
-	return true;
 }
 
 bool CGenericObject::BuildVertexLayout()

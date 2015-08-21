@@ -90,6 +90,12 @@
     <ClCompile Include="GenericObject.cpp">
       <Filter>Source Files\DX10\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="DX10_LitTex_Obj.cpp">
+      <Filter>Source Files\DX10\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="DX10_Color_Obj.cpp">
+      <Filter>Source Files\DX10\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h">
@@ -146,9 +152,21 @@
     <ClInclude Include="Vertex.h">
       <Filter>Header Files\DX10</Filter>
     </ClInclude>
+    <ClInclude Include="DX10_Color_Obj.h">
+      <Filter>Header Files\DX10\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="DX10_LitTex_Obj.h">
+      <Filter>Header Files\DX10\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\FX\color.fx">
+      <Filter>Resource Files\FX Files</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\FX\colorTexture.fx">
+      <Filter>Resource Files\FX Files</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\FX\lighting.fx">
       <Filter>Resource Files\FX Files</Filter>
     </FxCompile>
   </ItemGroup>

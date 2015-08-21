@@ -25,16 +25,23 @@ class CGenericObject
 public:
 
 	/***********************
-	* CCube: Default Constructor for Generic Object class
+	* CGenericObject: Default Constructor for Generic Object class
 	* @author: Callan Moore
 	********************/
 	CGenericObject();
 
 	/***********************
-	* ~CCube: Default Destructor for Generic Object class
+	* ~CGenericObject: Default Destructor for Generic Object class
 	* @author: Callan Moore
 	********************/
-	~CGenericObject();
+	virtual ~CGenericObject();
+
+	/***********************
+	* BaseInitialise: Initialise the Base member variables
+	* @author: Callan Moore
+	* @return: void
+	********************/
+	void BaseInitialise();
 
 	/***********************
 	* Initialise: Initialise the Generic Object for use
@@ -44,7 +51,7 @@ public:
 	* @parameter: _color: Color for the Object
 	* @return: bool: Successful or not
 	********************/
-	bool Initialise(CDX10Renderer* _pRenderer, CGenericMesh* _pMesh, D3DXCOLOR _color);
+	virtual bool Initialise(CDX10Renderer* _pRenderer, CGenericMesh* _pMesh, D3DXCOLOR _color);
 	
 	/***********************
 	* Process: Process the new frame and update the Generic Object
@@ -52,28 +59,28 @@ public:
 	* @parameter: _dt: The delta tick for this frame
 	* @return: void
 	********************/
-	void Process(float _dt);
+	virtual void Process(float _dt);
 	
 	/***********************
 	* Draw: Draw the Generic Object to the screen space
 	* @author: Callan Moore
 	* @return: void
 	********************/
-	void Draw();
+	virtual void Draw() = 0;
 	
 	/***********************
 	* BuildFX: Build the FX files for the Generic Object Object
 	* @author: Callan Moore
 	* @return: bool: Successful or not
 	********************/
-	virtual bool BuildFX();
+	virtual bool BuildFX() = 0;
 	
 	/***********************
 	* CreateFXVarPointers: Retrieve the FX variables from the FX file
 	* @author: Callan Moore
 	* @return: bool: Successful or not
 	********************/
-	virtual bool CreateFXVarPointers();
+	virtual bool CreateFXVarPointers() = 0;
 	
 	/***********************
 	* BuildVertexLayout: Build the Vertex Layout for this Object
@@ -87,15 +94,14 @@ public:
 	* @author: Callan Moore
 	* @return: void
 	********************/
-	void CalcWorldMatrix();
+	virtual void CalcWorldMatrix();
 
-private:
+protected:
 	CDX10Renderer* m_pRenderer;
 	CGenericMesh* m_pMesh;
 	D3DXCOLOR m_color;
 
 	v3float m_pos;
-	float m_timeElapsed;
 	float m_rotationPitch;
 	float m_rotationYaw;
 	float m_rotationRoll;

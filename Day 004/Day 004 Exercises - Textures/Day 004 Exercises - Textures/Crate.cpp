@@ -31,6 +31,8 @@ private:
 private:
 
 	Box mCrateMesh;
+	int m_animIndex;
+	float m_timeElapsed;
 
 	Light mParallelLight;
 
@@ -40,6 +42,8 @@ private:
 	ID3D10ShaderResourceView* mDiffuseMapRV;
 	ID3D10ShaderResourceView* mDiffuseMapRV2;
 	ID3D10ShaderResourceView* mSpecMapRV;
+
+	ID3D10ShaderResourceView* mAnimTexture[120];
 
 	ID3D10EffectMatrixVariable* mfxWVPVar;
 	ID3D10EffectMatrixVariable* mfxWorldVar;
@@ -88,6 +92,8 @@ mfxLightVar(0), mfxDiffuseMapVar(0), mfxDiffuseMapVar2(0), mfxSpecMapVar(0), mfx
 	D3DXMatrixIdentity(&mView);
 	D3DXMatrixIdentity(&mProj);
 	D3DXMatrixIdentity(&mWVP); 
+	m_animIndex = 0;
+	m_timeElapsed = 0;
 }
 
 CrateApp::~CrateApp()
@@ -99,6 +105,11 @@ CrateApp::~CrateApp()
 	ReleaseCOM(mVertexLayout);
 	ReleaseCOM(mDiffuseMapRV);
 	ReleaseCOM(mSpecMapRV);
+
+	for (int i = 0; i < 120; i++)
+	{
+		ReleaseCOM(mAnimTexture[i]);
+	}
 }
 
 void CrateApp::initApp()
@@ -112,14 +123,36 @@ void CrateApp::initApp()
 	
 	mCrateMesh.init(md3dDevice, 1.0f);
 
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"flare.dds", 0, 0, &mDiffuseMapRV, 0 ));
+	for (int i = 0; i < 120; i++)
+	{
+		//std::string strFilePath = "FireAnim\Fire00" + std::to_string(i + 1);
+		//mAnimTexture[i] = 0;
 
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice,
-		L"flarealpha.dds", 0, 0, &mDiffuseMapRV2, 0));
+		std::string strFilePath = "FireAnim\\Fire";
+		std::string strNumber = std::to_string(i + 1);
+		if (strNumber.length() == 1)
+		{
+			strFilePath.append("00");
+		}
+		else if ((strNumber.length() == 2))
+		{
+			strFilePath.append("0");
+		}
+		strFilePath.append(strNumber);
+		strFilePath.append(".bmp");
 
-	HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
-		L"defaultspec.dds", 0, 0, &mSpecMapRV, 0 ));
+		HR(D3DX10CreateShaderResourceViewFromFileA(md3dDevice,
+			strFilePath.c_str(), 0, 0, &mAnimTexture[i], 0));
+	}
+
+	//HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+	//	L"flare.dds", 0, 0, &mDiffuseMapRV, 0 ));
+    //
+	//HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice,
+	//	L"flarealpha.dds", 0, 0, &mDiffuseMapRV2, 0));
+	//
+	//HR(D3DX10CreateShaderResourceViewFromFile(md3dDevice, 
+	//	L"defaultspec.dds", 0, 0, &mSpecMapRV, 0 ));
 
 
 	mParallelLight.dir      = D3DXVECTOR3(0.57735f, -0.57735f, 0.57735f);
@@ -139,6 +172,17 @@ void CrateApp::onResize()
 void CrateApp::updateScene(float dt)
 {
 	D3DApp::updateScene(dt);
+
+	m_timeElapsed += dt;
+
+	m_animIndex = (int)(m_timeElapsed * 30);
+
+	if (m_timeElapsed >= 4.0f)
+	{
+		m_timeElapsed -= 4.0f;
+		m_animIndex = 0;
+	}
+
 
 	// Update angles based on input to orbit camera around scene.
 	if(GetAsyncKeyState('A') & 0x8000)	mTheta -= 2.0f*dt;
@@ -184,8 +228,9 @@ void CrateApp::drawScene()
 	mWVP = mCrateWorld*mView*mProj;
 	mfxWVPVar->SetMatrix((float*)&mWVP);
 	mfxWorldVar->SetMatrix((float*)&mCrateWorld);
-	mfxDiffuseMapVar->SetResource(mDiffuseMapRV);
-	mfxDiffuseMapVar2->SetResource(mDiffuseMapRV2);
+	//mfxDiffuseMapVar->SetResource(mDiffuseMapRV);
+	mfxDiffuseMapVar->SetResource(mAnimTexture[m_animIndex]);
+	//mfxDiffuseMapVar2->SetResource(mDiffuseMapRV2);
 	mfxSpecMapVar->SetResource(mSpecMapRV);
  
 	// Don't transform texture coordinates, so just use identity transformation.

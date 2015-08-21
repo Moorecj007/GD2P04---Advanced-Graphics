@@ -24,6 +24,8 @@
 #include "Utilities.h"
 #include "DX10Renderer.h"
 #include "GenericObject.h"
+#include "DX10_Color_Obj.h"
+#include "DX10_LitTex_Obj.h"
 #include "Timer.h"
 #include "Camera_FirstPerson.h"
 #include "GDI_Renderer.h"

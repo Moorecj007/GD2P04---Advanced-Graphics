@@ -58,6 +58,8 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <BrowseInformation>true</BrowseInformation>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -83,6 +85,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -101,6 +105,8 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Backbuffer.cpp" />
     <ClCompile Include="2D_Physics.cpp" />
+    <ClCompile Include="DX10_Color_Obj.cpp" />
+    <ClCompile Include="DX10_LitTex_Obj.cpp" />
     <ClCompile Include="GDI_Quad.cpp" />
     <ClCompile Include="GDI_Renderer.cpp" />
     <ClCompile Include="Camera_FirstPerson.cpp" />
@@ -118,6 +124,8 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="Backbuffer.h" />
     <ClInclude Include="2D_Physics.h" />
+    <ClInclude Include="DX10_Color_Obj.h" />
+    <ClInclude Include="DX10_LitTex_Obj.h" />
     <ClInclude Include="GDI_Quad.h" />
     <ClInclude Include="GDI_Renderer.h" />
     <ClInclude Include="Camera_FirstPerson.h" />
@@ -135,6 +143,8 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\FX\color.fx" />
+    <FxCompile Include="Assets\FX\colorTexture.fx" />
+    <FxCompile Include="Assets\FX\lighting.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -193,13 +193,14 @@ bool CApplication::Initialise(int _clientWidth, int _clientHeight, HINSTANCE _hI
 		m_pCamera = new CCamera_FirstPerson();
 		m_pCamera->Initialise(m_pDX10Renderer, _hInstance, m_hWnd);
 
-		TVertexColor vert;
+		TVertexColorNormalUV vert;
 		m_pCubeMesh = new CMesh_Rect_Prism();
 		VALIDATE(m_pCubeMesh->Initialise(m_pDX10Renderer, vert, { 2.0f, 2.0f, 2.0f }));
 
-		m_pCube = new CGenericObject();
+		m_pCube = new DX10_Color_Obj();
 		VALIDATE(m_pCube->Initialise(m_pDX10Renderer, m_pCubeMesh, BLUE));
 	}
+
 	if (usingGDIRenderer == true)
 	{
 		// Initialise the Renderer
@@ -261,7 +262,7 @@ void CApplication::ExecuteOneFrame()
 void CApplication::Process()
 {
 	// Retrieve the Delta Tick of the last frame
-	Sleep(16);
+	//Sleep(1);
 	m_pTimer->Tick();
 	m_dt = m_pTimer->GetDeltaTime();
 

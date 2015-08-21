@@ -25,7 +25,7 @@ CMesh_Rect_Prism::~CMesh_Rect_Prism()
 
 bool CMesh_Rect_Prism::Initialise(CDX10Renderer* _pRenderer, TVertexBasic _vert, v3float _scale)
 {
-	// Save the renderer on the Cube
+	// Save the renderer on the Rectangular Prism
 	m_pRenderer = _pRenderer;
 
 	float vertScaleX = _scale.x / 2;
@@ -112,7 +112,7 @@ bool CMesh_Rect_Prism::Initialise(CDX10Renderer* _pRenderer, TVertexBasic _vert,
 
 bool CMesh_Rect_Prism::Initialise(CDX10Renderer* _pRenderer, TVertexColor _vert, v3float _scale)
 {
-	// Save the renderer on the Cube
+	// Save the renderer on the Rectangular Prism
 	m_pRenderer = _pRenderer;
 
 	float vertScaleX = _scale.x / 2;
@@ -199,7 +199,7 @@ bool CMesh_Rect_Prism::Initialise(CDX10Renderer* _pRenderer, TVertexColor _vert,
 
 bool CMesh_Rect_Prism::Initialise(CDX10Renderer* _pRenderer, TVertexColorUV _vert, v3float _scale)
 {
-	// Save the renderer on the Cube
+	// Save the renderer on the Rectangular Prism
 	m_pRenderer = _pRenderer;
 
 	float vertScaleX = _scale.x / 2;
@@ -244,6 +244,93 @@ bool CMesh_Rect_Prism::Initialise(CDX10Renderer* _pRenderer, TVertexColorUV _ver
 		{ D3DXVECTOR3(vertScaleX, -vertScaleY, -vertScaleZ), YELLOW, { 0.0f, 1.0f } },
 		{ D3DXVECTOR3(vertScaleX, -vertScaleY, vertScaleZ), YELLOW, { 1.0f, 1.0f } },
 		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, vertScaleZ), YELLOW, { 1.0f, 0.0f } }
+	};
+	m_vertType = VT_COLOR;
+	UINT stride = sizeof(*vertices);
+	UINT vertexCount = (sizeof(vertices) / stride);
+
+	// Create the Index Buffer
+	DWORD indices[] = {
+		// Front Face
+		0, 1, 2,
+		0, 2, 3,
+
+		// Left Face
+		4, 5, 6,
+		4, 6, 7,
+
+		// Right Face
+		8, 9, 10,
+		8, 10, 11,
+
+		// Back Face
+		12, 13, 14,
+		12, 14, 15,
+
+		// Top Face
+		16, 17, 18,
+		16, 18, 19,
+
+		// Bottom Face
+		20, 21, 22,
+		20, 22, 23
+	};
+	m_primTopology = D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	UINT indexCount = (sizeof(indices) / sizeof(*indices));
+
+	// Create the Static buffer and store the ID
+	m_pRenderer->CreateStaticBuffer(vertices, indices, vertexCount, indexCount, stride, &m_bufferID);
+
+	return true;
+}
+
+bool CMesh_Rect_Prism::Initialise(CDX10Renderer* _pRenderer, TVertexColorNormalUV _vert, v3float _scale)
+{
+	// Save the renderer on the Rectangular Prism
+	m_pRenderer = _pRenderer;
+
+	float vertScaleX = _scale.x / 2;
+	float vertScaleY = _scale.y / 2;
+	float vertScaleZ = _scale.z / 2;
+
+	// Create vertex buffer
+	TVertexColorNormalUV vertices[] =
+	{
+		// Front
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+
+		// Left
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+
+		// Right
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+
+		// Back
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+
+		// Top
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+
+		// Bottom
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } }
 	};
 	m_vertType = VT_COLOR;
 	UINT stride = sizeof(*vertices);

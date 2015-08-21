@@ -22,7 +22,6 @@
 #include "Utilities.h"
 #include "DirectInput.h"
 
-
 class CCamera_FirstPerson
 {
 public:
