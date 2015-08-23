@@ -102,49 +102,51 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Backbuffer.cpp" />
-    <ClCompile Include="2D_Physics.cpp" />
-    <ClCompile Include="DX10_Color_Obj.cpp" />
-    <ClCompile Include="DX10_LitTex_Obj.cpp" />
-    <ClCompile Include="GDI_Quad.cpp" />
-    <ClCompile Include="GDI_Renderer.cpp" />
-    <ClCompile Include="Camera_FirstPerson.cpp" />
-    <ClCompile Include="DirectInput.cpp" />
-    <ClCompile Include="GenericObject.cpp" />
-    <ClCompile Include="DX10Renderer.cpp" />
-    <ClCompile Include="GenericMesh.cpp" />
-    <ClCompile Include="Mesh_Finite_Plane.cpp" />
-    <ClCompile Include="Mesh_Rect_Prism.cpp" />
-    <ClCompile Include="StaticBuffer.cpp" />
-    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Files\Application.cpp" />
+    <ClCompile Include="Files\DX10\DX10\Cameras\DX10_Camera_FirstPerson.cpp" />
+    <ClCompile Include="Files\DX10\DX10\DX10_Renderer.cpp" />
+    <ClCompile Include="Files\DX10\DX10\Meshes\DX10_Mesh_Finite_Plane.cpp" />
+    <ClCompile Include="Files\DX10\DX10\Meshes\DX10_Mesh_Generic.cpp" />
+    <ClCompile Include="Files\DX10\DX10\Meshes\DX10_Mesh_Rect_Prism.cpp" />
+    <ClCompile Include="Files\DX10\DX10\Objects\DX10_Obj_Color.cpp" />
+    <ClCompile Include="Files\DX10\DX10\Objects\DX10_Obj_Generic.cpp" />
+    <ClCompile Include="Files\DX10\DX10\Objects\DX10_Obj_LitTex.cpp" />
+    <ClCompile Include="Files\DX10\DX10\Systems\DX10_StaticBuffer.cpp" />
+    <ClCompile Include="Files\GDI\GDI\GDI_Backbuffer.cpp" />
+    <ClCompile Include="Files\GDI\GDI\GDI_Renderer.cpp" />
+    <ClCompile Include="Files\GDI\GDI\Objects\GDI_Obj_Quad.cpp" />
+    <ClCompile Include="Files\Physics\2D Physics\2D_Physics.cpp" />
+    <ClCompile Include="Files\Utility\DirectInput.cpp" />
+    <ClCompile Include="Files\Utility\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AppInitialise.h" />
-    <ClInclude Include="Application.h" />
-    <ClInclude Include="Backbuffer.h" />
-    <ClInclude Include="2D_Physics.h" />
-    <ClInclude Include="DX10_Color_Obj.h" />
-    <ClInclude Include="DX10_LitTex_Obj.h" />
-    <ClInclude Include="GDI_Quad.h" />
-    <ClInclude Include="GDI_Renderer.h" />
-    <ClInclude Include="Camera_FirstPerson.h" />
-    <ClInclude Include="DirectInput.h" />
-    <ClInclude Include="GenericObject.h" />
-    <ClInclude Include="DX10_Utilities.h" />
-    <ClInclude Include="GenericMesh.h" />
-    <ClInclude Include="Mesh_Finite_Plane.h" />
-    <ClInclude Include="Mesh_Rect_Prism.h" />
-    <ClInclude Include="StaticBuffer.h" />
-    <ClInclude Include="Timer.h" />
-    <ClInclude Include="Utilities.h" />
-    <ClInclude Include="DX10Renderer.h" />
-    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="Files\Application.h" />
+    <ClInclude Include="Files\App_Macro.h" />
+    <ClInclude Include="Files\DX10\DX10.h" />
+    <ClInclude Include="Files\DX10\DX10\Cameras\DX10_Camera_FirstPerson.h" />
+    <ClInclude Include="Files\DX10\DX10\DX10_Renderer.h" />
+    <ClInclude Include="Files\DX10\DX10\DX10_Utilities.h" />
+    <ClInclude Include="Files\DX10\DX10\DX10_Vertex.h" />
+    <ClInclude Include="Files\DX10\DX10\Meshes\DX10_Mesh_Finite_Plane.h" />
+    <ClInclude Include="Files\DX10\DX10\Meshes\DX10_Mesh_Generic.h" />
+    <ClInclude Include="Files\DX10\DX10\Meshes\DX10_Mesh_Rect_Prism.h" />
+    <ClInclude Include="Files\DX10\DX10\Objects\DX10_Obj_Color.h" />
+    <ClInclude Include="Files\DX10\DX10\Objects\DX10_Obj_Generic.h" />
+    <ClInclude Include="Files\DX10\DX10\Objects\DX10_Obj_LitTex.h" />
+    <ClInclude Include="Files\DX10\DX10\Systems\DX10_StaticBuffer.h" />
+    <ClInclude Include="Files\GDI\GDI.h" />
+    <ClInclude Include="Files\GDI\GDI\GDI_Backbuffer.h" />
+    <ClInclude Include="Files\GDI\GDI\GDI_Renderer.h" />
+    <ClInclude Include="Files\GDI\GDI\Objects\GDI_Obj_Quad.h" />
+    <ClInclude Include="Files\Physics\2D Physics\2D_Physics.h" />
+    <ClInclude Include="Files\Utility\DirectInput.h" />
+    <ClInclude Include="Files\Utility\Timer.h" />
+    <ClInclude Include="Files\Utility\Utilities.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Assets\FX\color.fx" />
-    <FxCompile Include="Assets\FX\colorTexture.fx" />
-    <FxCompile Include="Assets\FX\lighting.fx" />
+    <FxCompile Include="Resources\FX\Color.fx" />
+    <FxCompile Include="Resources\FX\LightStructures.fx" />
+    <FxCompile Include="Resources\FX\LitTex.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -25,12 +25,6 @@
     <Filter Include="Source Files\GDI">
       <UniqueIdentifier>{7b77de56-d602-4091-9f9e-fac502f13dec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\2D Physics">
-      <UniqueIdentifier>{4a37126a-2ef0-4101-80da-d331dbc361b5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\2D Physics">
-      <UniqueIdentifier>{3d6970b1-2480-46ea-9856-002a5cf3739e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\DX10\Meshes">
       <UniqueIdentifier>{c69ee119-2ba5-4605-bf7b-1b15c0bcabfd}</UniqueIdentifier>
     </Filter>
@@ -46,127 +40,169 @@
     <Filter Include="Resource Files\FX Files">
       <UniqueIdentifier>{575c96b6-4ddb-46ab-a0a6-4d6507d27ec0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\GDI\Objects">
+      <UniqueIdentifier>{1a7102b4-9b16-4a31-b743-94323686a8be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GDI\Objects">
+      <UniqueIdentifier>{08ae0f37-24a6-4b0b-b1ec-d29db76acf70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Physics">
+      <UniqueIdentifier>{deded43c-a4d0-48b9-b8c6-6f51de4918eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Physics\2D Physics">
+      <UniqueIdentifier>{3d6970b1-2480-46ea-9856-002a5cf3739e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Physics">
+      <UniqueIdentifier>{6f751dd8-19c3-4e70-b158-20e93dceebf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Physics\2D Physics">
+      <UniqueIdentifier>{4a37126a-2ef0-4101-80da-d331dbc361b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utilities">
+      <UniqueIdentifier>{40fdcc21-f666-436a-bdad-8c0242976ef2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utilities">
+      <UniqueIdentifier>{cf75690d-c07f-4b8c-bec9-2476384182bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DX10\Cameras">
+      <UniqueIdentifier>{628b0342-ecf1-4dd9-b3b6-6e22a2affb28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DX10\Cameras">
+      <UniqueIdentifier>{eb1cafe1-6375-4b45-adf0-ac9851981b36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DX10\Systems">
+      <UniqueIdentifier>{b76c8d14-58fe-4db0-b2fd-8c8b01f6d5c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DX10\Systems">
+      <UniqueIdentifier>{594f7cb3-9e53-44bd-aeaa-c73facc748bf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Application.cpp">
+    <ClInclude Include="Files\Application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\App_Macro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\DX10\DX10.h">
+      <Filter>Header Files\DX10</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\GDI\GDI.h">
+      <Filter>Header Files\GDI</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\GDI\GDI\GDI_Backbuffer.h">
+      <Filter>Header Files\GDI</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\GDI\GDI\GDI_Renderer.h">
+      <Filter>Header Files\GDI</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\GDI\GDI\Objects\GDI_Obj_Quad.h">
+      <Filter>Header Files\GDI\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\Utility\DirectInput.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\Utility\Timer.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\Utility\Utilities.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\Physics\2D Physics\2D_Physics.h">
+      <Filter>Header Files\Physics\2D Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\DX10\DX10\DX10_Renderer.h">
+      <Filter>Header Files\DX10</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\DX10\DX10\DX10_Utilities.h">
+      <Filter>Header Files\DX10</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\DX10\DX10\DX10_Vertex.h">
+      <Filter>Header Files\DX10</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\DX10\DX10\Meshes\DX10_Mesh_Finite_Plane.h">
+      <Filter>Header Files\DX10\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\DX10\DX10\Meshes\DX10_Mesh_Generic.h">
+      <Filter>Header Files\DX10\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\DX10\DX10\Meshes\DX10_Mesh_Rect_Prism.h">
+      <Filter>Header Files\DX10\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\DX10\DX10\Objects\DX10_Obj_Color.h">
+      <Filter>Header Files\DX10\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\DX10\DX10\Objects\DX10_Obj_Generic.h">
+      <Filter>Header Files\DX10\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\DX10\DX10\Objects\DX10_Obj_LitTex.h">
+      <Filter>Header Files\DX10\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\DX10\DX10\Cameras\DX10_Camera_FirstPerson.h">
+      <Filter>Header Files\DX10\Cameras</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\DX10\DX10\Systems\DX10_StaticBuffer.h">
+      <Filter>Header Files\DX10\Systems</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Files\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Files\GDI\GDI\GDI_Renderer.cpp">
+      <Filter>Source Files\GDI</Filter>
     </ClCompile>
-    <ClCompile Include="Camera_FirstPerson.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Files\GDI\GDI\GDI_Backbuffer.cpp">
+      <Filter>Source Files\GDI</Filter>
     </ClCompile>
-    <ClCompile Include="DirectInput.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Files\GDI\GDI\Objects\GDI_Obj_Quad.cpp">
+      <Filter>Source Files\GDI\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="DX10Renderer.cpp">
+    <ClCompile Include="Files\Utility\DirectInput.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\Utility\Timer.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\Physics\2D Physics\2D_Physics.cpp">
+      <Filter>Source Files\Physics\2D Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\DX10\DX10\Meshes\DX10_Mesh_Finite_Plane.cpp">
+      <Filter>Source Files\DX10\Meshes</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\DX10\DX10\Meshes\DX10_Mesh_Generic.cpp">
+      <Filter>Source Files\DX10\Meshes</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\DX10\DX10\Meshes\DX10_Mesh_Rect_Prism.cpp">
+      <Filter>Source Files\DX10\Meshes</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\DX10\DX10\Objects\DX10_Obj_Color.cpp">
+      <Filter>Source Files\DX10\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\DX10\DX10\Objects\DX10_Obj_Generic.cpp">
+      <Filter>Source Files\DX10\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\DX10\DX10\Objects\DX10_Obj_LitTex.cpp">
+      <Filter>Source Files\DX10\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Files\DX10\DX10\DX10_Renderer.cpp">
       <Filter>Source Files\DX10</Filter>
     </ClCompile>
-    <ClCompile Include="StaticBuffer.cpp">
-      <Filter>Source Files\DX10</Filter>
+    <ClCompile Include="Files\DX10\DX10\Cameras\DX10_Camera_FirstPerson.cpp">
+      <Filter>Source Files\DX10\Cameras</Filter>
     </ClCompile>
-    <ClCompile Include="GDI_Renderer.cpp">
-      <Filter>Source Files\GDI</Filter>
-    </ClCompile>
-    <ClCompile Include="Backbuffer.cpp">
-      <Filter>Source Files\GDI</Filter>
-    </ClCompile>
-    <ClCompile Include="2D_Physics.cpp">
-      <Filter>Source Files\2D Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="GDI_Quad.cpp">
-      <Filter>Source Files\GDI</Filter>
-    </ClCompile>
-    <ClCompile Include="GenericMesh.cpp">
-      <Filter>Source Files\DX10\Meshes</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh_Finite_Plane.cpp">
-      <Filter>Source Files\DX10\Meshes</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh_Rect_Prism.cpp">
-      <Filter>Source Files\DX10\Meshes</Filter>
-    </ClCompile>
-    <ClCompile Include="GenericObject.cpp">
-      <Filter>Source Files\DX10\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="DX10_LitTex_Obj.cpp">
-      <Filter>Source Files\DX10\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="DX10_Color_Obj.cpp">
-      <Filter>Source Files\DX10\Objects</Filter>
+    <ClCompile Include="Files\DX10\DX10\Systems\DX10_StaticBuffer.cpp">
+      <Filter>Source Files\DX10\Systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Utilities.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera_FirstPerson.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectInput.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DX10_Utilities.h">
-      <Filter>Header Files\DX10</Filter>
-    </ClInclude>
-    <ClInclude Include="DX10Renderer.h">
-      <Filter>Header Files\DX10</Filter>
-    </ClInclude>
-    <ClInclude Include="StaticBuffer.h">
-      <Filter>Header Files\DX10</Filter>
-    </ClInclude>
-    <ClInclude Include="GDI_Renderer.h">
-      <Filter>Header Files\GDI</Filter>
-    </ClInclude>
-    <ClInclude Include="AppInitialise.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Backbuffer.h">
-      <Filter>Header Files\GDI</Filter>
-    </ClInclude>
-    <ClInclude Include="2D_Physics.h">
-      <Filter>Header Files\2D Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="GDI_Quad.h">
-      <Filter>Header Files\GDI</Filter>
-    </ClInclude>
-    <ClInclude Include="GenericMesh.h">
-      <Filter>Header Files\DX10\Meshes</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh_Finite_Plane.h">
-      <Filter>Header Files\DX10\Meshes</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh_Rect_Prism.h">
-      <Filter>Header Files\DX10\Meshes</Filter>
-    </ClInclude>
-    <ClInclude Include="GenericObject.h">
-      <Filter>Header Files\DX10\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Header Files\DX10</Filter>
-    </ClInclude>
-    <ClInclude Include="DX10_Color_Obj.h">
-      <Filter>Header Files\DX10\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="DX10_LitTex_Obj.h">
-      <Filter>Header Files\DX10\Objects</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Assets\FX\color.fx">
+    <FxCompile Include="Resources\FX\Color.fx">
       <Filter>Resource Files\FX Files</Filter>
     </FxCompile>
-    <FxCompile Include="Assets\FX\colorTexture.fx">
+    <FxCompile Include="Resources\FX\LightStructures.fx">
       <Filter>Resource Files\FX Files</Filter>
     </FxCompile>
-    <FxCompile Include="Assets\FX\lighting.fx">
+    <FxCompile Include="Resources\FX\LitTex.fx">
       <Filter>Resource Files\FX Files</Filter>
     </FxCompile>
   </ItemGroup>
