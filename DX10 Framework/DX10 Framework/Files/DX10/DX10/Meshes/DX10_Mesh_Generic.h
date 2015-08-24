@@ -36,7 +36,7 @@ public:
 	virtual ~DX10_Mesh_Generic();
 
 	/***********************
-	* Initialise: Initialise the Geometric mesh
+	* Initialise: Initialise the Generic mesh
 	* @author: Callan Moore
 	* @parameter: _pRenderer: Renderer for the Application
 	* @parameter: _vert: Vertex Structure to use
@@ -46,7 +46,7 @@ public:
 	virtual bool Initialise(DX10_Renderer* _pRenderer, TVertexBasic _vert, v3float _scalar) = 0;
 
 	/***********************
-	* Initialise: Initialise the Geometric mesh
+	* Initialise: Initialise the Generic mesh
 	* @author: Callan Moore
 	* @parameter: _pRenderer: Renderer for the Application
 	* @parameter: _vert: Vertex Structure to use
@@ -56,7 +56,7 @@ public:
 	virtual bool Initialise(DX10_Renderer* _pRenderer, TVertexColor _vert, v3float _scale) = 0;
 
 	/***********************
-	* Initialise: Initialise the finite plane mesh
+	* Initialise: Initialise the Generic mesh
 	* @author: Callan Moore
 	* @parameter: _pRenderer: Renderer for the Application
 	* @parameter: _vert: Vertex Structure to use
@@ -66,14 +66,14 @@ public:
 	virtual bool Initialise(DX10_Renderer* _pRenderer, TVertexColorUV _vert, v3float _scale) = 0;
 
 	/***********************
-	* Initialise: Initialise the finite plane mesh
+	* Initialise: Initialise the Generic mesh
 	* @author: Callan Moore
 	* @parameter: _pRenderer: Renderer for the Application
 	* @parameter: _vert: Vertex Structure to use
 	* @parameter: _scale: Scale factor for the finite plane Mesh
 	* @return: bool: Successful or not
 	********************/
-	virtual bool Initialise(DX10_Renderer* _pRenderer, TVertexColorNormalUV _vert, v3float _scale) = 0;
+	virtual bool Initialise(DX10_Renderer* _pRenderer, TVertexNormalUV _vert, v3float _scale) = 0;
 
 	/***********************
 	* Render: Render the Mesh

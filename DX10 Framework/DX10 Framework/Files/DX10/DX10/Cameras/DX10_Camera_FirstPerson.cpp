@@ -105,6 +105,7 @@ void DX10_Camera_FirstPerson::Process(float _dt)
 	D3DXMatrixLookAtLH(&m_view, &m_position, &m_target, &m_up);
 
 	m_pRenderer->SetViewMatrix(m_view);
+	m_pRenderer->SetEyePosition(m_position);
 }
 
 void DX10_Camera_FirstPerson::MoveForwards(float _dir)

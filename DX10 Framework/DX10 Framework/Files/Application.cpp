@@ -186,19 +186,25 @@ bool Application::Initialise(int _clientWidth, int _clientHeight, HINSTANCE _hIn
 	if (usingDX10Renderer == true)
 	{
 		// Initialise the Renderer
-		m_pDX10Renderer = new DX10_Renderer();
-		VALIDATE(m_pDX10Renderer->Initialise(m_clientWidth, m_clientHeight, m_hWnd));
+		m_pDX10_Renderer = new DX10_Renderer();
+		VALIDATE(m_pDX10_Renderer->Initialise(m_clientWidth, m_clientHeight, m_hWnd));
 
 		// Initialise the Objects
 		m_pCamera = new DX10_Camera_FirstPerson();
-		m_pCamera->Initialise(m_pDX10Renderer, _hInstance, m_hWnd);
+		m_pCamera->Initialise(m_pDX10_Renderer, _hInstance, m_hWnd);
 
-		TVertexColorNormalUV vert;
+		TVertexNormalUV vert;
 		m_pCubeMesh = new DX10_Mesh_Rect_Prism();
-		VALIDATE(m_pCubeMesh->Initialise(m_pDX10Renderer, vert, { 2.0f, 2.0f, 2.0f }));
+		VALIDATE(m_pCubeMesh->Initialise(m_pDX10_Renderer, vert, { 2.0f, 2.0f, 2.0f }));
 
-		m_pCube = new DX10_Obj_LitTex();
-		VALIDATE(m_pCube->Initialise(m_pDX10Renderer, m_pCubeMesh, BLUE));
+		m_pShader_LitTex = new DX10_Shader_LitTex();
+		VALIDATE(m_pShader_LitTex->Initialise(m_pDX10_Renderer));
+		
+		UINT val;
+		m_pDX10_Renderer->CreateTexture("Flare.dds", &val);
+		
+		m_pCube = new DX10_Obj_LitTex(m_pShader_LitTex, val);
+		VALIDATE(m_pCube->Initialise(m_pDX10_Renderer, m_pCubeMesh));
 	}
 
 	if (usingGDIRenderer == true)
@@ -245,11 +251,11 @@ void Application::ShutDown()
 	ReleasePtr(m_pQuad3);
 
 	// Delete and free the memory from the Renderer
-	if (m_pDX10Renderer != 0)
+	if (m_pDX10_Renderer != 0)
 	{
-		m_pDX10Renderer->ShutDown();
+		m_pDX10_Renderer->ShutDown();
 	}
-	ReleasePtr(m_pDX10Renderer);
+	ReleasePtr(m_pDX10_Renderer);
 	ReleasePtr(m_pGDIRenderer);
 }
 
@@ -268,7 +274,7 @@ void Application::Process()
 
 	HandleInput();
 
-	if (m_pDX10Renderer != 0)
+	if (m_pDX10_Renderer != 0)
 	{
 		m_pCamera->Process(m_dt);
 		m_pCube->Process(m_dt);
@@ -282,15 +288,15 @@ void Application::Process()
 
 void Application::Draw()
 {
-	if (m_pDX10Renderer != 0)
+	if (m_pDX10_Renderer != 0)
 	{
 		// Get the Renderer Ready to receive new data
-		m_pDX10Renderer->StartRender();
+		m_pDX10_Renderer->StartRender();
 
-		m_pCube->Draw();
+		m_pCube->Render();
 
 		// Tell the Renderer the data input is over and present the outcome
-		m_pDX10Renderer->EndRender();
+		m_pDX10_Renderer->EndRender();
 	}
 
 	if (m_pGDIRenderer != 0)
@@ -310,21 +316,21 @@ void Application::HandleInput()
 	// Template Inputs
 	if (m_pKeyDown[VK_F1])
 	{	
-		m_pDX10Renderer->ToggleFullscreen();
+		m_pDX10_Renderer->ToggleFullscreen();
 		m_pKeyDown[VK_F1] = false;
 	}
 	if (m_pKeyDown[VK_F2])
 	{
-		m_pDX10Renderer->ToggleFillMode();
+		m_pDX10_Renderer->ToggleFillMode();
 		m_pKeyDown[VK_F2] = false;
 	}
 	if (m_pKeyDown[VK_ESCAPE])
 	{
-		if (m_pDX10Renderer != 0)
+		if (m_pDX10_Renderer != 0)
 		{
-			if (m_pDX10Renderer->GetFullScreenState() == true)
+			if (m_pDX10_Renderer->GetFullScreenState() == true)
 			{
-				m_pDX10Renderer->ToggleFullscreen();
+				m_pDX10_Renderer->ToggleFullscreen();
 			}
 		}
 		m_online = false;

@@ -42,22 +42,13 @@ void DX10_Obj_Generic::BaseInitialise()
 
 	// Set all pointers to NULL
 	m_pRenderer = 0;
-	m_pTechMatWorld = 0;
-	m_pTechMatView = 0;
-	m_pTechMatProj = 0;
 }
 
-bool DX10_Obj_Generic::Initialise(DX10_Renderer* _pRenderer, DX10_Mesh_Generic* _pMesh, D3DXCOLOR _color)
+bool DX10_Obj_Generic::Initialise(DX10_Renderer* _pRenderer, DX10_Mesh_Generic* _pMesh)
 {
 	// Save the Renderer and Mesh on the Object
 	m_pRenderer = _pRenderer;
 	m_pMesh = _pMesh;
-	m_color = _color;
-
-	// Set up the Objects for with its shaders and draw instructions
-	BuildFX();
-	CreateFXVarPointers();
-	BuildVertexLayout();
 
 	return true;
 }
@@ -65,13 +56,6 @@ bool DX10_Obj_Generic::Initialise(DX10_Renderer* _pRenderer, DX10_Mesh_Generic* 
 void DX10_Obj_Generic::Process(float _dt)
 {
 	CalcWorldMatrix();
-}
-
-bool DX10_Obj_Generic::BuildVertexLayout()
-{
-	VALIDATE(m_pRenderer->BuildVertexLayout(m_pMesh->GetVertexType(), m_techniqueID, &m_vertexLayoutID));
-
-	return true;
 }
 
 void DX10_Obj_Generic::CalcWorldMatrix()

@@ -76,6 +76,9 @@
     <Filter Include="Source Files\DX10\Systems">
       <UniqueIdentifier>{594f7cb3-9e53-44bd-aeaa-c73facc748bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\DX10\Shaders">
+      <UniqueIdentifier>{b4d3c7e4-c102-46cd-b922-cb8e7f260829}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Files\Application.h">
@@ -143,6 +146,12 @@
     </ClInclude>
     <ClInclude Include="Files\DX10\DX10\Systems\DX10_StaticBuffer.h">
       <Filter>Header Files\DX10\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\DX10\DX10\DX10_Shader_Structures.h">
+      <Filter>Header Files\DX10</Filter>
+    </ClInclude>
+    <ClInclude Include="Files\DX10\DX10\Shaders\DX10_Shader_LitTex.h">
+      <Filter>Header Files\DX10\Shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,165 @@
+/*
+* Bachelor of Software Engineering
+* Media Design School
+* Auckland
+* New Zealand
+*
+* (c) 2005 - 2015 Media Design School
+*
+* File Name : DX10_Shader_LitTex.cpp
+* Description : Shader Instructions for a the LitTexture shader
+* Author :	Callan Moore
+* Mail :	Callan.Moore@mediadesign.school.nz
+*/
+
+// TO DO - ALL COMMENT HEADERS
+
+// Inclusion Guards
+#pragma once
+#ifndef __DX10_SHADER_LITTEX_H__
+#define __DX10_SHADER_LITTEX_H__
+
+// Local Includes
+#include "../../../Utility/Utilities.h"
+#include "../DX10_Utilities.h"
+#include "../DX10_Renderer.h"
+#include "../DX10_Shader_Structures.h"
+
+class DX10_Shader_LitTex
+{
+public:
+
+	/***********************
+	* DX10_Shader_LitTex: Default Constructor for Lit Texture Shader class
+	* @author: Callan Moore
+	********************/
+	DX10_Shader_LitTex()
+	{
+	}
+
+	/***********************
+	* ~DX10_Shader_LitTex: Default Destructor for Lit Texture Shader class
+	* @author: Callan Moore
+	********************/
+	~DX10_Shader_LitTex()
+	{
+	}
+
+	bool Initialise(DX10_Renderer* _pDX10_Renderer)
+	{
+		m_pDX10_Renderer = _pDX10_Renderer;
+
+		VALIDATE(BuildFX());
+		VALIDATE(CreateFXVarPointers());
+		VALIDATE(CreateVertexLayout());
+
+		return true;
+	}
+
+	void SetUpPerFrame()
+	{
+		m_pLight->SetRawValue(m_pDX10_Renderer->GetActiveLight(), 0, sizeof(Light));
+		m_pEyePos->SetFloatVector((float*)m_pDX10_Renderer->GetEyePos());
+		m_pMatView->SetMatrix((float*)m_pDX10_Renderer->GetViewMatrix());
+		m_pMatProj->SetMatrix((float*)m_pDX10_Renderer->GetProjMatrix());
+	}
+
+	void Render(TLitTex _litTex)
+	{
+		m_pDX10_Renderer->RestoreDefaultDrawStates();
+		m_pDX10_Renderer->SetInputLayout(m_vertexLayoutID);
+		ID3D10EffectTechnique* pTech = m_pDX10_Renderer->GetTechnique(m_techniqueID);
+
+		// Don't transform texture coordinates
+		D3DXMATRIX matTex;
+		D3DXMatrixIdentity(&matTex);
+
+		if (pTech != NULL)
+		{
+			D3D10_TECHNIQUE_DESC techDesc;
+			pTech->GetDesc(&techDesc);
+			for (UINT p = 0; p < techDesc.Passes; ++p)
+			{
+				m_pMatWorld->SetMatrix((float*)_litTex.pMatWorld);
+				m_pMatTex->SetMatrix((float*)matTex);
+				m_pMapDiffuse->SetResource(m_pDX10_Renderer->GetTexture(_litTex.textureID));
+
+				pTech->GetPassByIndex(p)->Apply(0);
+				_litTex.pMesh->Render();
+			}
+		}
+	}
+
+private:
+	bool BuildFX()
+	{
+		VALIDATE(m_pDX10_Renderer->BuildFX("LitTex.fx", "LitTextureTech", &m_fxID, &m_techniqueID));
+
+		return true;
+	}
+
+	bool CreateFXVarPointers()
+	{
+		// Per Frame
+		m_pLight = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_light");
+		m_pEyePos = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_eyePosW")->AsVector();
+
+		m_pMatView = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_matView")->AsMatrix();
+		m_pMatProj = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_matProj")->AsMatrix();
+
+		// Per Object
+		m_pMatWorld = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_matWorld")->AsMatrix();
+		m_pMatTex = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_matTex")->AsMatrix();
+
+		// Globals
+		m_pMapDiffuse = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_mapDiffuse")->AsShaderResource();
+		m_pMapSpecular = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_mapSpec")->AsShaderResource();
+
+		VALIDATE(m_pLight != 0);
+		VALIDATE(m_pEyePos != 0);
+		VALIDATE(m_pMatView != 0);
+		VALIDATE(m_pMatProj != 0);
+		VALIDATE(m_pMatWorld != 0);
+		VALIDATE(m_pMatTex != 0);
+		VALIDATE(m_pMapDiffuse != 0);
+		VALIDATE(m_pMapSpecular != 0);
+
+		return true;
+	}
+
+	bool CreateVertexLayout()
+	{
+		// Vertex Desc for a basic vertex with Normals and UV coordinates
+		D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D10_INPUT_PER_VERTEX_DATA, 0 },
+		};
+		UINT elementNum = 3;
+		m_pDX10_Renderer->CreateVertexLayout(vertexDesc, elementNum, m_techniqueID, &m_vertexLayoutID);
+	
+		return true;
+	}
+
+private:
+
+	UINT m_fxID;
+	UINT m_techniqueID;
+	UINT m_vertexLayoutID;
+
+	DX10_Renderer*						m_pDX10_Renderer;
+
+	ID3D10EffectVariable*				m_pLight;
+	ID3D10EffectVectorVariable*			m_pEyePos;
+	ID3D10EffectMatrixVariable*			m_pMatView;
+	ID3D10EffectMatrixVariable*			m_pMatProj;
+
+	ID3D10EffectMatrixVariable*			m_pMatWorld;
+	ID3D10EffectMatrixVariable*			m_pMatTex;
+
+	ID3D10EffectShaderResourceVariable* m_pMapDiffuse;
+	ID3D10EffectShaderResourceVariable* m_pMapSpecular;
+};
+
+#endif	// __DX10_SHADER_LITTEX_H__

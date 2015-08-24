@@ -125,6 +125,7 @@
     <ClInclude Include="Files\DX10\DX10.h" />
     <ClInclude Include="Files\DX10\DX10\Cameras\DX10_Camera_FirstPerson.h" />
     <ClInclude Include="Files\DX10\DX10\DX10_Renderer.h" />
+    <ClInclude Include="Files\DX10\DX10\DX10_Shader_Structures.h" />
     <ClInclude Include="Files\DX10\DX10\DX10_Utilities.h" />
     <ClInclude Include="Files\DX10\DX10\DX10_Vertex.h" />
     <ClInclude Include="Files\DX10\DX10\Meshes\DX10_Mesh_Finite_Plane.h" />
@@ -133,6 +134,7 @@
     <ClInclude Include="Files\DX10\DX10\Objects\DX10_Obj_Color.h" />
     <ClInclude Include="Files\DX10\DX10\Objects\DX10_Obj_Generic.h" />
     <ClInclude Include="Files\DX10\DX10\Objects\DX10_Obj_LitTex.h" />
+    <ClInclude Include="Files\DX10\DX10\Shaders\DX10_Shader_LitTex.h" />
     <ClInclude Include="Files\DX10\DX10\Systems\DX10_StaticBuffer.h" />
     <ClInclude Include="Files\GDI\GDI.h" />
     <ClInclude Include="Files\GDI\GDI\GDI_Backbuffer.h" />

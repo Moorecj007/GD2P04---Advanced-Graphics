@@ -284,7 +284,7 @@ bool DX10_Mesh_Rect_Prism::Initialise(DX10_Renderer* _pRenderer, TVertexColorUV 
 	return true;
 }
 
-bool DX10_Mesh_Rect_Prism::Initialise(DX10_Renderer* _pRenderer, TVertexColorNormalUV _vert, v3float _scale)
+bool DX10_Mesh_Rect_Prism::Initialise(DX10_Renderer* _pRenderer, TVertexNormalUV _vert, v3float _scale)
 {
 	// Save the renderer on the Rectangular Prism
 	m_pRenderer = _pRenderer;
@@ -294,43 +294,43 @@ bool DX10_Mesh_Rect_Prism::Initialise(DX10_Renderer* _pRenderer, TVertexColorNor
 	float vertScaleZ = _scale.z / 2;
 
 	// Create vertex buffer
-	TVertexColorNormalUV vertices[] =
+	TVertexNormalUV vertices[] =
 	{
 		// Front
-		{ D3DXVECTOR3(-vertScaleX, vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
-		{ D3DXVECTOR3(vertScaleX, vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
-		{ D3DXVECTOR3(vertScaleX, -vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
-		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
 
 		// Left
-		{ D3DXVECTOR3(-vertScaleX, vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
-		{ D3DXVECTOR3(-vertScaleX, vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
-		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
-		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
 
 		// Right
-		{ D3DXVECTOR3(vertScaleX, vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
-		{ D3DXVECTOR3(vertScaleX, vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
-		{ D3DXVECTOR3(vertScaleX, -vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
-		{ D3DXVECTOR3(vertScaleX, -vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
 
 		// Back
-		{ D3DXVECTOR3(vertScaleX, vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
-		{ D3DXVECTOR3(-vertScaleX, vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
-		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
-		{ D3DXVECTOR3(vertScaleX, -vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
 
 		// Top
-		{ D3DXVECTOR3(-vertScaleX, vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
-		{ D3DXVECTOR3(vertScaleX, vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
-		{ D3DXVECTOR3(vertScaleX, vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
-		{ D3DXVECTOR3(-vertScaleX, vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
 
 		// Bottom
-		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
-		{ D3DXVECTOR3(vertScaleX, -vertScaleY, -vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
-		{ D3DXVECTOR3(vertScaleX, -vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
-		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, vertScaleZ), YELLOW, D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } }
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } }
 	};
 	m_vertType = VT_COLOR;
 	UINT stride = sizeof(*vertices);

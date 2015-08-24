@@ -19,6 +19,8 @@
 
 // Local Includes
 #include "DX10_Obj_Generic.h"
+#include "../DX10_Shader_Structures.h"
+#include "../Shaders/DX10_Shader_LitTex.h"
 
 class DX10_Obj_LitTex :
 	public DX10_Obj_Generic
@@ -26,10 +28,12 @@ class DX10_Obj_LitTex :
 public:
 
 	/***********************
-	* CDX10_LitTex_Obj: Default Constructor for Lit Texture Object class
+	* CDX10_LitTex_Obj: Constructor for Lit Texture Object class
 	* @author: Callan Moore
+	* @parameter: _pShader: The Shader for this Object
+	* @parameter: _textureID: The ID for the Texture for this Object
 	********************/
-	DX10_Obj_LitTex();
+	DX10_Obj_LitTex(DX10_Shader_LitTex* _pShader, UINT _textureID);
 
 	/***********************
 	* ~CDX10_LitTex_Obj: Default Destructor for Lit Texture Object class
@@ -38,30 +42,14 @@ public:
 	~DX10_Obj_LitTex();
 
 	/***********************
-	* Draw: Draw the Lit Texture Object to the screen space
+	* Render: Render the Lit Texture Object to the screen space
 	* @author: Callan Moore
 	* @return: void
 	********************/
-	virtual void Draw();
-
-	/***********************
-	* BuildFX: Build the FX files for the Lit Texture Object
-	* @author: Callan Moore
-	* @return: bool: Successful or not
-	********************/
-	virtual bool BuildFX();
-
-	/***********************
-	* CreateFXVarPointers: Retrieve the FX variables from the FX file
-	* @author: Callan Moore
-	* @return: bool: Successful or not
-	********************/
-	virtual bool CreateFXVarPointers();
-
-	// TO DO
-	virtual SetTexture(std::string _fileName)
+	virtual void Render();
 
 private:
-
+	DX10_Shader_LitTex* m_pShader;
+	UINT m_textureID;
 };
 #endif	// __DX10_OBJ_LITTEX_H__

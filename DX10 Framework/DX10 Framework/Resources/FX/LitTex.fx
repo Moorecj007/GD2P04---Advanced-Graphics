@@ -9,88 +9,86 @@
 
 cbuffer cbPerFrame
 {
-	Light gLight;
-	float3 gEyePosW;
-};
+	Light g_light;
+	float3 g_eyePosW;
 
-bool gSpecularEnabled;
+	float4x4 g_matView;
+	float4x4 g_matProj;
+};
 
 cbuffer cbPerObject
 {
-	float4x4 gWorld;
-	float4x4 gWVP; 
-	float4x4 gTexMtx;
+	float4x4 g_matWorld;
+	float4x4 g_matTex;
 };
 
 // Nonnumeric values cannot be added to a cbuffer.
-Texture2D gDiffuseMap;
-Texture2D gDiffuseMap2;
-Texture2D gSpecMap;
+Texture2D g_mapDiffuse;
+Texture2D g_mapSpec;
 
-SamplerState gTriLinearSam
+bool g_specularEnabled;
+
+SamplerState g_triLinearSam
 {
 	Filter = ANISOTROPIC;
 	AddressU = WRAP;
 	AddressV = WRAP;
-	
 };
 
 struct VS_IN
 {
-	float3 posL    : POSITION;
-	float3 normalL : NORMAL;
-	float2 texC    : TEXCOORD;
+	float3 position		: POSITION;
+	float3 normal		: NORMAL;
+	float2 texCoord		: TEXCOORD;
 };
 
 struct VS_OUT
 {
-	float4 posH    : SV_POSITION;
-    float3 posW    : POSITION;
-    float3 normalW : NORMAL;
-    float2 texC    : TEXCOORD;
+	float4 positionH    : SV_POSITION;
+    float3 position     : POSITION;
+    float3 normal		: NORMAL;
+    float2 texCoord     : TEXCOORD;
 };
  
-VS_OUT VS(VS_IN vIn)
+VS_OUT VS(VS_IN _inputVS)
 {
-	VS_OUT vOut;
+	VS_OUT outputVS;
 	
 	// Transform to world space space.
-	vOut.posW    = mul(float4(vIn.posL, 1.0f), gWorld).xyz;
-	vOut.normalW = mul(float4(vIn.normalL, 0.0f), gWorld).xyz;
+	outputVS.position = mul(float4(_inputVS.position, 1.0f), g_matWorld).xyz;
+	outputVS.normal = mul(float4(_inputVS.normal, 0.0f), g_matWorld).xyz;
 		
 	// Transform to homogeneous clip space.
-	vOut.posH = mul(float4(vIn.posL, 1.0f), gWVP);
+	outputVS.positionH = mul(float4(_inputVS.position, 1.0f), g_matWorld);
+	outputVS.positionH = mul(float4(_inputVS.position, 1.0f), g_matView);
+	outputVS.positionH = mul(float4(_inputVS.position, 1.0f), g_matProj);
 	
 	// Output vertex attributes for interpolation across triangle.
-	vOut.texC  = mul(float4(vIn.texC, 0.0f, 1.0f), gTexMtx).xy;
+	outputVS.texCoord = mul(float4(_inputVS.texCoord, 0.0f, 1.0f), g_matTex).xy;
 	
-	return vOut;
+	return outputVS;
 }
 
-float4 PS(VS_OUT pIn) : SV_Target
+float4 PS(VS_OUT _inputPS) : SV_Target
 {
 	// Get materials from texture maps.
-	float4 diffuse = gDiffuseMap.Sample(gTriLinearSam, pIn.texC);
-	float4 diffuse2 = gDiffuseMap2.Sample(gTriLinearSam, pIn.texC);
-
-	float4 diffuseTotal = diffuse * diffuse2;
-
-	float4 spec    = gSpecMap.Sample( gTriLinearSam, pIn.texC );
+	float4 diffuse = g_mapDiffuse.Sample(g_triLinearSam, _inputPS.texCoord);
+	float4 spec = g_mapSpec.Sample(g_triLinearSam, _inputPS.texCoord);
 	
 	// Map [0,1] --> [0,256]
 	spec.a *= 256.0f;
 	
 	// Interpolating normal can make it not be of unit length so normalize it.
-    	float3 normalW = normalize(pIn.normalW);
+	float3 normal = normalize(_inputPS.normal);
     
 	// Compute the lit color for this pixel.
-	SurfaceInfo v = { pIn.posW, normalW, diffuseTotal, spec };
-	float3 litColor = ParallelLight(v, gLight, gEyePosW);
+	SurfaceInfo surface = { _inputPS.position, normal, diffuse, spec };
+	float3 litColor = ParallelLight(surface, g_light, g_eyePosW);
     
-	return float4(litColor, diffuseTotal.a);
+	return float4(litColor, diffuse.a);
 }
 
-technique10 TexTech
+technique10 LitTextureTech
 {
     	pass P0
     	{

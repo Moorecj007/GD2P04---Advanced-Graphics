@@ -43,6 +43,11 @@ bool DX10_Renderer::Initialise(int _clientWidth, int _clientHeight, HWND _hWND)
 	m_nextBufferID = 0;
 	m_nextTextureID = 0;
 
+	m_activeLight.dir = D3DXVECTOR3(0.57735f, -0.57735f, 0.57735f);
+	m_activeLight.ambient = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.0f);
+	m_activeLight.diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	m_activeLight.specular = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+
 	return true;
 }
 
@@ -135,7 +140,7 @@ bool DX10_Renderer::InitialiseDeviceAndSwapChain()
 				&m_pDX10SwapChain,
 				&m_pDX10Device));
 
-	m_rasterizerDesc.CullMode = D3D10_CULL_BACK;
+	m_rasterizerDesc.CullMode = D3D10_CULL_NONE;
 	m_rasterizerDesc.FillMode = D3D10_FILL_SOLID;
 	m_rasterizerDesc.FrontCounterClockwise = true;
 	m_rasterizerDesc.DepthBias = true;
@@ -316,6 +321,12 @@ bool DX10_Renderer::BuildFX(std::string _fxFileName, std::string _technique, UIN
 			// Technique has not been created so Retrieve the Tech from the FX file
 			ID3D10EffectTechnique* pTech = pFX->GetTechniqueByName(_technique.c_str());
 
+			if (pTech == NULL)
+			{
+				// technique was not found
+				return false;
+			}
+
 			// Create pairs to store in the Technique Maps
 			techID = ++m_nextTechniqueID;
 			std::pair<std::string, UINT> techPair(_technique, techID);
@@ -359,70 +370,6 @@ ID3D10EffectVariable* DX10_Renderer::GetFXVariable(UINT _fxID, std::string _tech
 	return pFX->GetVariableByName(_techVar.c_str());
 }
 
-bool DX10_Renderer::BuildVertexLayout(eVertexType _vertType, UINT _techID, UINT* _pVertexLayoutID)
-{
-	UINT elementNum;
-
-	switch (_vertType)
-	{
-	case VT_BASIC:
-	{
-		// Vertex Desc with basic vertex of a position only
-		D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
-		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 }
-		};
-		elementNum = 1;
-		return (CreateVertexLayout(vertexDesc, elementNum, _techID, _pVertexLayoutID));
-	}
-	break;
-	case VT_COLOR:
-	{
-		// Vertex Desc for a basic vertex with D3DXCOLOR as well
-		D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
-		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
-			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 }
-		};
-		elementNum = 2;
-		return (CreateVertexLayout(vertexDesc, elementNum, _techID, _pVertexLayoutID));
-	}
-	break;
-	case VT_COLOR_UV:
-	{
-		// Vertex Desc for a basic vertex with D3DXCOLOR as well
-		D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
-		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
-			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 },
-			{ "UV", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 28, D3D10_INPUT_PER_VERTEX_DATA, 0 }
-		};
-		elementNum = 2;
-		return (CreateVertexLayout(vertexDesc, elementNum, _techID, _pVertexLayoutID));
-	}
-		break;
-	case VT_COLOR_NORMAL_UV:
-	{
-		// Vertex Desc for a basic vertex with D3DXCOLOR as well
-		D3D10_INPUT_ELEMENT_DESC vertexDesc[] =
-		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D10_INPUT_PER_VERTEX_DATA, 0 },
-			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D10_INPUT_PER_VERTEX_DATA, 0 },
-			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 28, D3D10_INPUT_PER_VERTEX_DATA, 0 },
-			{ "UV", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 40, D3D10_INPUT_PER_VERTEX_DATA, 0 }
-		};
-		elementNum = 2;
-		return (CreateVertexLayout(vertexDesc, elementNum, _techID, _pVertexLayoutID));
-	}
-	break;
-	default:
-	{
-		return false;
-	}
-	break;
-	}	// End Switch
-}
-
 bool DX10_Renderer::CreateVertexLayout(D3D10_INPUT_ELEMENT_DESC* _vertexDesc, UINT _elementNum, UINT _techID, UINT* _vertexLayoutID)
 {
 	// Find the Technique using the ID
@@ -432,8 +379,9 @@ bool DX10_Renderer::CreateVertexLayout(D3D10_INPUT_ELEMENT_DESC* _vertexDesc, UI
 	// Create the input layout
 	D3D10_PASS_DESC passDesc;
 	pTech->GetPassByIndex(0)->GetDesc(&passDesc);
-	VALIDATEHR(	m_pDX10Device->CreateInputLayout(_vertexDesc, _elementNum, passDesc.pIAInputSignature,
-				passDesc.IAInputSignatureSize, &pVertexLayout));
+
+	VALIDATEHR(m_pDX10Device->CreateInputLayout(_vertexDesc, _elementNum, passDesc.pIAInputSignature,
+		passDesc.IAInputSignatureSize, &pVertexLayout));
 
 	// Add the Vertex Layout to the Map
 	UINT inputLayerID = ++m_nextInputLayoutID;
@@ -450,7 +398,7 @@ bool DX10_Renderer::CreateTexture(std::string _texFileName, UINT* _pTexID)
 	ID3D10Effect* pTexture = 0;
 	UINT texID;
 
-	// Look for the texure by name to see if it is already loaded
+	// Look for the texture by name to see if it is already loaded
 	std::map<std::string, UINT>::iterator texCheck;
 	texCheck = m_textureIDs.find(_texFileName);
 
@@ -462,11 +410,11 @@ bool DX10_Renderer::CreateTexture(std::string _texFileName, UINT* _pTexID)
 	}
 	else
 	{
-		// Texture is new, create ans save.
+		// Texture is new, create and save.
 		texID = ++m_nextTextureID;
 
 		ID3D10ShaderResourceView* pTexture;
-		std::string filePath = "..\\..\\..\\..\\Resources\\Textures\\";
+		std::string filePath = "Resources/Textures/";
 		filePath.append(_texFileName);
 
 		VALIDATEHR(D3DX10CreateShaderResourceViewFromFileA(m_pDX10Device,
@@ -563,14 +511,4 @@ void DX10_Renderer::CalcProjMatrix()
 {
 	float aspect = float(m_clientWidth) / m_clientHeight;
 	D3DXMatrixPerspectiveFovLH(&m_matProj, 0.25f*PI, aspect, 1.0f, 1000.0f);
-}
-
-D3DXMATRIX* DX10_Renderer::GetViewMatrix()
-{
-	return &m_matView;
-}
-
-D3DXMATRIX* DX10_Renderer::GetProjMatrix()
-{
-	return &m_matProj;
 }

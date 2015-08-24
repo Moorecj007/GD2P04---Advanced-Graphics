@@ -4,9 +4,9 @@
 
 cbuffer cbPerObject
 {
-	float4x4 matColorWorld;
-	float4x4 matColorView;  
-	float4x4 matColorProj; 
+	float4x4 matWorld;
+	float4x4 matView;  
+	float4x4 matProj; 
 	float4 objColor;
 };
 
@@ -36,9 +36,9 @@ PixelShaderInput ColorVertexShader(VertexShaderInput inputVS)
 	inputVS.position.w = 1.0f;
 
 	// Calculate the position of the vertex against the world, view, and projection matrices.
-	outputPS.position = mul(inputVS.position, matColorWorld);
-	outputPS.position = mul(outputPS.position, matColorView);
-	outputPS.position = mul(outputPS.position, matColorProj);
+	outputPS.position = mul(inputVS.position, matWorld);
+	outputPS.position = mul(outputPS.position, matView);
+	outputPS.position = mul(outputPS.position, matProj);
 
 	// Store the input color for the pixel shader to use.
 	outputPS.color = objColor;

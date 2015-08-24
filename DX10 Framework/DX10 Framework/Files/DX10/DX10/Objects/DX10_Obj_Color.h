@@ -38,25 +38,11 @@ public:
 	~DX10_Obj_Color();
 
 	/***********************
-	* Draw: Draw the Color Object to the screen space
+	* Render: Render the Color Object to the screen space
 	* @author: Callan Moore
 	* @return: void
 	********************/
-	virtual void Draw();
-
-	/***********************
-	* BuildFX: Build the FX files for the Color Object
-	* @author: Callan Moore
-	* @return: bool: Successful or not
-	********************/
-	virtual bool BuildFX();
-
-	/***********************
-	* CreateFXVarPointers: Retrieve the FX variables from the FX file
-	* @author: Callan Moore
-	* @return: bool: Successful or not
-	********************/
-	virtual bool CreateFXVarPointers();
+	virtual void Render();
 };
 
 #endif	// __DX10_OBJ_COLOR_H__

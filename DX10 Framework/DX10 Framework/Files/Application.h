@@ -157,7 +157,7 @@ private:
 	bool* m_pKeyDown;
 
 	// Renderer Variables
-	DX10_Renderer* m_pDX10Renderer;
+	DX10_Renderer* m_pDX10_Renderer;
 	CGDI_Renderer* m_pGDIRenderer;
 
 	// Camera
@@ -172,7 +172,8 @@ private:
 	// Meshes
 	DX10_Mesh_Generic* m_pCubeMesh;
 	
-
+	// Shaders
+	DX10_Shader_LitTex* m_pShader_LitTex;
 };
 
 #endif // __APPLICATION_H__

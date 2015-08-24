@@ -117,16 +117,6 @@ public:
 	ID3D10EffectVariable* GetFXVariable(UINT _fxID, std::string _techVar);
 
 	/***********************
-	* BuildVertexLayout: Detect the Vertex Description Needed
-	* @author: Callan Moore
-	* @Parameter: _vertType: Vertex structure to base layout on
-	* @Parameter: _techID: Technique ID to base the layout on
-	* @Parameter: _pVertexLayoutID: Storage variable to hold the ID of the created Vertex Layout
-	* @return: bool: Successful or not
-	********************/
-	bool BuildVertexLayout(eVertexType _vertType, UINT _techID, UINT* _pVertexLayoutID);
-
-	/***********************
 	* CreateVertexLayout: Create the Vertex Layout for an Object
 	* @author: Callan Moore
 	* @parameter: _vertexDesc: Description of the Vertices's
@@ -135,7 +125,7 @@ public:
 	* @Parameter: _vertexLayoutID: Storage variable to hold the ID of the created Vertex Layout
 	* @return: bool: Successful or not
 	********************/
-	bool CreateVertexLayout(D3D10_INPUT_ELEMENT_DESC _vertexDesc[], UINT _elementCount, UINT _techID, UINT* _pVertexLayoutID);
+	bool CreateVertexLayout(D3D10_INPUT_ELEMENT_DESC* _vertexDesc, UINT _elementCount, UINT _techID, UINT* _pVertexLayoutID);
 
 	/***********************
 	* CreateStaticBuffer: Creates a static buffer that holds all information for Vertex and Index Buffers for an Mesh
@@ -180,8 +170,6 @@ public:
 	* @return: bool: Successful or not
 	********************/
 	bool CreateTexture(std::string _texFileName, UINT* _pTexID);
-
-
 
 	/***********************
 	* RenderObject: Renders an Object to the screen
@@ -237,6 +225,14 @@ public:
 	void SetViewMatrix(D3DXMATRIX _view);
 
 	/***********************
+	* SetEyePosition: Sets the Eye of the view (Camera position)
+	* @author: Callan Moore
+	* @parameter: D3DXVECTOR3 _eyePos: The position of the eye (Camera)
+	* @return: void
+	********************/
+	void SetEyePosition(D3DXVECTOR3 _eyePos) { m_eyePos = _eyePos; };
+
+	/***********************
 	* GetTechnique: Retrieve the Technique for the given ID
 	* @author: Callan Moore
 	* @parameter: _techID: ID of the Technique
@@ -251,7 +247,7 @@ public:
 	* @return: ID3D10ShaderResourceView*: The Texture
 	********************/
 	ID3D10ShaderResourceView* GetTexture(UINT _texID);
-	
+
 	/***********************
 	* CalcProjMatrix: Calculate the Projection Matrix for use in Renderering
 	* @author: Callan Moore
@@ -264,16 +260,31 @@ public:
 	* @author: Callan Moore
 	* @return: D3DXMATRIX*: The View Matrix
 	********************/
-	D3DXMATRIX* GetViewMatrix();
+	D3DXMATRIX* GetViewMatrix() { return &m_matView; };
 	
 	/***********************
 	* GetProjMatrix: Retrieve the Projection Matrix
 	* @author: Callan Moore
 	* @return: D3DXMATRIX*: The Projection Matrix
 	********************/
-	D3DXMATRIX* GetProjMatrix();
+	D3DXMATRIX* GetProjMatrix() { return &m_matProj; };
 
+	/***********************
+	* GetFullScreenState: Retrieve the state of full screen
+	* @author: Callan Moore
+	* @return: bool: True if full screen is active, false otherwise
+	********************/
 	bool GetFullScreenState() { return m_fullScreen; }
+
+	/***********************
+	* GetEyePos: Retrieve the current Eye Position
+	* @author: Callan Moore
+	* @return: D3DXVECTOR3; The Eye Position
+	********************/
+	D3DXVECTOR3 GetEyePos() { return m_eyePos; };
+
+	// TO DO - delete
+	Light* GetActiveLight() { return &m_activeLight; };
 
 private:
 	// Window Variables
@@ -285,6 +296,7 @@ private:
 	// Matrices for Rendering
 	D3DXMATRIX m_matView;
 	D3DXMATRIX m_matProj;
+	D3DXVECTOR3 m_eyePos;
 
 	// DX10 Variables
 	ID3D10Device*    m_pDX10Device;
@@ -315,6 +327,9 @@ private:
 	UINT m_nextTextureID;
 	std::map<std::string, UINT> m_textureIDs;
 	std::map<UINT, ID3D10ShaderResourceView*> m_texturesByID;
+
+	// TO do - delete
+	Light m_activeLight;
 };
 
 #endif // __DX10_RENDERER_H__

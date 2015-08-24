@@ -48,10 +48,9 @@ public:
 	* @author: Callan Moore
 	* @parameter: _pRenderer: Renderer for this Application
 	* @parameter: _pMesh: Generic Mesh for this Object
-	* @parameter: _color: Color for the Object
 	* @return: bool: Successful or not
 	********************/
-	virtual bool Initialise(DX10_Renderer* _pRenderer, DX10_Mesh_Generic* _pMesh, D3DXCOLOR _color);
+	virtual bool Initialise(DX10_Renderer* _pRenderer, DX10_Mesh_Generic* _pMesh);
 	
 	/***********************
 	* Process: Process the new frame and update the Generic Object
@@ -62,32 +61,11 @@ public:
 	virtual void Process(float _dt);
 	
 	/***********************
-	* Draw: Draw the Generic Object to the screen space
+	* Render: Render the Generic Object to the screen space
 	* @author: Callan Moore
 	* @return: void
 	********************/
-	virtual void Draw() = 0;
-	
-	/***********************
-	* BuildFX: Build the FX files for the Generic Object Object
-	* @author: Callan Moore
-	* @return: bool: Successful or not
-	********************/
-	virtual bool BuildFX() = 0;
-	
-	/***********************
-	* CreateFXVarPointers: Retrieve the FX variables from the FX file
-	* @author: Callan Moore
-	* @return: bool: Successful or not
-	********************/
-	virtual bool CreateFXVarPointers() = 0;
-	
-	/***********************
-	* BuildVertexLayout: Build the Vertex Layout for this Object
-	* @author: Callan Moore
-	* @return: bool: Successful or not
-	********************/
-	virtual bool BuildVertexLayout();
+	virtual void Render() = 0;
 	
 	/***********************
 	* CalcWorldMatrix: Calculate the World Matrix 
@@ -111,10 +89,6 @@ protected:
 	UINT m_vertexLayoutID;
 
 	D3DXMATRIX m_matWorld;
-	ID3D10EffectMatrixVariable* m_pTechMatWorld;
-	ID3D10EffectMatrixVariable* m_pTechMatView;
-	ID3D10EffectMatrixVariable* m_pTechMatProj;
-	ID3D10EffectVectorVariable* m_pTechObjColor;
 };
 
 #endif	// __DX10_OBJ_GENERIC_H__

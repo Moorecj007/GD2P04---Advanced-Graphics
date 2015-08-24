@@ -75,7 +75,7 @@ public:
 	* @parameter: _scale: Scale factor for the finite plane Mesh
 	* @return: bool: Successful or not
 	********************/
-	virtual bool Initialise(DX10_Renderer* _pRenderer, TVertexColorNormalUV _vert, v3float _scale);
+	virtual bool Initialise(DX10_Renderer* _pRenderer, TVertexNormalUV _vert, v3float _scale);
 
 	/***********************
 	* Render: Render the Rect Prism Mesh
