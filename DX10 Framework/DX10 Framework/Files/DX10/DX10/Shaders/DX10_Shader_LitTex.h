@@ -53,15 +53,17 @@ public:
 		VALIDATE(CreateFXVarPointers());
 		VALIDATE(CreateVertexLayout());
 
+		m_pDX10_Renderer->CreateTexture("defaultSpecular.dds", &m_specularID);
+
 		return true;
 	}
 
 	void SetUpPerFrame()
 	{
 		m_pLight->SetRawValue(m_pDX10_Renderer->GetActiveLight(), 0, sizeof(Light));
-		m_pEyePos->SetFloatVector((float*)m_pDX10_Renderer->GetEyePos());
-		m_pMatView->SetMatrix((float*)m_pDX10_Renderer->GetViewMatrix());
-		m_pMatProj->SetMatrix((float*)m_pDX10_Renderer->GetProjMatrix());
+		m_pEyePos->SetRawValue(m_pDX10_Renderer->GetEyePos(), 0, sizeof(D3DXVECTOR3));
+		//m_pMatView->SetMatrix((float*)m_pDX10_Renderer->GetViewMatrix());
+		//m_pMatProj->SetMatrix((float*)m_pDX10_Renderer->GetProjMatrix());
 	}
 
 	void Render(TLitTex _litTex)
@@ -80,9 +82,17 @@ public:
 			pTech->GetDesc(&techDesc);
 			for (UINT p = 0; p < techDesc.Passes; ++p)
 			{
-				m_pMatWorld->SetMatrix((float*)_litTex.pMatWorld);
+				D3DXMATRIX matWorld = *_litTex.pMatWorld;
+				D3DXMATRIX matView = *(m_pDX10_Renderer->GetViewMatrix());
+				D3DXMATRIX matProj = *(m_pDX10_Renderer->GetProjMatrix());
+
+				mWVP = matWorld * matView * matProj;
+				m_pMatView->SetMatrix((float*)m_pDX10_Renderer->GetViewMatrix());
+
+				m_pMatWorld->SetMatrix((float*)matWorld);
 				m_pMatTex->SetMatrix((float*)matTex);
 				m_pMapDiffuse->SetResource(m_pDX10_Renderer->GetTexture(_litTex.textureID));
+				m_pMapSpecular->SetResource(m_pDX10_Renderer->GetTexture(m_specularID));
 
 				pTech->GetPassByIndex(p)->Apply(0);
 				_litTex.pMesh->Render();
@@ -93,7 +103,7 @@ public:
 private:
 	bool BuildFX()
 	{
-		VALIDATE(m_pDX10_Renderer->BuildFX("LitTex.fx", "LitTextureTech", &m_fxID, &m_techniqueID));
+		VALIDATE(m_pDX10_Renderer->BuildFX("tex.fx", "TexTech", &m_fxID, &m_techniqueID));
 
 		return true;
 	}
@@ -101,24 +111,24 @@ private:
 	bool CreateFXVarPointers()
 	{
 		// Per Frame
-		m_pLight = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_light");
-		m_pEyePos = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_eyePosW")->AsVector();
+		m_pLight = m_pDX10_Renderer->GetFXVariable(m_fxID, "gLight");
+		m_pEyePos = m_pDX10_Renderer->GetFXVariable(m_fxID, "gEyePosW");
 
-		m_pMatView = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_matView")->AsMatrix();
-		m_pMatProj = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_matProj")->AsMatrix();
+		m_pMatView = m_pDX10_Renderer->GetFXVariable(m_fxID, "gWVP")->AsMatrix();
+		//m_pMatProj = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_matProj")->AsMatrix();
 
 		// Per Object
-		m_pMatWorld = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_matWorld")->AsMatrix();
-		m_pMatTex = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_matTex")->AsMatrix();
+		m_pMatWorld = m_pDX10_Renderer->GetFXVariable(m_fxID, "gWorld")->AsMatrix();
+		m_pMatTex = m_pDX10_Renderer->GetFXVariable(m_fxID, "gTexMtx")->AsMatrix();
 
 		// Globals
-		m_pMapDiffuse = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_mapDiffuse")->AsShaderResource();
-		m_pMapSpecular = m_pDX10_Renderer->GetFXVariable(m_fxID, "g_mapSpec")->AsShaderResource();
+		m_pMapDiffuse = m_pDX10_Renderer->GetFXVariable(m_fxID, "gDiffuseMap")->AsShaderResource();
+		m_pMapSpecular = m_pDX10_Renderer->GetFXVariable(m_fxID, "gSpecMap")->AsShaderResource();
 
 		VALIDATE(m_pLight != 0);
 		VALIDATE(m_pEyePos != 0);
 		VALIDATE(m_pMatView != 0);
-		VALIDATE(m_pMatProj != 0);
+		//VALIDATE(m_pMatProj != 0);
 		VALIDATE(m_pMatWorld != 0);
 		VALIDATE(m_pMatTex != 0);
 		VALIDATE(m_pMapDiffuse != 0);
@@ -147,11 +157,12 @@ private:
 	UINT m_fxID;
 	UINT m_techniqueID;
 	UINT m_vertexLayoutID;
+	UINT m_specularID;
 
 	DX10_Renderer*						m_pDX10_Renderer;
 
 	ID3D10EffectVariable*				m_pLight;
-	ID3D10EffectVectorVariable*			m_pEyePos;
+	ID3D10EffectVariable*				m_pEyePos;
 	ID3D10EffectMatrixVariable*			m_pMatView;
 	ID3D10EffectMatrixVariable*			m_pMatProj;
 
@@ -160,6 +171,9 @@ private:
 
 	ID3D10EffectShaderResourceVariable* m_pMapDiffuse;
 	ID3D10EffectShaderResourceVariable* m_pMapSpecular;
+
+	// TO DO - delete
+	D3DXMATRIX mWVP;
 };
 
 #endif	// __DX10_SHADER_LITTEX_H__

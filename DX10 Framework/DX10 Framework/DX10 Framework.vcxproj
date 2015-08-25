@@ -149,6 +149,7 @@
     <FxCompile Include="Resources\FX\Color.fx" />
     <FxCompile Include="Resources\FX\LightStructures.fx" />
     <FxCompile Include="Resources\FX\LitTex.fx" />
+    <FxCompile Include="Resources\FX\tex.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,6 +21,8 @@ DX10_Obj_LitTex::DX10_Obj_LitTex(DX10_Shader_LitTex* _pShader, UINT _textureID)
 
 	m_pShader = _pShader;
 	m_textureID = _textureID;
+
+	
 }
 
 DX10_Obj_LitTex::~DX10_Obj_LitTex()

@@ -242,6 +242,7 @@ void Application::ShutDown()
 	ReleasePtr(m_pKeyDown);
 	ReleasePtr(m_pTimer);
 
+	ReleasePtr(m_pShader_LitTex);
 	ReleasePtr(m_pCamera);
 	ReleasePtr(m_pCubeMesh);
 	ReleasePtr(m_pCube);
@@ -278,6 +279,7 @@ void Application::Process()
 	{
 		m_pCamera->Process(m_dt);
 		m_pCube->Process(m_dt);
+		m_pShader_LitTex->SetUpPerFrame();
 	}
 
 	if (m_pGDIRenderer != 0)

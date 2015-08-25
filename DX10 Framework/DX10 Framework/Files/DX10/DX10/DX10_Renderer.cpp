@@ -142,7 +142,7 @@ bool DX10_Renderer::InitialiseDeviceAndSwapChain()
 
 	m_rasterizerDesc.CullMode = D3D10_CULL_NONE;
 	m_rasterizerDesc.FillMode = D3D10_FILL_SOLID;
-	m_rasterizerDesc.FrontCounterClockwise = true;
+	m_rasterizerDesc.FrontCounterClockwise = false;
 	m_rasterizerDesc.DepthBias = true;
 	m_rasterizerDesc.DepthBiasClamp = 0;
 	m_rasterizerDesc.SlopeScaledDepthBias = 0;
