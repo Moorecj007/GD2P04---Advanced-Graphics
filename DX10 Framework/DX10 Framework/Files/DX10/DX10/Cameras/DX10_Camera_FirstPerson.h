@@ -122,7 +122,6 @@ private:
 	float m_rotSpeed;
 	float m_maxRotation;
 	float m_minRotation;
-
 };
 #endif // __DX10_CAMERA_FIRSTPERSON_H__
 

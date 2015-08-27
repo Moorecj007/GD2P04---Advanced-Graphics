@@ -298,41 +298,41 @@ bool DX10_Mesh_Rect_Prism::Initialise(DX10_Renderer* _pRenderer, TVertexNormalUV
 	{
 		// Front
 		{ D3DXVECTOR3(-vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
-		{ D3DXVECTOR3(vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
-		{ D3DXVECTOR3(vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
-		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(1.0f, -1.0f, -1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, -1.0f, -1.0f), { 0.0f, 1.0f } },
 
 		// Left
-		{ D3DXVECTOR3(-vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
-		{ D3DXVECTOR3(-vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
-		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
-		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, 1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, -1.0f, -1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, -1.0f, 1.0f), { 0.0f, 1.0f } },
 
 		// Right
-		{ D3DXVECTOR3(vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
-		{ D3DXVECTOR3(vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
-		{ D3DXVECTOR3(vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
-		{ D3DXVECTOR3(vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(1.0f, 1.0f, 1.0f), { 1.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(1.0f, -1.0f, 1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(1.0f, -1.0f, -1.0f), { 0.0f, 1.0f } },
 
 		// Back
-		{ D3DXVECTOR3(vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
-		{ D3DXVECTOR3(-vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
-		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
-		{ D3DXVECTOR3(vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(1.0f, 1.0f, 1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, 1.0f), { 1.0f, 0.0f } },
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, -1.0f, 1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(1.0f, -1.0f, 1.0f), { 0.0f, 1.0f } },
 
 		// Top
-		{ D3DXVECTOR3(-vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
-		{ D3DXVECTOR3(vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
-		{ D3DXVECTOR3(vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
-		{ D3DXVECTOR3(-vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } },
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, 1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, vertScaleZ), D3DXVECTOR3(1.0f, 1.0f, 1.0f), { 1.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(-vertScaleX, vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
 
 		// Bottom
-		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 0.0f } },
-		{ D3DXVECTOR3(vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 0.0f, 1.0f } },
-		{ D3DXVECTOR3(vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 1.0f } },
-		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, 1.0f, -1.0f), { 1.0f, 0.0f } }
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(-1.0f, -1.0f, -1.0f), { 0.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, -vertScaleZ), D3DXVECTOR3(1.0f, -1.0f, -1.0f), { 1.0f, 0.0f } },
+		{ D3DXVECTOR3(vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(1.0f, -1.0f, 1.0f), { 1.0f, 1.0f } },
+		{ D3DXVECTOR3(-vertScaleX, -vertScaleY, vertScaleZ), D3DXVECTOR3(-1.0f, -1.0f, 1.0f), { 0.0f, 1.0f } }
 	};
-	m_vertType = VT_COLOR;
+	m_vertType = VT_NORMAL_UV;
 	UINT stride = sizeof(*vertices);
 	UINT vertexCount = (sizeof(vertices) / stride);
 
@@ -373,6 +373,5 @@ bool DX10_Mesh_Rect_Prism::Initialise(DX10_Renderer* _pRenderer, TVertexNormalUV
 
 void DX10_Mesh_Rect_Prism::Render()
 {
-	m_pRenderer->SetPrimitiveTopology(m_primTopology);
 	m_pRenderer->RenderMesh(m_bufferID);
 }

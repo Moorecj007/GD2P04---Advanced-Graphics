@@ -160,8 +160,7 @@ private:
 	DX10_Renderer* m_pDX10_Renderer;
 	CGDI_Renderer* m_pGDIRenderer;
 
-	// Camera
-	DX10_Camera_FirstPerson* m_pCamera;
+	
 
 	// Objects
 	DX10_Obj_Generic* m_pCube;
@@ -174,6 +173,10 @@ private:
 	
 	// Shaders
 	DX10_Shader_LitTex* m_pShader_LitTex;
+
+public:
+	// Camera
+	DX10_Camera_FirstPerson* m_pCamera;
 };
 
 #endif // __APPLICATION_H__

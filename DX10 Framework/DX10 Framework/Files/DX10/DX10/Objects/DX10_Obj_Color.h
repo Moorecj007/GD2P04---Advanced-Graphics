@@ -38,6 +38,14 @@ public:
 	~DX10_Obj_Color();
 
 	/***********************
+	* Process: Process the new frame and update the LitTex Object
+	* @author: Callan Moore
+	* @parameter: _dt: The delta tick for this frame
+	* @return: void
+	********************/
+	virtual void Process(float _dt);
+
+	/***********************
 	* Render: Render the Color Object to the screen space
 	* @author: Callan Moore
 	* @return: void

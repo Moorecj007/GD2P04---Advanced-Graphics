@@ -53,11 +53,6 @@ bool DX10_Obj_Generic::Initialise(DX10_Renderer* _pRenderer, DX10_Mesh_Generic* 
 	return true;
 }
 
-void DX10_Obj_Generic::Process(float _dt)
-{
-	CalcWorldMatrix();
-}
-
 void DX10_Obj_Generic::CalcWorldMatrix()
 {
 	// Matrices to make up the World Matrix

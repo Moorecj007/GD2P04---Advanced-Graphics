@@ -66,11 +66,6 @@ LRESULT CALLBACK Application::WindowProc(HWND _hWnd, UINT _uiMsg, WPARAM _wParam
 			pApp->SetKeyDown(_wParam, false);
 		}
 		break;
-		case WM_MOUSEMOVE:
-		{
-			
-		}
-		break;
 		default: break;
 	} // End switch.
 
@@ -170,10 +165,6 @@ bool Application::Initialise(int _clientWidth, int _clientHeight, HINSTANCE _hIn
 		usingGDIRenderer = false;
 	}
 
-	m_online = true;
-	m_pTimer = new Timer();
-	m_pTimer->Reset();
-
 	// Save the client window sizes
 	m_clientWidth = _clientWidth;
 	m_clientHeight = _clientHeight;
@@ -188,31 +179,48 @@ bool Application::Initialise(int _clientWidth, int _clientHeight, HINSTANCE _hIn
 		// Initialise the Renderer
 		m_pDX10_Renderer = new DX10_Renderer();
 		VALIDATE(m_pDX10_Renderer->Initialise(m_clientWidth, m_clientHeight, m_hWnd));
-
+	
 		// Initialise the Objects
 		m_pCamera = new DX10_Camera_FirstPerson();
 		m_pCamera->Initialise(m_pDX10_Renderer, _hInstance, m_hWnd);
-
+		
 		TVertexNormalUV vert;
 		m_pCubeMesh = new DX10_Mesh_Rect_Prism();
 		VALIDATE(m_pCubeMesh->Initialise(m_pDX10_Renderer, vert, { 2.0f, 2.0f, 2.0f }));
-
+		
 		m_pShader_LitTex = new DX10_Shader_LitTex();
 		VALIDATE(m_pShader_LitTex->Initialise(m_pDX10_Renderer));
 		
-		UINT val;
-		m_pDX10_Renderer->CreateTexture("Flare.dds", &val);
+		// Create Fire Animation
+		std::vector<UINT>* pFireAnimTex = new std::vector<UINT>;
+		for (int i = 0; i < 120; i++)
+		{
+			std::string strFilePath = "FireAnim/Fire";
+			std::string strNumber = std::to_string(i + 1);
+			if (strNumber.length() == 1)
+			{
+				strFilePath.append("00");
+			}
+			else if ((strNumber.length() == 2))
+			{
+				strFilePath.append("0");
+			}
+			strFilePath.append(strNumber);
+			strFilePath.append(".bmp");
 		
-		m_pCube = new DX10_Obj_LitTex(m_pShader_LitTex, val);
+			pFireAnimTex->push_back(0);
+			m_pDX10_Renderer->CreateTexture(strFilePath, &(*pFireAnimTex)[i]);
+		}
+		m_pCube = new DX10_Obj_LitTex(m_pShader_LitTex, pFireAnimTex, 4.0f);
 		VALIDATE(m_pCube->Initialise(m_pDX10_Renderer, m_pCubeMesh));
 	}
-
+	
 	if (usingGDIRenderer == true)
 	{
 		// Initialise the Renderer
 		m_pGDIRenderer = new CGDI_Renderer();
 		VALIDATE(m_pGDIRenderer->Initialise(m_hWnd, _hInstance, m_clientWidth, m_clientHeight));
-
+	
 		// Initialise the Objects
 		m_pQuad = new CGDI_Quad();
 		VALIDATE(m_pQuad->Initialise(m_pGDIRenderer, { 400, 400 }, 70, 5, RGB(255, 0, 0)));
@@ -221,6 +229,10 @@ bool Application::Initialise(int _clientWidth, int _clientHeight, HINSTANCE _hIn
 		m_pQuad3 = new CGDI_Quad();
 		VALIDATE(m_pQuad3->Initialise(m_pGDIRenderer, { 800, 700 }, 20, 40, 0x0000FF));
 	}
+
+	m_online = true;
+	m_pTimer = new Timer();
+	m_pTimer->Reset();
 	
 	return true;
 }
@@ -362,6 +374,23 @@ void Application::HandleInput()
 	if (m_pKeyDown[0x51])	// Q Key
 	{
 		m_pCamera->Fly(-1.0f);
+	}
+
+	if (m_pKeyDown[VK_LEFT])	// Left Arrow Key
+	{
+		m_pCamera->RotateYaw(-1.0f);
+	}
+	if (m_pKeyDown[VK_RIGHT])	// Right Arrow Key
+	{
+		m_pCamera->RotateYaw(1.0f);
+	}
+	if (m_pKeyDown[VK_UP])	// Up Arrow Key
+	{
+		m_pCamera->RotatePitch(-1.0f);
+	}
+	if (m_pKeyDown[VK_DOWN])	// Down Arrow Key
+	{
+		m_pCamera->RotatePitch(1.0f);
 	}
 }
 

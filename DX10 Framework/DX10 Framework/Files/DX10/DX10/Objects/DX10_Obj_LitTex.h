@@ -32,14 +32,23 @@ public:
 	* @author: Callan Moore
 	* @parameter: _pShader: The Shader for this Object
 	* @parameter: _textureID: The ID for the Texture for this Object
+	* @parameter: _textureTime: Time in seconds to run through all animation frames
 	********************/
-	DX10_Obj_LitTex(DX10_Shader_LitTex* _pShader, UINT _textureID);
+	DX10_Obj_LitTex(DX10_Shader_LitTex* _pShader, std::vector<UINT>* _textureID, float _textureTime);
 
 	/***********************
 	* ~CDX10_LitTex_Obj: Default Destructor for Lit Texture Object class
 	* @author: Callan Moore
 	********************/
 	~DX10_Obj_LitTex();
+
+	/***********************
+	* Process: Process the new frame and update the LitTex Object
+	* @author: Callan Moore
+	* @parameter: _dt: The delta tick for this frame
+	* @return: void
+	********************/
+	virtual void Process(float _dt);
 
 	/***********************
 	* Render: Render the Lit Texture Object to the screen space
@@ -50,6 +59,9 @@ public:
 
 private:
 	DX10_Shader_LitTex* m_pShader;
-	UINT m_textureID;
+	std::vector<UINT>* m_pTextureID;
+	UINT m_texIndex;
+	float m_timeElapsed;
+	float m_texTimer;
 };
 #endif	// __DX10_OBJ_LITTEX_H__

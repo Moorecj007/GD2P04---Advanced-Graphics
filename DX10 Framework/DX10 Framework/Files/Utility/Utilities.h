@@ -35,6 +35,8 @@
 // Library Includes
 #include <windows.h>
 #include <math.h>
+#include <string>
+#include <vector>
 
 /***********************
 Constants 

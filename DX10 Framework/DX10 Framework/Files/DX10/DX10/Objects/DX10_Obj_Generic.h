@@ -58,7 +58,7 @@ public:
 	* @parameter: _dt: The delta tick for this frame
 	* @return: void
 	********************/
-	virtual void Process(float _dt);
+	virtual void Process(float _dt) = 0;
 	
 	/***********************
 	* Render: Render the Generic Object to the screen space
@@ -78,6 +78,8 @@ protected:
 	DX10_Renderer* m_pRenderer;
 	DX10_Mesh_Generic* m_pMesh;
 	D3DXCOLOR m_color;
+
+	float m_dt;
 
 	v3float m_pos;
 	float m_rotationPitch;

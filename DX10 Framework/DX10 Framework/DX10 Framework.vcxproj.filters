@@ -214,8 +214,5 @@
     <FxCompile Include="Resources\FX\LitTex.fx">
       <Filter>Resource Files\FX Files</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\FX\tex.fx">
-      <Filter>Resource Files\FX Files</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

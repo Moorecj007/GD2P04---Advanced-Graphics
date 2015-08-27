@@ -30,7 +30,7 @@ bool DX10_Camera_FirstPerson::Initialise(DX10_Renderer* _pRenderer, HINSTANCE _h
 	m_pDirectInput = new DirectInput();
 	VALIDATE(m_pDirectInput->Initialise(_hInstance, _hWnd));
 
-	m_position = D3DXVECTOR3(0.0f, 0.0f, -2.0f);
+	m_position = D3DXVECTOR3(0.0f, 0.0f, -5.0f);
 	m_target = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_up = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	m_defaultForward = D3DXVECTOR3(0.0f, 0.0f, 1.0f);
@@ -47,11 +47,11 @@ bool DX10_Camera_FirstPerson::Initialise(DX10_Renderer* _pRenderer, HINSTANCE _h
 	m_pitchChange = 0.0f;
 
 	m_speed = 5.0f;
-	m_rotSpeed = DegreesToRadians(180.0f);
+	m_rotSpeed = DegreesToRadians(90.0f);
 
 	m_maxRotation = DegreesToRadians(89.0f);
 	m_minRotation = DegreesToRadians(-89.0f);
-		
+
 	return true;
 }
 
@@ -59,8 +59,8 @@ void DX10_Camera_FirstPerson::Process(float _dt)
 {
 	// Get mouse input
 	m_pDirectInput->DetectMouseInput(&m_yawChange, &m_pitchChange);
-	m_yaw += m_yawChange * m_rotSpeed * _dt;
-	m_pitch += m_pitchChange * m_rotSpeed * _dt;
+	m_yaw += m_yawChange * _dt;
+	m_pitch += m_pitchChange * _dt;
 
 	// Prevent Gimbal Lock
 	if (m_pitch > m_maxRotation)

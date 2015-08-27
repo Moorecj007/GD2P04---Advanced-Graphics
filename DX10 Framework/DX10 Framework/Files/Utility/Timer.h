@@ -22,13 +22,46 @@ class Timer
 public:
 	Timer();
 	
-	// TO DO - revamp timer class
+	/***********************
+	* GetGameTime: Retrieve the current game time
+	* @author: Callan Moore
+	* @return: float: Th current game time
+	********************/
 	float GetGameTime()const;
+	
+	/***********************
+	* GetDeltaTime: Retrieve the current delta tick
+	* @author: Callan Moore
+	* @return: float: the current delta tick
+	********************/
 	float GetDeltaTime()const;
 
-	void Reset(); // Call before message loop.
-	void Start(); // Call when unpaused.
+	/***********************
+	* Reset: Reset all the timer variables
+	* @author: Callan Moore
+	* @return: void
+	********************/
+	void Reset();
+	
+	/***********************
+	* Start: Start the clock again if it has been stopped (Un pause)
+	* @author: Callan Moore
+	* @return: void
+	********************/
+	void Start(); // Call when un paused.
+	
+	/***********************
+	* Stop: Stop the clock from accumulating time (Pause)
+	* @author: Callan Moore
+	* @return: void
+	********************/
 	void Stop();  // Call when paused.
+	
+	/***********************
+	* Tick: Calculate the delta tick
+	* @author: Callan Moore
+	* @return: void
+	********************/
 	void Tick();  // Call every frame.
 
 private:

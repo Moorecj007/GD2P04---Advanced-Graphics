@@ -15,7 +15,6 @@
 // This Include
 #include "DX10_Obj_Color.h"
 
-
 DX10_Obj_Color::DX10_Obj_Color()
 {
 	DX10_Obj_Generic::BaseInitialise();
@@ -23,6 +22,11 @@ DX10_Obj_Color::DX10_Obj_Color()
 
 DX10_Obj_Color::~DX10_Obj_Color()
 {
+}
+
+void DX10_Obj_Color::Process(float _dt)
+{
+	CalcWorldMatrix();
 }
 
 void DX10_Obj_Color::Render()

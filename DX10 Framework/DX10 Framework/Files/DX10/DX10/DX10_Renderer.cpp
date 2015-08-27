@@ -62,6 +62,14 @@ void DX10_Renderer::ShutDown()
 		m_pDX10SwapChain->SetFullscreenState(true, NULL);
 	}
 
+	// Delete the Graphics memory stored as DX10 Textures
+	std::map<UINT, ID3D10ShaderResourceView*>::iterator iterTexture = m_texturesByID.begin();
+	while (iterTexture != m_texturesByID.end())
+	{
+		ReleaseCOM(iterTexture->second);
+		iterTexture++;
+	}
+
 	// Delete the Graphics memory stored as DX10 InputLayers
 	std::map<UINT, ID3D10InputLayout*>::iterator iterInputLayout = m_inputLayouts.begin();
 	while (iterInputLayout != m_inputLayouts.end())
@@ -140,7 +148,7 @@ bool DX10_Renderer::InitialiseDeviceAndSwapChain()
 				&m_pDX10SwapChain,
 				&m_pDX10Device));
 
-	m_rasterizerDesc.CullMode = D3D10_CULL_NONE;
+	m_rasterizerDesc.CullMode = D3D10_CULL_BACK; 
 	m_rasterizerDesc.FillMode = D3D10_FILL_SOLID;
 	m_rasterizerDesc.FrontCounterClockwise = false;
 	m_rasterizerDesc.DepthBias = true;
@@ -153,7 +161,6 @@ bool DX10_Renderer::InitialiseDeviceAndSwapChain()
 
 	m_pDX10Device->CreateRasterizerState(&m_rasterizerDesc, &m_pRasterizerState);
 	m_pDX10Device->RSSetState(m_pRasterizerState);
-	
 	
 	// Invoke functionality that deals with changing size of the window
 	VALIDATE(onResize());
@@ -217,6 +224,8 @@ bool DX10_Renderer::onResize()
 	// Calculate the new Projection Matrix
 	CalcProjMatrix();
 
+	
+
 	return true;
 }
 
@@ -233,6 +242,7 @@ void DX10_Renderer::ToggleFullscreen()
 {
 	m_fullScreen = !m_fullScreen;
 	m_pDX10SwapChain->SetFullscreenState(m_fullScreen, NULL);
+	onResize();
 }
 
 void DX10_Renderer::ToggleFillMode()

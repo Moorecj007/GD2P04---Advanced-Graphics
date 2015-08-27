@@ -66,6 +66,7 @@ public:
 private:
 	IDirectInputDevice8* m_DIMouse;
 	DIMOUSESTATE m_mousePrevState;
+	DIMOUSESTATE m_mouseCurrState;
 	IDirectInput8* m_pDirectInput;
 };
 #endif	// __DIRECTINPUT_H__

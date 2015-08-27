@@ -26,12 +26,12 @@ C2D_Physics::~C2D_Physics()
 
 bool C2D_Physics::Initialise()
 {
-	b2Vec2 gravity(0.0f, -9.81f);
-	bool allowSleep = true;
-
-	// Create a new World
-	m_pWorld = new b2World(gravity);
-	m_pWorld->SetAllowSleeping(allowSleep);
+	//b2Vec2 gravity(0.0f, -9.81f);
+	//bool allowSleep = true;
+	//
+	//// Create a new World
+	//m_pWorld = new b2World(gravity);
+	//m_pWorld->SetAllowSleeping(allowSleep);
 
 	return true;
 }

@@ -60,8 +60,8 @@ VS_OUT VS(VS_IN _inputVS)
 		
 	// Transform to homogeneous clip space.
 	outputVS.positionH = mul(float4(_inputVS.position, 1.0f), g_matWorld);
-	outputVS.positionH = mul(float4(_inputVS.position, 1.0f), g_matView);
-	outputVS.positionH = mul(float4(_inputVS.position, 1.0f), g_matProj);
+	outputVS.positionH = mul(outputVS.positionH, g_matView);
+	outputVS.positionH = mul(outputVS.positionH, g_matProj);
 	
 	// Output vertex attributes for interpolation across triangle.
 	outputVS.texCoord = mul(float4(_inputVS.texCoord, 0.0f, 1.0f), g_matTex).xy;

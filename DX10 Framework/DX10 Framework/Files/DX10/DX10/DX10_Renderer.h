@@ -282,8 +282,12 @@ public:
 	* @return: D3DXVECTOR3; The Eye Position
 	********************/
 	D3DXVECTOR3 GetEyePos() { return m_eyePos; };
-
-	// TO DO - delete
+	
+	/***********************
+	* GetActiveLight: Retrieve the current active light in the scene
+	* @author: Callan Moore
+	* @return: Light*: The current active light
+	********************/
 	Light* GetActiveLight() { return &m_activeLight; };
 
 private:
@@ -328,7 +332,7 @@ private:
 	std::map<std::string, UINT> m_textureIDs;
 	std::map<UINT, ID3D10ShaderResourceView*> m_texturesByID;
 
-	// TO do - delete
+	// Lighting
 	Light m_activeLight;
 };
 

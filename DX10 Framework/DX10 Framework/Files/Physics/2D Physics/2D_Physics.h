@@ -18,8 +18,8 @@
 #define __2D_PHYSICS_H__
 
 // Library Includes
-#pragma comment(lib, "Box2D.lib")
-#include <Box2D.h>
+//#pragma comment(lib, "Box2D.lib")
+//#include <Box2D.h>
 
 // Local Includes
 #include "../../Utility/Utilities.h"
@@ -44,7 +44,7 @@ public:
 	bool Initialise();
 
 private:
-	b2World* m_pWorld;
+	//b2World* m_pWorld;
 };
 
 #endif	// __2D_PHYSICS_H__

@@ -87,10 +87,14 @@ public:
 	* @author: Callan Moore
 	* @return: eVertexType: The Vertex Type
 	********************/
-	eVertexType GetVertexType()
-	{
-		return m_vertType;
-	}
+	eVertexType GetVertexType() { return m_vertType; };
+
+	/***********************
+	* GetPrimTopology: Retrieve the Primitive topology that the Mesh uses
+	* @author: Callan Moore
+	* @return: eVertexType: The Vertex Type
+	********************/
+	D3D_PRIMITIVE_TOPOLOGY GetPrimTopology() { return m_primTopology; };
 
 protected:
 	DX10_Renderer* m_pRenderer;
