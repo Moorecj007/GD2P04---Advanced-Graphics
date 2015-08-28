@@ -58,7 +58,7 @@ bool DX10_Camera_FirstPerson::Initialise(DX10_Renderer* _pRenderer, HINSTANCE _h
 void DX10_Camera_FirstPerson::Process(float _dt)
 {
 	// Get mouse input
-	m_pDirectInput->DetectMouseInput(&m_yawChange, &m_pitchChange);
+	//m_pDirectInput->DetectMouseInput(&m_yawChange, &m_pitchChange);
 	m_yaw += m_yawChange * _dt;
 	m_pitch += m_pitchChange * _dt;
 
