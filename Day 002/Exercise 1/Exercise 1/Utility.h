@@ -41,7 +41,7 @@
 		HRESULT hr = (x);                                      \
 		if(FAILED(hr))                                         \
 		{                                                      \
-			DXTrace(__FILE__, (DWORD)__LINE__, hr, L#x, true); \
+			printf( "%s%s", __FILE__, (DWORD)__LINE__); \
 		}                                                      \
 	}
 	#endif
