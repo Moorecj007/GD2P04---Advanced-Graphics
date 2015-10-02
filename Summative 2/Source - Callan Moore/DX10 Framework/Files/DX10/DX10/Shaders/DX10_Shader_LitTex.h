@@ -96,7 +96,16 @@ public:
 		// Don't transform texture coordinates
 		D3DXMATRIX matTex;
 		D3DXMatrixIdentity(&matTex);
+<<<<<<< HEAD
 		D3DXMatrixTranslation(&matTex, 0.5, 0, 0);
+=======
+
+		D3DXMATRIX matTranslation;
+		D3DXMatrixIdentity(&matTranslation);
+		D3DXMatrixTranslation(&matTranslation, (float)_litTex.textureID / 120.0f, 0, 0);
+
+		matTex = matTex * matTranslation;
+>>>>>>> origin/master
 
 		if (pTech != NULL)
 		{
